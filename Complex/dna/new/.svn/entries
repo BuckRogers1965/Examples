@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/process/dna/new"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="RunAll.sh"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="30cef8cbcc4688144e76c15f98ee50fe"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:16.000000Z"/>
+<entry
+   committed-rev="40"
+   name="RunAll20030830192339.txt"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="16c6f990999adb492e35ed2560b1edaa"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:16.000000Z"/>
+<entry
+   name="src"
+   kind="dir"/>
+<entry
+   committed-rev="40"
+   name="bp.sh"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="06dfcf7e38e41daed795899283aa248f"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:16.000000Z"/>
+</wc-entries>

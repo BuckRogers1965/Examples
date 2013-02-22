@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/servers/chat"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="socket_demo.h"
+   text-time="2007-03-29T11:23:52.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="18c7c1d75c5202df2e29d53678cd3060"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="40"
+   name="locations.load"
+   text-time="2007-03-29T11:23:52.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="48fd02924a02a2c7dfe2af4e3a0b2440"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="40"
+   name="socket_demo.c"
+   text-time="2007-03-29T11:23:52.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="018aefead59e7e8b07308763df40d45d"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+</wc-entries>

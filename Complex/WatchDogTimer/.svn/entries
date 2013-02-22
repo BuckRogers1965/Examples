@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="26"
+   name=""
+   committed-date="2007-03-28T12:11:08.751358Z"
+   url="http://localhost/svn/projects/projects/framework/src/WatchDogTimer"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="26"
+   name="WatchDogTimer.c"
+   text-time="2007-03-28T11:57:27.000000Z"
+   committed-date="2007-03-28T12:11:08.751358Z"
+   checksum="ba9474572e0b7079850352d2c0d2e78e"
+   last-author="jrogers"
+   kind="file"/>
+<entry
+   committed-rev="26"
+   name="testharness.c"
+   text-time="2007-03-28T12:08:45.000000Z"
+   committed-date="2007-03-28T12:11:08.751358Z"
+   checksum="de36ad5f9d5e21432e360b658849ec1e"
+   last-author="jrogers"
+   kind="file"/>
+<entry
+   committed-rev="26"
+   name="WatchDogTimer.h"
+   text-time="2007-03-28T11:54:20.000000Z"
+   committed-date="2007-03-28T12:11:08.751358Z"
+   checksum="56c581b8cb6146a3f648129a9b4883fe"
+   last-author="jrogers"
+   kind="file"/>
+</wc-entries>

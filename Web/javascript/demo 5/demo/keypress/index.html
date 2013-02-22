@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>This is a presentation demonstration</title>
+</head>
+<body>
+<form action="" method="POST" id="myForm" >
+<input type="text" name="myText" onKeyPress="changeVal(event)">
+</input>
+<script type="text/javascript" language="JavaScript">
+var myForm = document.getElementById("myForm");
+var s1 = new String(myForm.myText.value)
+
+function changeVal(e) {
+if(window.event) // IE
+{
+keynum = e.keyCode;
+}
+else if(e.which) // Netscape/Firefox/Opera
+{
+keynum = e.which;
+}
+keychar = String.fromCharCode(keynum);
+    myForm.myText.value = String.fromCharCode(keynum);
+
+}
+
+</script>
+</form>
+
+<form action="" method="POST" id="notmyForm" >
+<input type="text" name="myText" onKeyPress="changeVal(event)">
+</input>
+
+</form>
+</body>
+</html>

@@ -1,0 +1,30 @@
+Memory Allocation Techniques.  
+
+By James M. Rogers
+
+Began in the early 2000's.
+
+I began writing down my experiences with memory management in order to document my research and findings into memory management techniques for computer program.
+
+Often the way in which a program accesses memory will determine it's maximum performance.  The way that memory is allocated and used is so integral to a programs design that choosing an improper algorythm initially will lead to serious performance during operation.  In order to fix the issue the program will have to be redesigned and rewritten which takes significant resources and time.
+
+Matching the data set size to the proposed algorthym in a test harness is one tool that can be used to allow a program to properly evaluate models before implementing full programs.  The 80/20 rule here can be used to great effect, allowing many possible senarios to be proposed and tried before deciding on one final solution.  This is not wasted time.  The test harnesses and prewritten algorthms should be thoroughly documented and be kept inside a source code control repository to make later tests for other projects much more efficient.  Many bits will end up in the later programs.  The data generator that creates the databases for use can be made into generic utilities customized for your systems.
+
+Another area of testing that is often overlooked is to start with a smaller data set, begin running the program, and test for bottlenecks as the dataset is grown up to full production values.  Then have the system remove the data and grow it back up again.  Do this several dozen times and see if anything bad happens as disk files and databases expand and contract back down again.
+
+One of the issues I recently ran into was in reallocating a large block of memory in a program. As memory usage grew the program kept reallocating larger and larger blocks of memory.
+
+The method I was using worked well for a while, but as the program exceeded real memory and had to turn to virtual memory the system suddenly ground to a halt and began paging memory out to disk.  What had taken just a few milliseconds suddenly began taking seconds to complete.  This resulted in the program suddenly going from being able to complete processing from seconds to minutes, a 10 times factor slow.
+
+A second issue is that in order to realloc a block the system has to allocate a larger block, copy the old block to the new block and then release the old block.  What this means is that when you have a 400MB block of memory allocated and you reallocate it to 600MB, then 1GB of memory will be in use at the same time until the smaller block can be freed.  The same effect can happen when shrinking blocks of memory as happens when growing the blocks.
+
+These issues make realloc less than well behaved when dealing with large blocks of memory.
+
+Error Returns.
+
+Another huge area of concern is that every call to any memory allocation function can fail and return an error code.  Your program must recover from these failures and pass the information regarding the failures on up to the higher levels so that the failures can be properly logged and the system shut down gracefully, if needed.  
+
+Not realizing that a function has failed and continuing on as though it succeeded will reasult in your program crashing, or, even worse, behave in unpredictable ways.  This can result in data corruption.
+
+
+ 

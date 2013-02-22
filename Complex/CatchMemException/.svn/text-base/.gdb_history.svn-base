@@ -1,0 +1,23 @@
+run
+bt
+step
+quit
+run
+printf *test
+print *test
+list
+list 0
+break handle_segfault
+run
+step
+quit
+run
+cont
+quit
+run
+step
+cont
+quit
+run
+cont
+quit

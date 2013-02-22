@@ -1,0 +1,325 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#define IN_NAMESPACE
+
+
+/* Given a set of strings, create a search tree of values */
+
+typedef struct Node {
+
+        /*@null@*/ struct Node * Child;
+
+        /*@null@*/ struct Node * Next;
+
+        char Character;
+        long Value;
+
+} Node;
+
+#include "namespace.h"
+
+
+/*@null@*/ Node * NSCreate (){
+
+	Node * Root;
+	
+        // create the nodes, zeroed memory;
+        Root = (Node *)calloc(sizeof(Node), 1);
+	if (Root == NULL) 
+		return NULL;
+
+        // put the nodes in a big loop around the Root. 
+
+        // initialize the first new node
+        //Root->Next = NULL;
+        //Root->Child = 0;
+        //Root->Character = 0;
+        //Root->Value = 0;
+
+	return Root;
+}
+
+void NSRelease (Node * Root){
+
+	Node * DeleteNow;
+	Node * DeleteNext;
+
+	DeleteNow = Root;
+
+	while (DeleteNow) {
+		DeleteNext = DeleteNow->Next;
+		if (DeleteNow->Child)
+			NSRelease(DeleteNow->Child);
+		free(DeleteNow);
+		DeleteNow = DeleteNext;
+	}
+
+	Root = NULL;
+}
+
+/*@null@*/ Node * AllocNode(){
+
+	Node * Root;
+
+        // create the nodes, zeroed memory;
+        Root = (Node *)calloc(sizeof(Node), 1);
+	if (Root == NULL) 
+		return NULL;
+
+        // put the nodes in a big loop around the Root. 
+
+        // initialize the first new node
+        //Root->Next = NULL;
+        //Root->Child = 0;
+        //Root->Character = 0;
+        //Root->Value = 0;
+	
+	return Root;
+}
+
+int NSInsert (Node * Root, char * String, long Value){
+
+	/*@null@*/ Node * Current;
+	/*@null@*/ Node * Previous;
+	int StrLoc=0;
+
+	// check values to make sure they are valid.
+	if (String && String[0] && Root) {
+
+		Current = Root->Child;
+		Previous = Root;
+
+		// crawl the string and tree, inserting nodes as needed.
+
+		// while there are still characters left
+		while (String[StrLoc]){
+
+			// is current NULL?
+			if (!Current) {
+
+				// attach free node to Previous
+				Current = AllocNode();
+				if (!Current)
+					return 0;
+				Previous->Child = Current;
+
+				// put the first character from the string in it
+				Current->Character = String[StrLoc];
+
+			} else if (String[StrLoc] < Current->Character) {
+			// is the character is less than Current->Character
+				// Create a new node and place it before this node.
+				Node * Temp;
+
+				// attach free node to Current
+				Temp = AllocNode();
+				if (!Temp)
+					return 0;
+				Temp->Character = String[StrLoc];
+
+				Previous->Child = Temp;
+				Temp->Next = Current;
+
+				Current = Temp;
+
+			} else if (String[StrLoc] != Current->Character) {
+
+			// the character is greater than Current->Character
+
+				while (Current && String[StrLoc] > Current->Character){
+					Previous = Current;
+					Current = Current->Next;
+				}
+				if (!Current){
+					// we are larger than anything else
+					Current = AllocNode();
+					if (!Current)
+						return 0;
+					Previous->Next = Current;
+                                	Current->Character = String[StrLoc];
+
+				} else {
+
+					// we are not equal to
+					if (String[StrLoc] != Current->Character) {
+
+						// attach free node to Previous
+						Previous->Next = AllocNode();
+						if (!Previous->Next)
+							return 0;
+						Previous->Next->Next = Current;
+						Current = Previous->Next;
+
+						// put the character from the string in it
+						Current->Character = String[StrLoc];
+					}
+				}
+			}
+
+			// Move to the next character
+			Previous = Current;
+			Current = Current->Child;
+
+			StrLoc++;
+		}	
+
+		// all done with String
+		Previous->Value = Value;
+		return 1;
+
+	} else
+		return 0;
+}
+
+long NSSearch (Node * Root, char * String){
+
+	Node * Current;
+	Node * Previous;
+	int StrLoc=0;
+
+	// check values to make sure they are valid.
+	if (String && String[0] && Root) {
+
+		Current = Root->Child;
+		Previous = Root;
+	
+		while (Current && String[StrLoc]) {
+			if (String[StrLoc] > Current->Character) {
+				while (Current && String[StrLoc] > Current->Character)
+					Current = Current->Next;
+
+				if (!Current)
+					break;
+
+				if (String[StrLoc] == Current->Character)
+					if (!String[StrLoc+1])
+						// Found
+                        			return (Current->Value);
+					Current = Current->Child;
+	
+			} else  if (String[StrLoc] == Current->Character) {
+				if (!String[StrLoc+1])
+					// Found
+                        		return (Current->Value);
+				Current = Current->Child;
+
+			} else {
+				break;
+			}
+
+			StrLoc++;
+		}
+	}
+	
+	// Not Found
+	return 0;
+}
+
+int NSDelete (Node * Root, char * String){
+	Node * Current;
+	Node * Previous;
+	Node * LastBranch;  
+	int StrLoc=0;
+
+	// check values to make sure they are valid.
+	if (String && String[0] && Root) {
+
+		Current    = Root->Child;
+		Previous   = Root;
+		LastBranch = Current;     // Remember the last value point, 
+					  // delete from there to current when found.
+	
+		while (Current && String[StrLoc]) {
+			if (String[StrLoc] > Current->Character) {
+				while (Current && String[StrLoc] > Current->Character)
+					Current = Current->Next;
+
+				if (!Current)
+					break;
+
+				if (String[StrLoc] == Current->Character)
+					if (!String[StrLoc+1]) {
+
+						Node * DeleteNode;
+						Node * DeleteNext;
+						// Found
+
+						// If there is no value here
+						// Then we didn't find anything.
+						if (!Current->Value)
+							return 0;
+
+						// if there is more from here, then leave it, 
+						// just remove the stored value
+						if(Current->Child){
+							Current->Value = 0;
+							return (1);
+						}	
+
+						// Delete the extra nodes
+						DeleteNode = LastBranch->Child;
+						LastBranch->Child = NULL;
+						while (DeleteNode) {
+							//printf("%c", DeleteNode->Character);
+							DeleteNext = DeleteNode->Child;
+							free (DeleteNode);
+							DeleteNode = DeleteNext;
+						}
+
+                        			return (1);
+					}
+
+					if (Current->Value > 0)
+						LastBranch = Current;
+					Current = Current->Child;
+	
+			} else  if (String[StrLoc] == Current->Character) {
+
+				if (!String[StrLoc+1]) {
+
+					Node * DeleteNode;
+					Node * DeleteNext;
+					// Found
+
+					// If there is no value here
+					// Then we didn't find anything.
+					if (!Current->Value)
+						return 0;
+
+					// if there is more from here, then leave it, 
+					// just remove the stored value
+					if(Current->Child){
+						Current->Value = 0;
+						return (1);
+					}	
+
+					// Delete the extra nodes
+					DeleteNode = LastBranch->Child;
+					LastBranch->Child = NULL;
+					while (DeleteNode) {
+						//printf("%c", DeleteNode->Character);
+						DeleteNext = DeleteNode->Child;
+						free (DeleteNode);
+						DeleteNode = DeleteNext;
+					}
+
+                        		return (1);
+				}
+
+				if (Current->Value > 0)
+					LastBranch = Current;
+				Current = Current->Child;
+
+			} else {
+				break;
+			}
+
+			StrLoc++;
+		}
+	}
+	
+	// Not Found
+	return 0;
+}
+

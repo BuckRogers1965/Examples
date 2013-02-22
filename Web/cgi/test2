@@ -1,0 +1,49 @@
+#!/usr/bin/perl -w
+
+use strict;
+my $where;
+my $cleared;
+my $root;
+
+$root="/cgi-bin/test2/";
+
+($where = $ENV{'PATH_INFO'}) =~ s|^/*||;
+
+print "Perl-Version: $]\n";
+
+print "Content-type: text/html\n\n";
+
+if ($where =~ /^([-\@\/\w.]+)$/) {
+    $cleared = $1;
+} else {
+    $cleared = "lxr";
+}
+
+if (-d $cleared ) {
+
+print "<H1>Directory Listings</H1>\n";
+open (TEST, "/bin/ls $cleared |");
+
+while (<TEST>) {
+    chop;
+    print "<A href=\"$root$cleared/$_\">$_<BR></a>\n";
+}
+print "<BR>\n";
+
+close TEST;
+
+} elsif (-f $cleared) {
+
+print "<H1>File Listing</H1>\n";
+open (TEST, "/bin/cat $cleared |");
+print "<PRE>\n";
+
+while (<TEST>) {
+    print;
+    }
+close TEST;
+print "</PRE>\n";
+} else {
+print "File not found."
+}
+

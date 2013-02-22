@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/complex/mylibrary"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="client.c"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="01788e15108e1ef1ff4a565184a047dd"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="40"
+   name="howto"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="e3714b87291d9bdae9994af187a669e0"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="40"
+   name="libprint.so.1"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="efe3744e0e3a1fe30f9664255610b640"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:22:55.000000Z"/>
+<entry
+   committed-rev="40"
+   name="libprint.c"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="3a1c731e1bd75d032a95addf0fcebcf6"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="40"
+   name="a.out"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="79762f36863661ca13f7b7d56911fdf0"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:22:55.000000Z"/>
+<entry
+   committed-rev="40"
+   name="libprint.h"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="625d37c3ad1bd2214463c10e4abd779f"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="40"
+   name="client"
+   text-time="2007-03-29T11:22:55.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="cb469429b35c0dc0d6612bd88eb41a3c"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:22:55.000000Z"/>
+</wc-entries>

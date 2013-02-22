@@ -148,6 +148,27 @@ long double ddddfp21(long double x){ return (sinl(x+1)); }
 long double ddfp22  (long double x){ return (-cosl(x+M_PI)); }
 long double ddddfp22(long double x){ return (cosl(x+M_PI)); }
 
+// problem hw 1   
+long double fh1    (long double x){ return (powl(M_E, x) + 3*x*x + 1); }
+long double dfh1   (long double x){ return (powl(M_E, x) + 6*x); }
+long double ddfh1  (long double x){ return (powl(M_E, x) + 6); }
+long double ddddfh1(long double x){ return (powl(M_E, x)); }
+long double ifh1   (long double x){ return (powl(M_E, x) + x*x*x + x); }
+
+// problem hw 2   
+long double fh2    (long double x){ return (powl(M_E, x*x)); }
+long double dfh2   (long double x){ return (2*x*powl(M_E, x*x)); }
+long double ddfh2  (long double x){ return (4*x*x*powl(M_E, x*x)+2*powl(M_E, x*x)); }
+long double ddddfh2(long double x){ return (4 * powl(M_E,x*x) * (4 * x*x*x*x+12 *x*x+3)); }
+long double ifh2   (long double x){ return (powl(M_E, x*x)/M_PI - x - x/2  -x/32 +x/64 +x/128 + x/256); }
+
+// problem hw 3   
+long double fh3    (long double x){ return (2*x*x*x + x*x + 3*x -1); }
+long double dfh3   (long double x){ return (6*x*x + 2*x + 3); }
+long double ddfh3  (long double x){ return (12*x+2); }
+long double ddddfh3(long double x){ return (0); }
+long double ifh3   (long double x){ return (x*x*x*x/2.0+x*x*x/3.0 + 3.0*x*x/2.0 - x); }
+
 long double para (long double b, long double e, long double n,
 		long double (*f)(long double)){
 
@@ -161,15 +182,22 @@ long double para (long double b, long double e, long double n,
 	long double ea = e * n;     // the ending numerator
 
 	if (!n) return 0;
+	if (n< 11) printf("((%.0Lf-%.0Lf)/%.0Lf/3)(f(%.0LF/%.0Lf)", e, b, n, ba-c, n);
 
-	for (;ba<ea; ba+=c*2)
+	for (;ba<ea; ba+=c*2){
 		r4 += f(ba/n);  // sum all the intervals
+		if (n< 11) printf("+4*f(%.0Lf/%.0Lf)", ba, n);
+	}
 	r4*= 4;  // quad alternating interval values.
 
 	ba = b * n + c*2; // the begining numerator 
-	for (;ba<ea; ba+=c*2)
+	for (;ba<ea; ba+=c*2){
 		r2 += f(ba/n);  // sum all the intervals
+		if (n< 11) printf("+2*f(%.0Lf/%.0Lf)", ba, n);
+	}
 	r2*= 2;  // double alternating interval values.
+
+	if (n< 11) printf("+f(%.0Lf/%.0Lf))\n", ba, n);
 
 	r = r2 + r4;
 	r += f(b) + f(e); //handle the first and last interval
@@ -189,9 +217,14 @@ long double trap (long double b, long double e, long double n,
 
 	if (!n) return 0;
 
-	for (;ba<ea; ba+=c)
-		r += f(ba/n);  // sum all the intervals
+	if (n< 11) printf("((%.0Lf-%.0Lf)/%.0Lf/2)(f(%.0LF/%.0Lf)", e, b, n, ba-c, n);
 
+	for (;ba<ea; ba+=c){
+		r += f(ba/n);  // sum all the intervals
+		if (n< 11) printf("+2*f(%.0Lf/%.0Lf)", ba, n);
+	}
+
+	if (n< 11) printf("+f(%.0Lf/%.0Lf))\n", ba, n);
 	r *= 2;  // double all the interval values.
 	r += f(b) + f(e); //handle the first and last interval
 	r *= ca; // apply the final multiplier
@@ -233,19 +266,20 @@ long double epara(long double b, long double e, long double n, long double (*f)(
         return ((et * c * c * c * c * c)/(180 * n * n * n * n));
 }
 
-long double autoTrapN(long double b, long double e, long double (*f)(long double)){
+long double autoTrapN(long double b, long double e, long double er, long double (*f)(long double)){
 	long double c = e-b;
 	long double et = findUpper(b,e,f);
 
-	return roundl ( powl((et *c *c *c / 12 *10000), .5)+.6);
+	//printf("M: %Le ", et);
+	return roundl ( powl((et *c *c *c / 12 *er), .5)+.6);
 }
 
-long double autoParaN(long double b, long double e, long double (*f)(long double)){
+long double autoParaN(long double b, long double e, long double er, long double (*f)(long double)){
 
 	long double  c = e-b;
 	long double et = findUpper(b,e,f);
 
-	return (roundl ((powl((et*c *c *c *c *c /180 * 10000 ), .25) +1)/2 ) * 2);
+	return (roundl ((powl((et*c *c *c *c *c /180 * er ), .25) +1)/2 ) * 2);
 }
 
 // Does the homework according to the requirements in section 1
@@ -265,13 +299,13 @@ void process (char * name, long double b, long double e, long double n, long dou
 	printf("%s \n", name);
 	ri  = inte (b, e, fi);
 
-	if (autointerval) n = autoTrapN(b, e, ddf);
+	if (autointerval) n = autoTrapN(b, e, 10000, ddf);
 	rt  = trap (b, e, n, f);
 	rte = etrap(b, e, n, ddf);
 
 	printf("    I trap i: %8.0Lf a: %10.6Lf, %10Le \tb:  %4.7Lf, %10Le c%5.2Lf \n", n, rt, rte, ri, (rt-ri), ((rt-ri)/ri)*100 );
 
-	if (autointerval) n = autoParaN(b, e, ddddf);
+	if (autointerval) n = autoParaN(b, e, 10000, ddddf);
 	rp  = para (b, e, n, f);
 	rpe = epara(b, e, n, ddddf);
 
@@ -281,16 +315,16 @@ void process (char * name, long double b, long double e, long double n, long dou
 }
 
 // Does the homework according to the requirements in section 2
-void process2 (char * name, long double b, long double e, long double (*ddf)(long double), long double (*ddddf)(long double)){
+void process2 (char * name, long double b, long double e, long double er, long double (*ddf)(long double), long double (*ddddf)(long double)){
 
 	long double n;
 
 	printf("%s\t", name);
 
-	n = autoTrapN(b, e, ddf);
+	n = autoTrapN(b, e, er, ddf);
 	printf("    a: %4.0Lf", n);
 
-	n = autoParaN(b, e, ddddf);
+	n = autoParaN(b, e, er, ddddf);
 	printf("\tb: %4.0Lf ", n);
 
 	printf ("\n");
@@ -361,20 +395,35 @@ int main (){
 	process ("Problem  9 ",  0, M_PI, 4, &fp9, &ddfp9, &ddddfp9, &ifp9);
 	process ("Problem 10 ",  0, 1, 4,    &fp10, &ddfp10, &ddddfp10, &ifp10);
 
-	process2 ("Problem 11 ",  1, 2, &ddfp1,  &ddddfp1);
-	process2 ("Problem 12 ",  1, 3, &ddfp2,  &ddddfp2);
-	process2 ("Problem 13 ", -1, 1, &ddfp3,  &ddddfp3);
-	process2 ("Problem 14 ", -2, 0, &ddfp4,  &ddddfp4);
-	process2 ("Problem 15 ",  0, 2, &ddfp5,  &ddddfp5);
-	process2 ("Problem 16 ", -1, 1, &ddfp6,  &ddddfp6);
-	process2 ("Problem 17 ",  1, 2, &ddfp7,  &ddddfp7);
-	process2 ("Problem 18 ",  2, 4, &ddfp8,  &ddddfp8);
-	process2 ("Problem 19 ",  0, 3, &ddfp19, &ddddfp19);
-	process2 ("Problem 20 ",  0, 3, &ddfp20, &ddddfp20);
-	process2 ("Problem 21 ",  0, 2, &ddfp21, &ddddfp21);
-	process2 ("Problem 22 ", -1, 1, &ddfp22, &ddddfp22);
+
+
+	process2 ("Problem 11 ",  1, 2, 10000, &ddfp1,  &ddddfp1);
+	process2 ("Problem 12 ",  1, 3, 10000, &ddfp2,  &ddddfp2);
+	process2 ("Problem 13 ", -1, 1, 10000, &ddfp3,  &ddddfp3);
+	process2 ("Problem 14 ", -2, 0, 10000, &ddfp4,  &ddddfp4);
+	process2 ("Problem 15 ",  0, 2, 10000, &ddfp5,  &ddddfp5);
+	process2 ("Problem 16 ", -1, 1, 10000, &ddfp6,  &ddddfp6);
+	process2 ("Problem 17 ",  1, 2, 10000, &ddfp7,  &ddddfp7);
+	process2 ("Problem 18 ",  2, 4, 10000, &ddfp8,  &ddddfp8);
+	process2 ("Problem 19 ",  0, 3, 10000, &ddfp19, &ddddfp19);
+	process2 ("Problem 20 ",  0, 3, 10000, &ddfp20, &ddddfp20);
+	process2 ("Problem 21 ",  0, 2, 10000, &ddfp21, &ddddfp21);
+	process2 ("Problem 22 ", -1, 1, 10000, &ddfp22, &ddddfp22);
 
 	Solve25();
+
+	process  ("HW 1 ", 1, 5, 8,    &fh1, &ddfh1, &ddddfh1, &ifh1);
+	process2 ("HW 1 ", 1, 5, 10000, &ddfh1, &ddddfh1);
+
+	process  ("HW 2 ", 1, 2, 8,    &fh2, &ddfh2, &ddddfh2, &ifh2);
+	process  ("HW 2 ", 1, 2, 1000000,    &fh2, &ddfh2, &ddddfh2, &ifh2);
+	process2 ("HW 2 ", 1, 2, 10000, &ddfh2, &ddddfh2);
+
+	process  ("HW 3 ", -1, 2, 0,    &fh3, &ddfh3, &ddddfh3, &ifh3);
+	process2 ("HW 3 ", -1, 2, 1000, &ddfh3, &ddddfh3);
+	process  ("HW 3 ", -1, 2, 242,    &fh3, &ddfh3, &ddddfh3, &ifh3);
+
+
 
 	return 0;
 }

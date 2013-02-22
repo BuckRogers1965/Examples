@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="42"
+   name=""
+   committed-date="2007-03-29T11:32:32.390839Z"
+   url="http://localhost/svn/projects/projects/examples/servers/server"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="42"
+   name="server.c"
+   text-time="2007-03-29T11:29:58.000000Z"
+   committed-date="2007-03-29T11:32:32.390839Z"
+   checksum="610ec57405ba0fc125fbe20247412594"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:29:58.000000Z"/>
+<entry
+   committed-rev="42"
+   name="code.c"
+   text-time="2007-03-29T11:29:58.000000Z"
+   committed-date="2007-03-29T11:32:32.390839Z"
+   checksum="7aad08efa60e17211fa285134d5598ac"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:21.000000Z"/>
+<entry
+   committed-rev="42"
+   name="server.h"
+   text-time="2007-03-29T11:29:58.000000Z"
+   committed-date="2007-03-29T11:32:32.390839Z"
+   checksum="5ec3737c145ba01ac81d6919573017f1"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:29:58.000000Z"/>
+</wc-entries>

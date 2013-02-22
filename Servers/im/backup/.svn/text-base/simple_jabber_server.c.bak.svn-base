@@ -1,0 +1,306 @@
+/*   simple jabber server */
+/*   James M. Rogers */
+
+/*
+
+
+  This server is aimed at installations that need a simple to use jabber server for less than a 
+thousand people. 
+
+
+  Limitations:
+
+  <1000 users can be logged in at the same time.
+  No file transfers.
+  Only supports clear text passwords.
+  Support registration, clear text passwords, roster, subscription, jabber messaging.
+
+  No support for agents, except for reporting that there aren't any.
+
+*/
+
+#include <stdio.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#define PRIMARY_TCP_PORT 5222    /* define primary socket */
+#define Q_LENGTH     25    /* the length of the message Q */
+#define BUFFER         512    /* the largest message */
+#define TITLE_BUFFER     128    /* the largest message */
+#define ROOM_BUFFER     512    /* the largest message */
+
+#define MAX_CLIENTS    1000    /*  */
+#define SOCKET_ERROR    -1    /* assuming a -1 for all socket failures */
+#define NEVER_END    1    /* MAIN LOOP NEVER ENDS */
+
+#define MAX_COUNTDOWN    5    /* largest number of countdown timers */
+#define MAX_TOKENS      3    /* how many tokens allowed per line */
+
+/* these are the states that the player can be in */
+#define NEW_CONNECTION    0    /* Initial value */
+#define LOGIN    1    /* Initial state to get name */
+#define PLAY    2    /* Parses commands and performs actions */
+#define QUITING    3    /* Closes connection for person */
+#define QUIT    4    /* Closes connection for person */
+
+struct client_data{
+
+    int state;
+    char name[BUFFER];
+
+    int token[MAX_TOKENS];
+    char *word[MAX_TOKENS];
+    int tokens;
+    int needed;
+    char *point_buf;
+    int  buf_size;
+    char buffer[BUFFER];
+};
+
+/*** Global Variables ***/
+struct client_data client[MAX_CLIENTS+4];
+
+/* initializes the client data to a known state */
+void initialize(int fd) {
+    client[fd].location=1;
+}
+
+
+/* Client actions go here */
+void client_actions(int fd){
+
+    switch (client[fd].state) {
+        case NEW_CONNECTION: {
+            /* setup a new stream */
+            client[fd].state = LOGIN;
+            } break;
+        case LOGIN: {
+            /* perform login procedures */
+            strcpy(client[fd].name, client[fd].buffer);
+            client[fd].state = PLAY;
+            initialize(fd);
+            } break;
+        case PLAY: {
+            /* parse the client communication */
+
+            /* query */
+
+                /* roster */
+<stream:stream to='six' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>
+<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' id='3A62E006' xmlns='jabber:client' from='six'>
+
+<iq id='0' type='set'><query xmlns='jabber:iq:auth'><username>jabber</username><resource>Gabber</resource><digest>f4d6efcadbf398e1bf78f0fec9d07feac09c3e0b</digest></query></iq>
+<iq id='0' type='error'><query xmlns='jabber:iq:auth'><username>jabber</username><resource>Gabber</resource><digest sid='3A62E006'>f4d6efcadbf398e1bf78f0fec9d07feac09c3e0b</digest></query><error code='401'>Unauthorized</error></iq>
+
+<iq id='1' type='set'><query xmlns='jabber:iq:auth'><username>jabber</username><resource>Gabber</resource><password>1234</password></query></iq>
+<iq id='1' type='error'><query xmlns='jabber:iq:auth'><username>jabber</username><resource>Gabber</resource><password>1234</password></query><error code='401'>Unauthorized</error></iq>
+
+<iq id='2' type='set'><query xmlns='jabber:iq:register'><username>jabber</username><resource>Gabber</resource><password>1234</password></query></iq>
+<iq id='2' type='result'/>
+
+<iq id='3' type='set'><query xmlns='jabber:iq:auth'><username>jabber</username><resource>Gabber</resource><password>1234</password></query></iq>
+<iq id='3' type='result'/>
+
+<iq type='get' id='4'><query xmlns='jabber:iq:agents'/></iq>
+<iq type='result' id='4' from='six' to='jabber@six/Gabber'><query xmlns='jabber:iq:agents'>
+ 
+        <agent jid='users.jabber.org'>
+          <name>Jabber User Directory</name>
+          <description>You may register and create a public searchable profile, and search for other registered Jabber users.</description>
+          <service>jud</service>
+          <register/>
+          <search/>
+        </agent>
+ 
+        <agent jid='conference.six'>
+          <name>The conferencing service on mydomain</name>
+          <description>Don&apos;t all talk at once!</description>
+          <service>conference</service>
+          <groupchat/>
+          <register/>
+        </agent>
+ 
+      </query></iq>
+
+<iq type='get'><query xmlns='jabber:iq:roster'/></iq>
+<iq type='result' from='jabber@six/Gabber'><query xmlns='jabber:iq:roster'/></iq>        
+
+
+<stream:error>Disconnected</stream:error></stream:stream>
+</stream:stream>
+
+            /* presence and subscription */
+
+/*
+<iq id='5' to='buck@six' type='get'><vCard prodid='-//HandGen//NONSGML vGen v1.0//EN' version='3.0' xmlns='vcard-temp'/></iq>
+<iq id='5' to='gandalf@six/Gabber' type='result' from='buck@six'/>
+
+<iq type='set'><query xmlns='jabber:iq:roster'><item jid='buck@six' name='buck'/></query></iq>
+<presence to='buck@six' type='subscribe'/>
+
+<iq type='set'><query xmlns='jabber:iq:roster'><item jid='buck@six' subscription='none' name='buck'/></query></iq><iq type='result' from='gandalf@six/Gabber' to='gandalf@six/Gabber'/><iq type='set'><query xmlns='jabber:iq:roster'><item jid='buck@six' subscription='none' name='buck' ask='subscribe'/></query></iq>
+<presence/>
+
+<iq id='5' to='gandalf@six' type='get'><vCard prodid='-//HandGen//NONSGML vGen v1.0//EN' version='3.0' xmlns='vcard-temp'/></iq>
+<iq id='5' to='buck@six/Gabber' type='result' from='gandalf@six'/>
+
+<iq type='set'><query xmlns='jabber:iq:roster'><item jid='gandalf@six' name='gandalf'/></query></iq>
+<presence to='gandalf@six' type='subscribe' from='buck@six'/>
+
+<presence to='gandalf@six' type='subscribe'/>
+<iq type='set'><query xmlns='jabber:iq:roster'><item jid='gandalf@six' subscription='none' name='gandalf'/></query></iq><iq type='result' from='buck@six/Gabber' to='buck@six/Gabber'/><iq type='set'><query xmlns='jabber:iq:roster'><item jid='gandalf@six' subscription='none' name='gandalf' ask='subscribe'/></query></iq>
+<presence/>
+
+<<< <presence to='buck@six' type='subscribed'/>
+>>> <presence to='buck@six' type='subscribed' from='gandalf@six'/>
+
+>>> <iq type='set'><query xmlns='jabber:iq:roster'><item jid='gandalf@six' subscription='to' name='gandalf'/></query></iq><presence from='gandalf@six/Gabber' to='buck@six'><x xmlns='jabber:x:delay' from='gandalf@six/Gabber' stamp='20010115T11:54:19'/></presence>
+<<< <iq id='6' to='buck@six' type='get'><vCard prodid='-//HandGen//NONSGML vGen v1.0//EN' version='3.0' xmlns='vcard-temp'/></iq>
+
+>>> <iq type='set'><query xmlns='jabber:iq:roster'><item jid='buck@six' subscription='from' name='buck' ask='subscribe'/></query></iq><iq id='6' to='gandalf@six/Gabber' type='result' from='buck@six'/>
+<<< <iq type='set'><query xmlns='jabber:iq:roster'><item jid='buck@six' name='buck'/></query></iq>
+
+<<< <presence to='buck@six' type='subscribe'/>
+>>> <presence to='buck@six' type='subscribe' from='gandalf@six'/>    
+*/
+
+            /* messaging */                        
+            /* server must add from reference into the incoming message, then route the message */
+
+/*
+
+messaging
+
+<<< <message to='buck@six/Gabber' type='normal'><body>This is a sample message.</body></message>
+>>> <message to='buck@six/Gabber' type='normal' from='gandalf@six/Gabber'><body>This is a sample message.</body></message>
+<<< <message to='gandalf@six/Gabber' type='normal'><body>This is a responce back</body></message>
+>>> <message to='gandalf@six/Gabber' type='normal' from='buck@six/Gabber'><body>This is a responce back
+</body></message>     
+*/
+
+/*
+
+chat
+
+<<< <message to='buck@six/Gabber' type='chat'><body>chat test...</body></message>
+>>> <message to='buck@six/Gabber' type='chat' from='gandalf@six/Gabber'><body>chat test...</body></message>
+<<< <message to='gandalf@six/Gabber' type='chat'><body>what a test...</body></message>
+>>> <message to='gandalf@six/Gabber' type='chat' from='buck@six/Gabber'><body>what a test...</body></message>
+
+*/
+
+            } break;
+    } /* end case */
+} /* end client actions */
+
+void main(){
+
+    int primary_socket, new_socket;
+    struct sockaddr_in sin, new_sin;
+    fd_set rfds, afds;
+    int fd, nfds, alen;
+    int x;
+    size_t buf_size;
+
+    memset ((char *)&sin,0,sizeof(sin));
+
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(PRIMARY_TCP_PORT);
+
+    primary_socket = socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
+    if (primary_socket == SOCKET_ERROR) {
+        printf("FATAL ERROR : Can't create primary socket.\n");
+        exit(1);
+    }
+        printf("Created primary socket.\n");
+    
+    if(bind(primary_socket, (struct sockaddr *)&sin, sizeof(sin))
+        == SOCKET_ERROR) {
+        printf("FATAL ERROR : Can't bind primary socket to port.\n");
+        exit(1);
+    }
+        printf("Bind port was good.\n");
+
+    if(listen(primary_socket,Q_LENGTH) == SOCKET_ERROR) {
+        printf("FATAL ERROR : Can't listen to primary port.\n");
+        exit(1);
+    }
+        printf("Listening on Primary port.\n");
+    
+    /* clear the active file descriptor set */
+    nfds = getdtablesize();
+    FD_ZERO(&afds);
+
+    /* add primary socket to main loop */
+    FD_SET(primary_socket,&afds);
+
+    /* *** *** ***   MAIN LOOP   *** *** *** */
+    while (NEVER_END){
+
+    bcopy ((char *)&afds, (char *)&rfds, sizeof(rfds));
+
+    /* look for a new connection */
+    if (select(nfds, &rfds, (fd_set *)0, (fd_set *)0, (struct timeval *)0)
+        == SOCKET_ERROR) {
+        printf("FATAL ERROR : Select Error.\n");
+        exit(1);
+    }
+
+    /* Add new connects to loop */
+    if (FD_ISSET(primary_socket, &rfds)) {
+        alen = sizeof(new_sin);
+        new_socket = accept(primary_socket, (struct sockaddr *)
+            &new_sin, &alen);
+        if (new_socket == SOCKET_ERROR){
+            printf("FATAL ERROR : Select Error.\n");
+            exit(1);
+        }
+        login_screen(new_socket);
+        client[new_socket].state=LOGIN;
+        printf("New connection on file descriptor %d.\a\n",new_socket);
+        FD_SET(new_socket,&afds);
+    }
+
+    
+    
+    /* Cycle thru all open file descriptors */
+    for (fd=0; fd<nfds; ++fd)
+        if (fd != primary_socket && FD_ISSET(fd,&rfds)) {
+
+        if (client[fd].state == QUIT) {
+            write (fd, "SERVER Closing connection\n", 26);
+            close(fd);
+            FD_CLR(fd,&afds);
+            printf("%d Closed Connection\n",fd);
+        } else {
+        /* server code goes here */
+        buf_size = read (fd, client[fd].buffer, BUFFER);
+        client[fd].buffer[buf_size]='\0';
+        client[fd].buf_size=buf_size;
+        if (buf_size>1) printf("%d %s",fd,client[fd].buffer);
+            else {
+                write (fd, "SERVER Closing connection\n", 26);
+                close(fd);
+                FD_CLR(fd,&afds);
+                printf("%d Closed Connection\n",fd);
+            } /* end else */
+        } /* end else */
+            
+        client_actions(fd);
+
+        /* clear the characters buffer for say command */
+        for(x=0;x<BUFFER;x++)
+            client[fd].buffer[x]='\0';
+
+        if (client[fd].state == QUITING) client[fd].state = QUIT;
+
+    } /* end server code */
+    
+    update_environment();
+    
+    } /* END WHILE */
+} /* END MAIN */

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/process/dna/results"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="RunAll20030830191057.txt"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="d4f72f3bcb73d309b68fa2c3252ca277"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="RunAll20030830155913.txt"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="f7b7495b9cfbf609109f5de4563ff8fc"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="RunAll20030830192339.txt"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="16c6f990999adb492e35ed2560b1edaa"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="RunAll20030830190200.txt"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="86edd564e8f9cb03e6b44d543f0e55c1"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="RunAll20030830162221.txt"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="a665afad57e46fd46422ff271f210921"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+</wc-entries>

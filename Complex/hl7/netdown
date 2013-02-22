@@ -1,0 +1,5 @@
+#!/bin/bash
+
+killall dhcpcd
+ifconfig eth0 down
+/etc/init.d/pcmcia stop

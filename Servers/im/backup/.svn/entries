@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/servers/im/backup"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="client.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="91820100675a2257a86f276365cc06a4"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="simple_jabber_server.c.bak"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="962a242e8b9be1190ae9ebaf6dd94ad9"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="xml.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="63cdfd51764024b4a43060d63429d30e"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="jab.h"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="8429cc4c71b2962817ccfe5bd87b4c8a"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="simple_jabber_server.bak2.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="61899f41680734f56ea9e5450e3779de"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="simple_jabber_server.bak3.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="59a1042ef535aa61e2b74ee9bef82e5c"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="main.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="a700d16f5e7a7dcf71c6434567f5c171"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="simple_jabber_server.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="6ef654557a20eceeb15a2c72784d8101"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+</wc-entries>

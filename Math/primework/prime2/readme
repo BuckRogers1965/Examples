@@ -1,0 +1,77 @@
+
+--
+1 byte is one number...
+
+8 bits per digit.  No compression, easy to understand.
+
+12345678:bits
+       1:numbers
+
+
+--
+1 bit is one number.
+
+1 bit ber digit.  No compression, uses special compares to build and then view results.
+
+12345678:bits
+12345678:numbers
+
+--
+1 bit is two numbers.
+
+skips even numbers, using test to see if something is even or odd.
+
+12345678:bits
+13579111:numbers
+     135
+
+--
+
+skips even numbers, using test to see if something is even or odd.
+skips multiples of three, adding digits to see if they add up to 3, 6 or 9.
+doesn't fit into a byte boundary. doesn't save that much..
+
+--
+
+any number that ends in a 5 is divisible by 5
+
+--
+
+
+to factor a number as quickly as possible...
+
+Two's rule.
+see if the number ends in a 0,2,4,6,8
+  if it does, divide by 2 and check the number for 2's rule again.
+
+Three's rule.
+see if the digits of the number add up to 3, 6 or 9,
+  if it does, divide by 3 and check the remainder for 3's rule again...
+
+5's rule.
+If the digit ends in a five,
+  divide by 5 and check the remainder for 5's rule again...
+
+prime rule.
+consecutively check the number with each prime number upto the square of the number.
+  if the number is divisible by a prime,
+     if the remainder is less than the square of the current prime, print remainder and finish.
+     else the remainder becomes the number, starting with the current prime, continue the prime rule.
+
+--
+
+Why find prime numbers?
+--
+
+Prime number server.
+
+With a single Terabyte of disk storage I can store the first 16 Trillion numbers and factor any number
+upto 2^87th bits within a reasonable amount of time.  And since these files actually compress well,
+especially at the high end where most numbers aren't primes, then I have high hopes that I will be able
+to store 2^128 bits in one Terabyte of disk space.  
+
+
+--
+
+
+

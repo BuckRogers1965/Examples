@@ -1,0 +1,83 @@
+Memory Managment 
+
+by James M. Rogers
+Summer of 2012
+
+Any application will have data that it must store in memory in order to fulfill its purposes.  The application will aquire this data from the hard drive, from another system, from a database, from a sensor, or from proceedural generation.  
+
+To process this data rapidly you must load the data into memory.  Even if you just load a small window into the data into memory you still have to allocate and release the memory as needed as you effectively marshall the data from storage.
+
+When the results are calculated, the resultant data set must also be saved to a storage area so that it does not have to be recalculated.  Or it needs to be deleted in order to make room for the next data set that is processed.  
+
+This process is called memory management.
+
+--
+
+
+Common types of failures.
+
+
+Memory Leak.
+
+A failure to properly allocate and release memory is called a memory leak.  Eventually your process must be stopped and restarted because it has grown to a size that exceeds both real and virtual memory sizes.  Growing beyond real memory will impact system performance.
+
+
+Data Corruption, or Program Crash
+
+A second failure mode with improperly allocation and releasing of memory is trying to use memory that has already been freed.  Worst case is that your program continues without crashing, best case is that you get a warning about the problem because your program has crashed.
+
+
+Fragmenation.
+
+Many programs will alloc a block of memory when required, and free it when that block is no longer used.  They will do this with various sized blocks of memory.  This will cause gaps to grow between allocated blocks.  Eventually you will request a block of data and the system call will fail, despite there appearing to be plenty of room for your files.  This failure mode can impact performance for the entire system and even cause memory allocation failures in other programs.
+
+
+Failure to handle an error return.
+
+You must not assume that your data request for more memory was successful.  It is possible that your request was denied and you must properly handle the failure, passing the error return back up the stack so that the program can manage and recover from the errors.
+
+--
+
+
+Techniques to properly manage memory.
+
+
+Keep a list of freed nodes around.
+
+One technique that I have used succefully in the past to to write my program just like normal, allocing and freeing nodes inside a couple of functions.  I noticed that I was rapidly creating and freeing nodes all the time.  Then later I would change the delete_node() function to add the nodes to a free list, and change the new_node() function to first try to grab a node from the free list, only allocating a new node when the free list was empty.  Often a program will reach a steady state and overall will just be placing and removing nodes from the free list.
+
+In that particular case I was able to easily double performance.    Of course this was a little naive and did not incorporate any garbage collection to release free nodes once the free list grows to a certain size, but that could also be easily handled.  I'd recommend having a high and low water count.  When the size grew up to the high water mark, then delete down to the low water mark.  Not all at once, just a few at a time so that your program doesn't seem to randomly freeze up as it free's a large number of blocks at a time. 
+
+
+Pool.
+
+It is just as fast to allocate a large block of memory as it is to allocate a single small block.  Allocating large blocks of memory also helps fight memory fragmentation issues at the system level.
+
+Typically each kind of object will get its own pool of memory and a bit map is used to see which block is free. Because every object is the same size in the pool, then you cannot fragment your memory.
+
+It is common to chain blocks of the same sized pool together when you need to allocate more room.
+
+Another interesting technique is to use a single pool for the entire program, but do a powers of 2 size aggregation so that one byte allocations are in one group, two byte are in another, 4 byte are in a third, 8 byte sized elements all are allocation from a fourth, 16 byte sized allocations occur from a fifth, 32, 64, 128, 256, 512, 1024, 2048... and so on, up to a set size.
+
+If you ask for a block from pool of size 400, then you will get a block of size 512, and the excess will be wasted, but the trade off is in speed and performance and the lack of fragmentation.
+
+Managing these pools internally is interesting.  You have to look at the location of the memory in order to match it will the proper pool so that you can free the memory in the proper pool.
+
+The proper function of the Pool you go with has to be assured with comprehensive tests at the function and unit testing.
+
+
+Management of stream data.
+
+Data coming from a file, network port, or sensor will often need to be processed in the same order that it is received and the way you read a network port tends to cause the data to be "chunky."  
+
+I have had great luck by using a block of memory much larger than the data it is holding at any one time as an I/O buffer.  I write the data to the end of the buffer, and read from the front of the buffer.  When the data reaches the end of allocated memory, then memmove the entire block back to the front of the buffer, and write to the end.  When the buffer is full, double the size of the block of memory with realloc.  When the size of the data in the buffer is 1/4 the size of the buffer, half the buffer size. 
+
+You can extend the functionality of the stream object to get a line at a time, a record at a time, or even a field at a time if you give it the delimiter to look for.  This means that this one object is pretty good at tokenizing a stream of data into descrete tokens with meaning.
+
+Queue's
+
+By using one stream data object to hold the size of the data you just stuck into a second second stream data object you can effectively simulate a queue object with FIFO and LIFO and mixed processing modes.  
+
+One system I worked on had a queue object, and that queue was at the top of the list when we profiled the program.  I replaced the queue object with a queue allocated using my techique and saw the queue functions drop to the bottom of the profile list.  In fact, my friend wanted to stress test my changes and had the queue insert 50 times and release 50 times each call and it still didn't budge from the bottom of the profile list.
+
+

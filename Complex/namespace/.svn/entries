@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="21"
+   name=""
+   committed-date="2007-03-25T14:46:29.599438Z"
+   url="http://localhost/svn/projects/projects/framework/src/namespace"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="21"
+   name="namespace.h"
+   text-time="2007-03-25T14:08:36.000000Z"
+   committed-date="2007-03-25T14:46:29.599438Z"
+   checksum="765fa6aee3c8121ab618796b746a5141"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-25T13:35:25.000000Z"/>
+<entry
+   committed-rev="21"
+   name="testharness.c"
+   text-time="2007-03-25T14:44:05.000000Z"
+   committed-date="2007-03-25T14:46:29.599438Z"
+   checksum="60571f1e700cd18064d011a3e73949fe"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-25T13:35:25.000000Z"/>
+<entry
+   committed-rev="21"
+   name="namespace.c"
+   text-time="2007-03-25T15:13:39.000000Z"
+   committed-date="2007-03-25T14:46:29.599438Z"
+   checksum="1cb9395bc69df3da2af9495b2f0f5e04"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-25T13:35:25.000000Z"/>
+</wc-entries>

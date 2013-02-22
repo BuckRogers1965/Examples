@@ -1,0 +1,96 @@
+﻿.CDS_ProductInfoPopupButton
+{
+    color:Navy;
+    text-align:center;
+    cursor:pointer;
+}
+#CDS_ProductInfoPopup
+{
+    background-color:#ffffee;
+    border:1px solid #000000;
+    padding: 6px;
+    font-size:10pt;
+    -moz-border-radius:0px;
+    font-family: "Verdana", Arial, sans-serif;
+    z-index:20000; 
+}
+#CDS_ProductInfoPopup table
+{
+ font-size: 10pt;
+}
+#CDS_ProductInfo_Title
+{
+    text-align: left;
+    font-size: 100%;
+    font-weight: bold;
+    color: #333399;
+}
+#CDS_ProductInfoPopup ul
+{
+    margin-left: -25px;
+    margin-top: 0px;
+    margin-bottom: -4px;
+    font-size: 80%;
+    list-style: square; 
+    white-space: nowrap;
+    text-align: left;
+}
+#CDS_ProductInfoPopup li
+{
+    padding-bottom: 9px;
+}
+
+#CDS_ProductInfoPopup a:link
+{
+color: #333399;
+}
+#CDS_ProductInfoPopup a:hover
+{
+color: red;
+}
+#CDS_ProductInfoPopup a:visit
+{
+color: #333399;
+}
+
+#CDS_ProductInfoPopupShadow
+{
+    position:absolute;
+    background-color:#555;
+    z-index:10000;
+    opacity:0.7;
+    filter:alpha(opacity=70);
+    -khtml-opacity:0.7;
+    -moz-opacity:0.7;
+}
+
+#CDS_Window
+{
+   display:none;
+   position:absolute;
+   text-align:right;
+   padding:0px;
+   background:#FFFFFF;
+   border-width:2px;
+   border-style:solid;
+   border-color:Black;
+   z-index:20000;
+}
+
+#CDS_Window_Titlebar
+{
+   height:20px;
+   width:100%;
+   padding-left:3px;
+   font-family:Tahoma,Arial;
+   font-size:8pt;
+   font-weight:bold;
+   color:White;
+   background-color:#203b7d;
+   border-bottom-width:1px;
+   border-bottom-style:solid;
+   border-bottom-color:Black;
+   z-index:20000;
+}
+
+#CDS_ProductInfoInline {}

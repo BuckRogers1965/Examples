@@ -1,0 +1,327 @@
+#!/usr/bin/perl
+#
+# read-comics
+#
+# Version 0.12, (January 18, 1994)
+# 
+# Author: Jennifer Myers <jmyers@eecs.nwu.edu>
+#
+# 'read-comics' is a Common Gateway Interface (CGI) script for CGI-compliant 
+# HTTP servers (e.g., NSCA httpd 1.0).  'read-comics' generates a hypertext 
+# interface to the clari.feature.dilbert newsgroup.  It does this by 
+# querying the NNTP server for a list of active articles in the 
+# clari.feature.dilbert newsgroup and then generates from this, a list of 
+# hyperlinks.  When a link is selected, the article is retrieved from the 
+# NNTP server and then uudecoded on-the-fly.
+#
+# There is a special link: http://www-server.domain/cgi-bin/read-comics?today 
+# which will always point to the most recent comic strip.
+#
+# Connecting hosts not in $domain are denied access.
+#
+# Retrieval instructions:
+#
+#    The latest version of 'read-comics' may be retrieved from the WWW as
+#	http://www.eecs.nwu.edu:8001/jmyers/cgi-src/read-comics
+#    or by anonymous ftp as
+#	eecs.nwu.edu:/pub/jmyers/cgi-src/read-comics
+#
+# Installation:
+#
+#    Configure $domain, $nntphost, and $group as appropriate.
+#
+#    Put this script in your CGI bin directory.  For example, on my 
+#       server, I have this script installed as: 
+#       http://www.eecs.nwu.edu:8001/cgi-bin/read-comics
+#
+#    If you can run the script, but are denied access, set $ip_mask
+#	appropriately.
+#
+# Acknowledgements:
+#
+#   The NNTP code is adopted from code for a NNTP client written by 
+# 	Eric Young <eay@psych.psy.uq.oz.au>
+#   The uudecode algorithm comes from _Programming_Perl_, 
+#	(Wall/Schwartz), p. 198.
+#
+# Revision History:
+#
+# 1/18/94:	Version 0.12. Added IP checking of domain for servers for 
+#		which gethostbyname does not return a FQDN.  Removed 
+#		dependency on `hostname` for obtaining the server's
+#		hostname.  Replaced references to "clari.feature.dilbert"
+#		by $group in the text.
+#
+# 1/17/94:	Version 0.11. Changed name of script to not interfere
+#		with trademark restrictions. (Dilbert is a registered
+#		trademark of Scott Adams and United Media).
+#		
+# 1/16/94:	Version 0.1. Initial release.
+#
+#######################################################################
+
+# Change these variables to suit your environment.
+$ip_mask = "NNN.NNN";		# You need only change this (to the first 
+				# few numbers of the IP address assigned 
+				# to your domain - e.g., "129.105") if your 
+				# machine does not return a fully qualified 
+				# domain name for $remote_host.
+$domain = "nwu.edu";
+$nntphost = "news.acns.nwu.edu";
+$group = "clari.feature.dilbert";
+
+# You should not need to change anything after this line.
+$date = `/bin/date`;
+$hostname = $ENV{'SERVER_NAME'};
+$query_string = $ENV{'QUERY_STRING'};
+$remote_addr = $ENV{'REMOTE_ADDR'};
+$remote_host = $ENV{'REMOTE_HOST'};
+$script_name = $ENV{'SCRIPT_NAME'};
+
+#require 'sys/socket.ph';
+
+if (($remote_host =~ /\.$domain$/) || ($remote_addr =~ /^$ip_mask/)) {
+	do startnntp("$nntphost");
+	do read_nntp_header();
+	($first, $last) = &group_cmd();
+	do xhdr_cmd($first,$last);
+}
+
+if ($query_string eq "") { # Make index
+	print <<"EOM";
+Content-Type: text/html
+
+	<HTML><HEAD><TITLE>read-comics, a gateway to $group
+	</TITLE></HEAD>
+	<BODY><H1>$group gateway</H1><DL><HR>
+	Please note that the <EM>Dilbert</EM> comic strip is copyrighted by
+	United Media, and you may not pass copies to others.  Access to the
+	<EM>Dilbert</EM> comic strip is restricted to hosts in the
+	<STRONG>$domain</STRONG> domain.
+	<P>See <A HREF = "ftp://ftp.clarinet.com/help/dilbert"\
+	>ftp.clarinet.com:help/dilbert</A> for more information. <HR>
+EOM
+
+	if (($remote_host =~ /\.$domain$/) || 
+	    ($remote_addr =~ /^$ip_mask/)) {	# Access permitted
+		do getlinks(@subject);
+	} else { # Deny access
+		print <<"EOM";
+		<H2>Access Restricted:</H2>
+		Your host is not recognized as belonging in the 
+		<STRONG>$domain</STRONG> domain.  Copyright restrictions 
+		limit our distribution of this comic strip to hosts in the 
+		<STRONG>$domain</STRONG> domain. <P> <A HREF = 
+		"http://www.eecs.nwu.edu:8001/jmyers/cgi-src/read-comics"\
+		><EM>read-comics</EM></A>, a gateway to the newsgroup
+		<EM>$group</EM>, is a Common Gateway Interface 
+		(<A HREF="http://hoohoo.ncsa.uiuc.edu/cgi/overview.html"\
+		>CGI</A>) script, written in <A HREF = 
+		"http://www.eecs.nwu.edu:8001/perl.html">Perl</A>, which 
+		queries the news server via NNTP, generates a list of 
+		hyperlinked articles, and retrieves and uudecodes selected 
+		articles on-the-fly.
+EOM
+	}
+
+	print <<"EOM";
+	<HR>
+	This page was automatically generated on $date <HR>
+	This script, <A HREF = 
+	"http://www.eecs.nwu.edu:8001/jmyers/cgi-src/read-comics"\
+	><EM>read-comics</EM></A>, was written by <EM><A HREF = 
+	"http://www.eecs.nwu.edu:8001/jmyers/plan.html">Jennifer Myers</A>
+	</EM></BODY></HTML>
+EOM
+
+} else { # Query provided
+	
+	if (($remote_host =~ /\.$domain$/) || 
+            ($remote_addr =~ /^$ip_mask/)) {	# Access permitted
+		print STDOUT "Content-Type: image/gif\n\n";
+
+		if ($query_string eq "today") {
+			$query_string = $last;
+		}
+
+		@txt=&body_cmd($query_string); 
+
+		#
+		# uudecode algorithm
+		#
+		$_=shift(@txt) until ($mode,$file)=/^begin\s*(\d*)\s*(\S*)/;
+		while ($_ = shift(@txt)) {
+		        last if /^end/;
+		        next if /[a-z]/;
+		        next unless int((((ord() - 32) & 077) + 2) / 3) ==
+		                int(length() / 4);
+		        print unpack("u", $_);
+		}
+	} else { # Deny access
+
+	print <<"EOM";
+Content-Type: text/html
+
+	<HTML><HEAD><TITLE>Access Denied</TITLE></HEAD>
+	<BODY><H1>Access Denied</H1><HR>
+	Sorry!  The <EM>Dilbert</EM> comic is distributed by ClariNet.  
+	Copyright restrictions limit our distribution of this comic strip to 
+	hosts in the <STRONG>$domain</STRONG> domain. <P> <A HREF = 
+	"http://www.eecs.nwu.edu:8001/jmyers/cgi-src/read-comics"\
+	><EM>read-comics</EM></A>, a gateway to the newsgroup
+	<EM>$group</EM>, is a Common Gateway Interface (<A 
+	HREF= "http://hoohoo.ncsa.uiuc.edu/cgi/overview.html">CGI</A>) 
+	script, written in <A HREF = "http://www.eecs.nwu.edu:8001/perl.html"\
+	>Perl</A>, which queries the news server via NNTP, generates a list 
+	of hyperlinked articles, and retrieves and uudecodes selected 
+	articles on-the-fly. <HR> This script, <A HREF = 
+	"http://www.eecs.nwu.edu:8001/jmyers/cgi-src/read-comics"\
+	><EM>read-comics</EM></A>, was written by <EM><A HREF = 
+	"http://www.eecs.nwu.edu:8001/jmyers/plan.html">Jennifer Myers</A>
+	</EM></BODY></HTML>
+EOM
+	}
+} # End of main program
+
+sub getlinks {
+        local(@articles) = @_;
+        local(@i);
+	print STDOUT "<UL><LI><A HREF =
+		\"http:$script_name?today\"\
+		>Today's Dilbert</a> (see below for title)</UL>";
+	print STDOUT "<H2>Archived:</H2>";
+	print STDOUT "<UL>";
+        while ($_=shift(@articles)) {
+                split;
+                $num=shift(@_);
+		@subj=@_;
+		if (@subj[0] eq "Dilbert:")  {
+	                print STDOUT "<LI> <A HREF=
+				\"http:$script_name?$num\">@subj</A>";
+		}
+        }
+	print STDOUT "</UL>";
+}
+
+sub body_cmd {
+        local($name)=@_;
+        local(@ret);
+		
+        print NNTP "BODY $name\n";
+        $_=<NNTP>;
+        if (!/^222 /)
+                {
+#               print STDOUT "body cmd problems ($name):$_";
+                do quit_cmd(1);
+                }
+        @ret=&getlines();       
+        return(@ret);
+        }
+
+sub xhdr_cmd {
+        local($a,$b)=@_;
+
+        print NNTP "XHDR Subject $a-$b\n";
+        $_=<NNTP>;
+        if (!/^221 /) {
+#               print STDOUT "xhdr cmd problems\n";
+                if (/^500 /) {
+                        do manual_xhdr_cmd($a,$b);
+                } else {
+                        do quit_cmd();
+		}
+                return;
+        }
+        @subject=&getlines();      
+}
+
+sub manual_xhdr_cmd {
+        local($a,$b)=@_;
+        local($i,@s,$j);
+
+        $#subject=$[;
+        foreach $i ($a .. $b) {
+                print NNTP "HEAD $i\n";
+                $_=<NNTP>;
+	        if (/^221 /) {
+                        @s=grep(/^Subject: /,&getlines());
+#                       print STDOUT "no Subject: line in article $i\n"
+#                               if ($#s < 0);
+                        $s[0] =~ /^Subject: (.*)/;
+                        push(@subject,"$i $1");
+                } else {
+                        print "$_";
+                }
+        }
+}
+
+sub getlines {
+        local(@ret);
+
+        while (<NNTP>) {
+                if (/^\./ && (!/^\.\./)) {
+                        chop;
+                        last;
+                }
+                s/\015//g;
+                push(@ret,$_);
+        }
+        return(@ret);
+}
+
+sub quit_cmd {
+        local($code)=@_;
+        print NNTP "QUIT\n";
+        $_=<NNTP>;
+#       print STDOUT "close bad:$_" unless (/^205 /);
+        exit($code);
+}
+
+sub group_cmd {
+        print NNTP "GROUP $group\n";
+        $_=<NNTP>;
+
+        split;
+        ($code,$num,$first,$last,$group)=@_;
+        if ($code != 211) {
+#               print STDOUT "group cmd problems:$_";
+                do quit_cmd(1);
+        }
+        return($first,$last);
+}
+
+sub dokill {
+        kill(9,$child) if $child;
+}
+
+sub startnntp {
+        local($name)=@_;
+
+        $SIG{'INT'}='dokill';
+
+        $sockaddr='Sna4x8';
+        chop($hostname=`hostname`);
+
+        ($n,$aliases,$proto)=getprotobyname('tcp');
+        ($n,$aliases,$port)=getservbyname('nntp','tcp');
+        ($n,$aliases,$type,$len,$thisaddr)=gethostbyname($hostname);
+        ($n,$aliases,$type,$len,$thataddr)=gethostbyname($name);
+        $this=pack($sockaddr,&AF_INET,0,$thisaddr);
+        $that=pack($sockaddr,&AF_INET,$port,$thataddr);
+
+        socket(NNTP,&PF_INET,&SOCK_STREAM,$proto) || die "socket: $!";
+        bind(NNTP,$this) || die "bind: $!";
+        connect(NNTP,$that) || die "connect: $!";
+
+        select(NNTP); $|=1;
+        select(STDIN); $|=1;
+        select(STDOUT); $|=1;
+}
+
+sub read_nntp_header {
+        while (<NNTP>) {
+                last if (/^200 /);
+                last if (/^201 /);
+                exit(1) if (/^400 /);
+        }
+}

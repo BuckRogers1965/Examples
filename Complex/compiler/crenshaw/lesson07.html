@@ -1,0 +1,1814 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Part VII: LEXICAL SCANNING</title>
+  <meta name="author" content="Jack W. Crenshaw">
+  <meta name="description" content="7 November 1988">
+</head>
+<body>
+<p> </p>
+<p style="margin-left: 40px;"> LET'S BUILD A COMPILER! </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> By Jack W. Crenshaw, Ph.D. 7 November 1988<br>
+Copyright 1988 Jack W. Crenshaw. All rights reserved. <br>
+</p>
+<p style="margin-left: 40px;"> Part VII: LEXICAL SCANNING </p>
+<p style="margin-left: 40px;">INTRODUCTION </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> In the last installment, I left you with
+a compiler  that  would ALMOST  work,  except  that  we  were  still
+limited to  single- character tokens.  The purpose of  this  session is
+to get rid of that restriction, once and for all.  This means that we
+must deal with the concept of the lexical scanner. </p>
+<p style="margin-left: 40px;"> Maybe I should mention why we  need  a
+lexical scanner at all ... after all, we've been able to manage all
+right without  one,  up till now, even when we provided for
+multi-character tokens. </p>
+<p style="margin-left: 40px;"> The ONLY reason, really, has to do with
+keywords. It's a fact of computer life that the syntax for a keyword has
+the same  form as that  for  any  other identifier.  We can't tell
+until we get the complete word whether or not it  IS  a keyword.  For
+example, the variable IFILE and the keyword IF look just alike, until
+you get to the third character.  In the examples to date, we  were
+always able to make  a  decision  based  upon the first character of the
+token, but that's  no  longer possible when keywords are present. We
+need to know that a given string is a keyword BEFORE we begin to
+process it.  And that's why we need a scanner. </p>
+<p style="margin-left: 40px;"> In the last session, I also promised that
+we would  be  able to provide for normal tokens  without  making
+wholesale changes to what we have  already done.  I didn't lie ... we
+can, as you will see later.  But every time I set out to install these
+elements of the software into  the  parser  we  have already built, I
+had bad feelings about it.  The whole thing felt entirely too much like
+a band-aid.  I finally figured out what was causing the  problem: I was
+installing lexical scanning software without first explaining to you
+what scanning is all about, and what the alternatives are. Up  till
+now, I have studiously avoided  giving  you  a  lot  of theory,  and
+certainly not  alternatives.    I  generally don't respond well to the
+textbooks that give you twenty-five different ways  to do something, but
+no clue as to which way best fits your needs.  I've tried to avoid that
+pitfall by just showing  you ONE method, that WORKS. </p>
+<p style="margin-left: 40px;"> But  this is an important area.  While
+the lexical  scanner  is hardly the most  exciting  part  of  a
+compiler, it often has the most  profound  effect  on  the  general
+"look &amp; feel"  of  the language, since after all it's the  part
+closest to the user.  I have a particular structure in mind for the
+scanner to  be  used with  KISS.    It fits the look &amp;  feel  that I
+want  for  that language.  But it may not work at  all  for  the
+language YOU'RE cooking  up,  so  in this one case I feel that it's
+important for you to know your options. </p>
+<p style="margin-left: 40px;"> So I'm going to depart, again, from my
+usual format.    In this session we'll be getting  much  deeper  than
+usual into the basic theory of languages and  grammars.    I'll  also be
+talking about areas OTHER than compilers in  which  lexical scanning 
+plays an important role.  Finally, I will show you  some alternatives
+for the structure of the lexical scanner.  Then, and only then, will
+we get back to our parser  from  the last installment.  Bear with me
+... I think you'll find it's worth the wait.    In fact, since scanners
+have many applications  outside  of  compilers,  you may well find this
+to be the most useful session for you. </p>
+<p style="margin-left: 40px;"> LEXICAL SCANNING </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Lexical scanning is the process of
+scanning the  stream  of input characters and separating it  into
+strings called tokens.  Most compiler  texts  start  here,  and devote 
+several  chapters  to discussing various ways to build scanners.  This
+approach has its place, but as you have already  seen, there  is a lot
+you can do without ever even addressing the issue, and in  fact  the
+scanner we'll  end  up with here won't look  much  like what  the 
+texts describe.  The reason?    Compiler  theory and, consequently, the
+programs resulting from it, must  deal with the most general kind of
+parsing rules.  We don't.  In the real  world,  it is possible to
+specify the language syntax in such a way that a pretty simple scanner
+will suffice.  And as always, KISS is our motto. </p>
+<p style="margin-left: 40px;"> Typically, lexical scanning is  done  in
+a separate part of the compiler, so that the parser per  se  sees only a
+stream of input tokens.  Now, theoretically it  is not necessary to
+separate this function from the rest of the parser.  There is  only one
+set of syntax equations that define the  whole language, so in theory
+we could write the whole parser in one module. </p>
+<p style="margin-left: 40px;"> Why  the  separation?      The  answer
+has both  practical  and theoretical bases. </p>
+<p style="margin-left: 40px;"> In  1956,  Noam  Chomsky  defined  the
+"Chomsky Hierarchy"  of grammars.  They are: </p>
+<ul style="margin-left: 40px;">
+  <li> Type 0:  Unrestricted (e.g., English) </li>
+  <li> Type 1:  Context-Sensitive </li>
+  <li> Type 2:  Context-Free </li>
+  <li> Type 3:  Regular </li>
+</ul>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> A few features of the typical programming
+language (particularly the older ones, such as FORTRAN) are Type  1,
+but for  the most part  all  modern  languages can be described using
+only the last two types, and those are all we'll be dealing with here. </p>
+<p style="margin-left: 40px;"> The  neat  part about these two types  is
+that there  are  very specific ways to parse them.  It has been shown
+that any regular grammar can be parsed using a particular form of
+abstract machine called the state machine (finite  automaton).    We
+have already implemented state machines in some of our recognizers. </p>
+<p style="margin-left: 40px;"> Similarly, Type 2 (context-free) grammars
+can always  be parsed using  a  push-down  automaton (a state machine
+augmented by  a stack).  We have  also  implemented  these  machines.
+Instead of implementing  a literal stack, we have  relied  on  the
+built-in stack associated with recursive coding to do the job, and that
+in fact is the preferred approach for top-down parsing. </p>
+<p style="margin-left: 40px;"> Now, it happens that in  real, practical
+grammars, the parts that qualify as  regular expressions tend to be the
+lower-level parts, such as the definition of an identifier: </p>
+<p style="margin-left: 40px;"> ::=  [  |  ]* </p>
+<p style="margin-left: 40px;"> Since it takes a different kind of
+abstract machine to  parse the two  types  of  grammars, it makes sense
+to separate these lower- level functions into  a  separate  module, the
+lexical scanner, which is built around the idea of a state machine. The
+idea is to use the simplest parsing technique needed for the job. </p>
+<p style="margin-left: 40px;"> There is another, more practical  reason
+for separating scanner from  parser.   We like to think of the input
+source file  as  a stream  of characters, which we process  right  to
+left without backtracking.  In practice that  isn't  possible. Almost
+every language has certain keywords such as  IF,  WHILE, and END.  As I
+mentioned  earlier,    we  can't  really  know  whether  a given
+character string is a keyword, until we've reached the end of it, as
+defined by a space or other delimiter.  So  in  that sense, we MUST
+save the  string long enough to find out whether we have a keyword or
+not. That's a limited form of backtracking. </p>
+<p style="margin-left: 40px;"> So the structure of a conventional
+compiler involves splitting up the functions of  the  lower-level and
+higher-level parsing.  The lexical  scanner  deals  with  things  at
+the character  level, collecting characters into strings, etc., and
+passing them along to the parser proper as indivisible tokens.  It's
+also considered normal to let the scanner have the job of identifying
+keywords. </p>
+<p style="margin-left: 40px;"> STATE MACHINES AND ALTERNATIVES </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> I  mentioned  that  the regular
+expressions can be parsed using a state machine.   In  most  compiler
+texts, and  indeed  in most compilers as well, you will find this taken
+literally.   There is typically  a  real  implementation  of  the state
+machine, with integers used to define the current state, and a table of
+actions to  take   for  each  combination  of  current  state and 
+input character.  If you  write  a compiler front end using the popular
+Unix tools LEX and YACC, that's  what  you'll get.  The output of LEX
+is a state machine implemented in C, plus a table  of actions
+corresponding to the input grammar given to LEX.  The YACC output is
+similar ...  a canned table-driven parser,  plus  the  table
+corresponding to the language syntax. </p>
+<p style="margin-left: 40px;"> That  is  not  the  only  choice,
+though. In   our  previous installments, you have seen over and over
+that it is  possible to implement  parsers  without  dealing
+specifically with  tables, stacks, or state variables.    In fact, in
+Installment V I warned you that if you  find  yourself needing these
+things you might be doing something wrong, and not taking advantage of
+the power of Pascal.  There are basically two ways to define a state
+machine's state: explicitly, with  a  state number or code, and
+implicitly, simply by virtue of the fact that I'm at a  certain  place
+in the code  (if  it's  Tuesday,  this  must be Belgium).  We've relied
+heavily on the implicit approaches  before,  and  I  think you'll find
+that they work well here, too. </p>
+<p style="margin-left: 40px;"> In practice, it may not even be necessary
+to HAVE  a well-defined lexical scanner.  This isn't our first
+experience at dealing with multi-character tokens.   In  Installment
+III, we  extended our parser to provide  for  them,  and  we didn't even
+NEED a lexical scanner.    That  was  because  in that narrow context,
+we  could always tell, just  by  looking at the single lookahead
+character, whether  we  were  dealing  with  a  number,  a variable, 
+or  an operator.  In effect, we  built  a  distributed lexical
+scanner, using procedures GetName and GetNum. </p>
+<p style="margin-left: 40px;"> With keywords present,  we  can't know
+anymore what we're dealing with, until the entire token is  read.
+This leads us to a more localized  scanner; although,  as you will see,
+the idea  of  a distributed scanner still has its merits. </p>
+<p style="margin-left: 40px;"> SOME EXPERIMENTS IN SCANNING </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Before  getting  back  to our compiler,
+it will  be  useful  to experiment a bit with the general concepts. </p>
+<p style="margin-left: 40px;"> Let's  begin with the two definitions
+most often  seen  in  real programming languages: </p>
+<p style="margin-left: 40px;"> ::=  [  |  ]*      ]+ </p>
+<p style="margin-left: 40px;"> (Remember, the '*' indicates zero or more
+occurences of the terms in brackets, and the '+', one or more.) </p>
+<p style="margin-left: 40px;"> We  have already dealt with similar
+items in  Installment  III. Let's begin (as usual) with a bare cradle.
+Not surprisingly, we are going to need a new recognizer:<br>
+</p>
+<pre style="margin-left: 80px;">{--------------------------------------------------------------}<br>{ Recognize an Alphanumeric Character }<br>&nbsp;<br>function IsAlNum(c: char): boolean;<br>begin<br>   IsAlNum := IsAlpha(c) or IsDigit(c);<br>end;<br>{--------------------------------------------------------------}<br></pre>
+<p style="margin-left: 40px;"> Using this let's write the following two
+routines, which are very similar to those we've used before: </p>
+<pre style="margin-left: 80px;">{--------------------------------------------------------------}<br>{ Get an Identifier }<br><br>function GetName: string;<br><br>var x: string[8];<br><br>begin<br>   x := '';<br><br>   if not IsAlpha(Look) then Expected('Name');<br>   while IsAlNum(Look) do begin<br>     x := x + UpCase(Look);<br>     GetChar;<br>   end;<br>   GetName := x;<br>end;<br><br>{--------------------------------------------------------------}<br>{ Get a Number }<br><br>function GetNum: string;<br>var x: string[16];<br>begin<br>   x := '';<br><br>   if not IsDigit(Look) then Expected('Integer');<br>   while IsDigit(Look) do begin<br>     x := x + Look;<br>     GetChar;<br>   end;<br>   GetNum := x;<br>end;<br>{--------------------------------------------------------------}<br></pre>
+<p style="margin-left: 40px;"> (Notice  that this version of GetNum
+returns a  string,  not  an integer as before.) </p>
+<p style="margin-left: 40px;"> You  can  easily  verify that these
+routines work by calling them from the main program, as in </p>
+<p style="margin-left: 40px;"> WriteLn(GetName); </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> This  program  will  print any legal name
+typed in (maximum eight characters, since that's what we told GetName).
+It will reject anything else. </p>
+<p style="margin-left: 40px;"> Test the other routine similarly. </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> WHITE SPACE </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> We  also  have  dealt with embedded white
+space before, using the two  routines  IsWhite  and  SkipWhite.    Make
+sure that  these routines are in your  current  version of the cradle,
+and add the the line </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> at the end of both GetName and GetNum. </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Now, let's define the new procedure: </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Lexical Scanner } </p>
+<p style="margin-left: 40px;"> Function Scan: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if IsAlpha(Look) then </p>
+<p style="margin-left: 40px;"> Scan := GetName </p>
+<p style="margin-left: 40px;"> else if IsDigit(Look) then </p>
+<p style="margin-left: 40px;"> Scan := GetNum </p>
+<p style="margin-left: 40px;"> else begin </p>
+<p style="margin-left: 40px;"> Scan := Look; </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> We can call this from the new main
+program: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Init; </p>
+<p style="margin-left: 40px;"> repeat </p>
+<p style="margin-left: 40px;"> Token := Scan; </p>
+<p style="margin-left: 40px;"> writeln(Token); </p>
+<p style="margin-left: 40px;"> until Token = CR; </p>
+<p style="margin-left: 40px;"> end. </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> (You will have to add the declaration of
+the string Token  at the beginning of the program.  Make it any
+convenient length,  say 16 characters.) </p>
+<p style="margin-left: 40px;"> Now,  run the program.  Note how the
+input string  is,  indeed, separated into distinct tokens. </p>
+<p style="margin-left: 40px;"> STATE MACHINES </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> For  the  record,  a  parse  routine
+like GetName  does  indeed implement a state machine.  The state is
+implicit in  the current position in the code.  A very useful trick for
+visualizing what's going on is  the  syntax  diagram,  or
+"railroad-track" diagram. It's a little difficult to draw  one  in this
+medium, so I'll use them very sparingly, but  the  figure  below should
+give you the idea: </p>
+<p style="margin-left: 40px;"> |-----&gt;
+Other---------------------------&gt; Error            |    Start
+-------&gt; Letter ---------------&gt; Other -----&gt; Finish
+^ V            |                        | |&lt;----- Letter
+&lt;---------|            |                        | |&lt;----- Digit 
+&lt;---------- </p>
+<p style="margin-left: 40px;"> As  you  can  see,  this  diagram  shows
+how the logic flows as characters  are  read.    Things  begin, of
+course, in the  start state, and end when  a  character  other  than an
+alphanumeric is found.  If  the  first  character  is not alpha, an
+error occurs. Otherwise the machine will continue looping until the
+terminating delimiter is found. </p>
+<p style="margin-left: 40px;"> Note  that at any point in the flow,  our
+position is  entirely dependent on the past  history  of the input
+characters. At that point, the action to be taken depends only on the
+current state, plus the current input character.  That's what make this
+a state machine. </p>
+<p style="margin-left: 40px;"> Because of the difficulty of drawing
+railroad-track diagrams in this medium, I'll continue to  stick to
+syntax equations from now on.  But I highly recommend the diagrams to
+you for  anything you do that involves parsing.  After a little practice
+you  can begin to  see  how  to  write  a  parser  directly from  the 
+diagrams. Parallel paths get coded into guarded actions (guarded by
+IF's or CASE statements),  serial  paths  into  sequential calls.  
+It's almost like working from a schematic. </p>
+<p style="margin-left: 40px;"> We didn't even discuss SkipWhite, which
+was introduced earlier, but it also is a simple state machine, as is
+GetNum. So is their parent procedure, Scan.  Little machines make big
+machines. </p>
+<p style="margin-left: 40px;"> The neat thing that I'd like  you  to
+note is how painlessly this implicit approach creates these  state
+machines. I personally prefer it a lot over the table-driven approach. 
+It  also results is a small, tight, and fast scanner. </p>
+<p style="margin-left: 40px;"> NEWLINES </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Moving right along, let's modify  our
+scanner to handle more than one line.  As I mentioned last time, the
+most straightforward way to  do  this  is to simply treat the newline
+characters, carriage return  and line feed, as white space.  This is, in
+fact, the way the  C  standard  library  routine,  iswhite, works. We
+didn't actually try this  before.  I'd like to do it now, so you can
+get a feel for the results. </p>
+<p style="margin-left: 40px;"> To do this, simply modify the single
+executable line  of IsWhite to read: </p>
+<p style="margin-left: 40px;"> IsWhite := c in [' ', TAB, CR, LF]; </p>
+<p style="margin-left: 40px;"> We need to give the main  program  a new
+stop condition, since it will never see a CR.  Let's just use: </p>
+<p style="margin-left: 40px;"> until Token = '.'; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> OK, compile this  program  and  run  it.
+Try a couple of lines, terminated by the period.  I used: </p>
+<p style="margin-left: 40px;"> now is the time </p>
+<p style="margin-left: 40px;"> for all good men. </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Hey,  what  happened?   When I tried it,
+I didn't  get  the  last token, the period.  The program didn't halt.
+What's more, when I pressed the  'enter'  key  a  few  times,  I still
+didn't get the period. </p>
+<p style="margin-left: 40px;"> If you're still stuck in your program,
+you'll find that  typing a period on a new line will terminate it. </p>
+<p style="margin-left: 40px;"> What's going on here?  The answer is
+that we're  hanging  up in SkipWhite.  A quick look at  that  routine
+will show that as long as we're typing null lines, we're going to just
+continue to loop. After SkipWhite encounters an LF,  it tries to execute
+a GetChar. But since the input buffer is now empty, GetChar's read
+statement insists  on  having  another  line.    Procedure  Scan gets 
+the terminating period, all right,  but  it  calls SkipWhite to clean
+up, and SkipWhite won't return until it gets a non-null line. </p>
+<p style="margin-left: 40px;"> This kind of behavior is not quite as bad
+as it seems.  In a real compiler,  we'd  be  reading  from  an input
+file instead of  the console, and as long  as  we have some procedure
+for dealing with end-of-files, everything will come out  OK.  But for
+reading data from the console, the behavior is just too bizarre.  The
+fact of the matter is that the C/Unix convention is  just  not
+compatible with the structure of  our  parser,  which  calls for a
+lookahead character.    The  code that the Bell  wizards  have
+implemented doesn't use that convention, which is why they need
+'ungetc'. </p>
+<p style="margin-left: 40px;"> OK, let's fix the problem.  To do that,
+we need to go back to the old definition of IsWhite (delete the CR and
+LF characters) and make  use  of  the procedure Fin that I introduced
+last time.  If it's not in your current version of the cradle, put it
+there now. </p>
+<p style="margin-left: 40px;"> Also, modify the main program to read: </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Init; </p>
+<p style="margin-left: 40px;"> repeat </p>
+<p style="margin-left: 40px;"> Token := Scan; </p>
+<p style="margin-left: 40px;"> writeln(Token); </p>
+<p style="margin-left: 40px;"> if Token = CR then Fin; </p>
+<p style="margin-left: 40px;"> until Token = '.'; </p>
+<p style="margin-left: 40px;"> end. </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> Note the "guard"  test  preceding  the
+call to Fin.  That's what makes the whole thing work, and ensures that
+we don't try to read a line ahead. Try the code now. I think you'll like
+it better. </p>
+<p style="margin-left: 40px;"> If you refer to the code  we  did in the
+last installment, you'll find that I quietly sprinkled calls to Fin
+throughout the code, wherever  a line break was appropriate.  This  is
+one of  those areas that really affects the look  &amp;  feel that I
+mentioned. At this  point  I  would  urge  you  to  experiment  with
+different arrangements  and  see  how  you  like  them.    If you want
+your language  to  be  truly  free-field,  then  newlines   should  be
+transparent. In  this  case,  the  best  approach is to put the
+following lines at the BEGINNING of Scan: </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> If, on the other  hand,  you  want  a
+line-oriented language like Assembler, BASIC, or FORTRAN  (or  even
+Ada... note that it has comments terminated by newlines),  then you'll 
+need for Scan to return CR's as tokens.  It  must  also  eat the
+trailing LF.  The best way to do that is to use this line,  again at
+the beginning of Scan: </p>
+<p style="margin-left: 40px;"> if Look = LF then Fin; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> For other conventions, you'll  have  to
+use other arrangements. In my example  of  the  last  session, I allowed
+newlines only at specific places, so I was somewhere in the middle
+ground.  In the rest of these sessions, I'll be picking ways  to handle
+newlines that I happen to like, but I want you to know how to choose
+other ways for yourselves. </p>
+<p style="margin-left: 40px;"> OPERATORS </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> We  could  stop now and have a  pretty
+useful scanner  for  our purposes.  In the fragments of KISS that we've
+built so  far, the only tokens that have multiple characters are the
+identifiers and numbers.    All  operators  were  single characters.  
+The  only exception I can think of is the relops &lt;=, &gt;=,  and 
+&lt;&gt;, but they could be dealt with as special cases. </p>
+<p style="margin-left: 40px;"> Still, other languages have
+multi-character operators,  such as the ':=' of  Pascal or the '++' and
+'&gt;&gt;' of C.  So  while  we may not need multi-character operators,
+it's  nice to know how to get them if necessary. </p>
+<p style="margin-left: 40px;"> Needless to say, we  can  handle
+operators very much the same way as the other tokens.  Let's start with
+a recognizer: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize Any Operator } </p>
+<p style="margin-left: 40px;"> function IsOp(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsOp := c in ['+', '-', '*', '/', '&lt;',
+'&gt;', ':', '=']; end;
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> It's important to  note  that  we  DON'T
+have to  include every possible  operator in this list.   For example, 
+the  paretheses aren't  included, nor is the terminating period.   
+The  current version of Scan handles single-character operators  just 
+fine as it is.  The list above includes only those characters  that 
+can appear in multi-character operators.  (For specific languages, of
+course, the list can always be edited.) </p>
+<p style="margin-left: 40px;"> Now, let's modify Scan to read: </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Lexical Scanner } </p>
+<p style="margin-left: 40px;"> Function Scan: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> if IsAlpha(Look) then </p>
+<p style="margin-left: 40px;"> Scan := GetName </p>
+<p style="margin-left: 40px;"> else if IsDigit(Look) then </p>
+<p style="margin-left: 40px;"> Scan := GetNum </p>
+<p style="margin-left: 40px;"> else if IsOp(Look) then </p>
+<p style="margin-left: 40px;"> Scan := GetOp </p>
+<p style="margin-left: 40px;"> else begin </p>
+<p style="margin-left: 40px;"> Scan := Look; </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> Try the program now.  You  will  find
+that any code fragments you care  to throw at it will be neatly  broken
+up into  individual tokens. </p>
+<p style="margin-left: 40px;"> LISTS, COMMAS AND COMMAND LINES </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Before getting back to the main thrust of
+our study, I'd  like to get on my soapbox for a moment.
+How many times have you worked with a program or operating system that
+had rigid rules about how you must separate items in a list? (Try,  the
+last time  you  used MSDOS!)  Some programs  require spaces as
+delimiters, and  some  require  commas.   Worst of all, some  require
+both, in  different  places.    Most  are  pretty unforgiving about
+violations of their rules. </p>
+<p style="margin-left: 40px;"> I think this is inexcusable.  It's too
+easy to  write  a parser that will handle  both  spaces  and  commas in
+a  flexible way. Consider the following procedure: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Skip
+Over a Comma } </p>
+<p style="margin-left: 40px;"> procedure SkipComma; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> if Look = ',' then begin </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> This eight-line procedure will skip over
+a delimiter consisting of any number (including zero)  of spaces, with
+zero or one comma embedded in the string. </p>
+<p style="margin-left: 40px;"> TEMPORARILY, change the call to SkipWhite
+in Scan to  a  call  to SkipComma,  and  try  inputting some lists.
+Works nicely,  eh? Don't you wish more software authors knew about
+SkipComma? </p>
+<p style="margin-left: 40px;"> For the record, I found that adding the
+equivalent of SkipComma to my Z80 assembler-language programs took all
+of 6  (six) extra bytes of  code.    Even  in a 64K machine, that's not
+a very high price to pay for user-friendliness! </p>
+<p style="margin-left: 40px;"> I  think  you can see where I'm going
+here. Even  if  you  never write a line of a compiler code in your life,
+there are places in every program where  you  can  use  the concepts of
+parsing.  Any program that processes a command line needs them.   In 
+fact,  if you  think  about  it for a bit, you'll have to conclude that
+any time  you  write  a program that processes  user inputs,  you're
+defining a  language.  People communicate with languages, and the
+syntax implicit in your program  defines that language.  The real
+question  is:  are  you  going  to  define  it deliberately  and
+explicitly, or just let it turn out to be  whatever the  program ends
+up parsing? </p>
+<p style="margin-left: 40px;"> I claim that you'll have  a better, more
+user-friendly program if you'll take the time to define the syntax
+explicitly. Write down the syntax equations or  draw  the
+railroad-track diagrams, and code the parser using the techniques I've
+shown you here.  You'll end  up with a better program, and it will be
+easier to write, to boot. </p>
+<p style="margin-left: 40px;"> GETTING FANCY </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> OK, at this point we have a pretty nice
+lexical scanner that will break  an  input stream up into tokens.  We
+could use  it  as  it stands and have a servicable compiler.  But there
+are some other aspects of lexical scanning that we need to cover. </p>
+<p style="margin-left: 40px;"> The main consideration is  efficiency.
+Remember when we were dealing  with  single-character  tokens,  every
+test was a comparison of a single character, Look, with a byte constant.
+We also used the Case statement heavily. </p>
+<p style="margin-left: 40px;"> With the multi-character tokens being
+returned by Scan, all those tests now become string comparisons.  Much
+slower. And  not only slower, but more awkward, since  there is no
+string equivalent of the  Case  statement  in Pascal.  It seems
+especially wasteful to test for what used to be single characters ...
+the '=',  '+', and other operators ... using string comparisons. </p>
+<p style="margin-left: 40px;"> Using string comparison is not
+impossible ... Ron Cain used just that approach in writing Small C.
+Since we're  sticking  to  the KISS principle here, we would  be truly
+justified in settling for this  approach.    But then I would have
+failed to tell you about one of the key approaches used in "real"
+compilers. </p>
+<p style="margin-left: 40px;"> You have to remember: the lexical scanner
+is going to be called a _LOT_!   Once for every token in the  whole
+source program,  in fact.   Experiments  have  indicated  that  the
+average compiler spends  anywhere  from 20% to 40% of  its  time  in
+the scanner routines.  If there were ever a place  where  efficiency
+deserves real consideration, this is it. </p>
+<p style="margin-left: 40px;"> For this reason, most compiler writers
+ask the lexical scanner to do  a  little  more work, by "tokenizing"
+the input stream.  The idea  is  to  match every token  against  a list
+of  acceptable keywords  and operators, and return unique  codes for 
+each  one recognized.  In the case of ordinary variable  names  or
+numbers, we  just return a code that says what kind of token they are,
+and save the actual string somewhere else. </p>
+<p style="margin-left: 40px;"> One  of the first things we're going to
+need is a way to identify keywords.  We can always do  it  with
+successive IF tests, but it surely would be nice  if  we  had  a
+general-purpose routine that could compare a given string with  a table
+of keywords.  (By the way, we're also going  to  need such a routine
+later, for dealing with symbol tables.)  This  usually presents a
+problem in Pascal, because standard Pascal  doesn't  allow  for arrays
+of variable lengths.   It's  a  real  bother  to  have to declare a
+different search routine for every table.    Standard  Pascal also
+doesn't allow for initializing arrays, so you tend to see code like </p>
+<p style="margin-left: 40px;"> Table[1] := 'IF'; </p>
+<p style="margin-left: 40px;"> Table[2] := 'ELSE'; </p>
+<p style="margin-left: 40px;"> . </p>
+<p style="margin-left: 40px;"> . </p>
+<p style="margin-left: 40px;"> Table[n] := 'END'; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> which can get pretty old if there are
+many keywords. </p>
+<p style="margin-left: 40px;"> Fortunately, Turbo Pascal 4.0 has
+extensions that  eliminate both of  these  problems.   Constant arrays
+can be declared using TP's "typed constant" facility, and  the variable
+dimensions  can be handled with its C-like extensions for pointers. </p>
+<p style="margin-left: 40px;"> First, modify your declarations like
+this: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Type
+Declarations } </p>
+<p style="margin-left: 40px;"> type Symbol = string[8]; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> SymTab = array[1..1000] of Symbol; </p>
+<p style="margin-left: 40px;"> TabPtr = ^SymTab; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> (The dimension  used  in  SymTab  is  not
+real ... no storage is allocated by the declaration itself,  and the
+number need only be "big enough.") </p>
+<p style="margin-left: 40px;"> Now, just beneath those declarations, add
+the following: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Definition of Keywords and Token Types } </p>
+<p style="margin-left: 40px;"> const KWlist: array [1..4] of Symbol = </p>
+<p style="margin-left: 40px;"> ('IF', 'ELSE', 'ENDIF', 'END'); </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> Next, insert the following new function: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Table
+Lookup } </p>
+<p style="margin-left: 40px;"> { If the input string matches a table
+entry, return the entry   index.  If not, return a zero.  }
+function Lookup(T: TabPtr; s: string; n: integer): integer; var i:
+integer; found: boolean; begin    found := false;    i := n; while (i
+&gt; 0) and not found do       if s = T^[i] then found := true
+else          dec(i);    Lookup := i; end;
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> To test it,  you  can  temporarily
+change the  main  program as follows: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> ReadLn(Token); </p>
+<p style="margin-left: 40px;"> WriteLn(Lookup(Addr(KWList), Token, 4));
+end. {--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> Notice how Lookup is called: The Addr
+function sets up  a pointer to KWList, which gets passed to Lookup. </p>
+<p style="margin-left: 40px;"> OK, give this  a  try.    Since we're
+bypassing Scan here, you'll have to type the keywords in upper case to
+get any matches. </p>
+<p style="margin-left: 40px;"> Now that we can recognize keywords, the
+next thing is  to arrange to return codes for them. </p>
+<p style="margin-left: 40px;"> So what kind of code should we return?
+There are really only two reasonable choices.  This seems like an ideal
+application for the Pascal enumerated type.   For  example,  you can
+define something like </p>
+<p style="margin-left: 40px;"> SymType = (IfSym, ElseSym, EndifSym,
+EndSym, Ident, Number,                     Operator); </p>
+<p style="margin-left: 40px;"> and arrange to return a variable of this
+type. Let's  give it a try.  Insert the line above into your type
+definitions. </p>
+<p style="margin-left: 40px;"> Now, add the two variable declarations: </p>
+<p style="margin-left: 40px;"> Token: Symtype;          { Current Token
+} Value: String[16];       { String Token of Look } </p>
+<p style="margin-left: 40px;"> Modify the scanner to read: </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Lexical Scanner } </p>
+<p style="margin-left: 40px;"> procedure Scan; </p>
+<p style="margin-left: 40px;"> var k: integer; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> if IsAlpha(Look) then begin </p>
+<p style="margin-left: 40px;"> Value := GetName; </p>
+<p style="margin-left: 40px;"> k := Lookup(Addr(KWlist), Value, 4);
+if k = 0 then          Token := Ident       else          Token :=
+SymType(k - 1);       end    else if IsDigit(Look) then begin
+Value := GetNum;       Token := Number;       end    else if IsOp(Look)
+then begin       Value := GetOp;       Token := Operator;       end
+else begin       Value := Look;       Token := Operator;       GetChar; 
+end;    SkipWhite; end;
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> (Notice that Scan is now a procedure, not
+a function.) </p>
+<p style="margin-left: 40px;"> Finally, modify the main program to read:
+ </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Init; </p>
+<p style="margin-left: 40px;"> repeat </p>
+<p style="margin-left: 40px;"> Scan; </p>
+<p style="margin-left: 40px;"> case Token of </p>
+<p style="margin-left: 40px;"> Ident: write('Ident '); </p>
+<p style="margin-left: 40px;"> Number: Write('Number '); </p>
+<p style="margin-left: 40px;"> Operator: Write('Operator '); </p>
+<p style="margin-left: 40px;"> IfSym, ElseSym, EndifSym, EndSym:
+Write('Keyword ');       end;       Writeln(Value);    until Token =
+EndSym; end.
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> What we've done here is to replace the
+string Token  used earlier with an enumerated type. Scan returns the
+type in variable Token, and returns the string itself in the new
+variable Value. </p>
+<p style="margin-left: 40px;"> OK, compile this and give it a whirl.  If
+everything goes right, you should see that we are now recognizing
+keywords. </p>
+<p style="margin-left: 40px;"> What  we  have  now is working right, and
+it was easy to generate from what  we  had  earlier.    However,  it
+still seems a little "busy" to me.  We can  simplify  things a bit by
+letting GetName, GetNum, GetOp, and Scan be  procedures  working  with
+the global variables Token and Value, thereby eliminating the  local
+copies. It  also seems a little cleaner to move  the  table  lookup
+into GetName.  The new form for the four procedures is, then: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Identifier } </p>
+<p style="margin-left: 40px;"> procedure GetName; </p>
+<p style="margin-left: 40px;"> var k: integer; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Value := ''; </p>
+<p style="margin-left: 40px;"> if not IsAlpha(Look) then
+Expected('Name'); while IsAlNum(Look) do begin      Value := Value +
+UpCase(Look); GetChar;    end;    k := Lookup(Addr(KWlist), Value, 4);  
+if k = 0 then       Token := Ident    else       Token := SymType(k-1);
+end; {--------------------------------------------------------------} {
+Get a Number } </p>
+<p style="margin-left: 40px;"> procedure GetNum; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Value := ''; </p>
+<p style="margin-left: 40px;"> if not IsDigit(Look) then
+Expected('Integer'); while IsDigit(Look) do begin      Value := Value +
+Look;      GetChar;    end;    Token := Number; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Operator } </p>
+<p style="margin-left: 40px;"> procedure GetOp; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Value := ''; </p>
+<p style="margin-left: 40px;"> if not IsOp(Look) then
+Expected('Operator'); while IsOp(Look) do begin      Value := Value +
+Look;      GetChar;    end;    Token := Operator; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Lexical Scanner } </p>
+<p style="margin-left: 40px;"> procedure Scan; </p>
+<p style="margin-left: 40px;"> var k: integer; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> if IsAlpha(Look) then </p>
+<p style="margin-left: 40px;"> GetName </p>
+<p style="margin-left: 40px;"> else if IsDigit(Look) then </p>
+<p style="margin-left: 40px;"> GetNum </p>
+<p style="margin-left: 40px;"> else if IsOp(Look) then </p>
+<p style="margin-left: 40px;"> GetOp </p>
+<p style="margin-left: 40px;"> else begin </p>
+<p style="margin-left: 40px;"> Value := Look; </p>
+<p style="margin-left: 40px;"> Token := Operator; </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> RETURNING A CHARACTER </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Essentially  every scanner I've ever seen
+that was  written  in Pascal  used  the  mechanism of an enumerated type
+that I've just described.  It is certainly  a workable mechanism, but
+it doesn't seem the simplest approach to me. </p>
+<p style="margin-left: 40px;"> For one thing, the  list  of possible
+symbol types can get pretty long. Here, I've used just one symbol,
+"Operator," to  stand for all of the operators, but I've seen other
+designs that actually return different codes for each one. </p>
+<p style="margin-left: 40px;"> There is, of course, another simple type
+that can be  returned as a  code: the character.  Instead  of returning
+the  enumeration value 'Operator' for a '+' sign, what's wrong with
+just returning the character itself?  A character is just as good a
+variable for encoding the different  token  types,  it  can  be used 
+in case statements  easily, and it's sure a lot easier  to  type. What
+could be simpler? </p>
+<p style="margin-left: 40px;"> Besides, we've already  had  experience
+with the idea of encoding keywords as single characters.  Our previous
+programs are already written  that  way,  so  using  this approach will
+minimize the changes to what we've already done. </p>
+<p style="margin-left: 40px;"> Some of you may feel that this idea of
+returning character codes is too mickey-mouse.  I must  admit  it gets a
+little awkward for multi-character operators like '&lt;='.   If you
+choose to stay with the  enumerated  type,  fine.  For the rest, I'd
+like to show you how to change what we've done above to support that
+approach. </p>
+<p style="margin-left: 40px;"> First, you can delete the SymType
+declaration now ... we won't be needing that.  And you can change the
+type of Token to char. </p>
+<p style="margin-left: 40px;"> Next, to replace SymType, add the
+following constant string: </p>
+<p style="margin-left: 40px;"> const KWcode: string[5] = 'xilee'; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> (I'll be encoding all idents with the
+single character 'x'.) </p>
+<p style="margin-left: 40px;"> Lastly, modify Scan and its relatives as
+follows: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Identifier } </p>
+<p style="margin-left: 40px;"> procedure GetName; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Value := ''; </p>
+<p style="margin-left: 40px;"> if not IsAlpha(Look) then
+Expected('Name'); while IsAlNum(Look) do begin      Value := Value +
+UpCase(Look); GetChar;    end;    Token := KWcode[Lookup(Addr(KWlist),
+Value, 4) + 1]; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get a
+Number } </p>
+<p style="margin-left: 40px;"> procedure GetNum; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Value := ''; </p>
+<p style="margin-left: 40px;"> if not IsDigit(Look) then
+Expected('Integer'); while IsDigit(Look) do begin      Value := Value +
+Look;      GetChar;    end;    Token := '#'; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Operator } </p>
+<p style="margin-left: 40px;"> procedure GetOp; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Value := ''; </p>
+<p style="margin-left: 40px;"> if not IsOp(Look) then
+Expected('Operator'); while IsOp(Look) do begin      Value := Value +
+Look;      GetChar;    end;    if Length(Value) = 1 then       Token :=
+Value[1]    else       Token := '?'; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Lexical Scanner } </p>
+<p style="margin-left: 40px;"> procedure Scan; </p>
+<p style="margin-left: 40px;"> var k: integer; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> if IsAlpha(Look) then </p>
+<p style="margin-left: 40px;"> GetName </p>
+<p style="margin-left: 40px;"> else if IsDigit(Look) then </p>
+<p style="margin-left: 40px;"> GetNum </p>
+<p style="margin-left: 40px;"> else if IsOp(Look) then begin </p>
+<p style="margin-left: 40px;"> GetOp </p>
+<p style="margin-left: 40px;"> else begin </p>
+<p style="margin-left: 40px;"> Value := Look; </p>
+<p style="margin-left: 40px;"> Token := '?'; </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Init; </p>
+<p style="margin-left: 40px;"> repeat </p>
+<p style="margin-left: 40px;"> Scan; </p>
+<p style="margin-left: 40px;"> case Token of </p>
+<p style="margin-left: 40px;"> 'x': write('Ident '); </p>
+<p style="margin-left: 40px;"> '#': Write('Number '); </p>
+<p style="margin-left: 40px;"> 'i', 'l', 'e': Write('Keyword ');
+else Write('Operator ');       end;       Writeln(Value);    until Value
+= 'END'; end.
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> This program should  work  the  same  as
+the previous version.  A minor  difference  in  structure,  maybe,  but
+it seems  more straightforward to me. </p>
+<p style="margin-left: 40px;"> DISTRIBUTED vs CENTRALIZED SCANNERS </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> The structure for the lexical scanner
+that I've just shown you is very conventional, and  about  99% of all
+compilers use something very  close  to it.  This is  not,  however,
+the only  possible structure, or even always the best one.
+The problem with the  conventional  approach  is that the scanner has no
+knowledge of context.  For example,  it  can't distinguish between the
+assignment operator '=' and  the  relational operator '=' (perhaps
+that's why both C and Pascal  use  different strings for the  two).
+All the scanner can do is to pass the operator along  to  the  parser,
+which can hopefully tell from the context which operator is meant.
+Similarly, a keyword like 'IF' has no place in the middle of a  math
+expression, but if one happens to appear there, the scanner  will  see
+no problem with it, and will return it to the parser, properly encoded
+as an 'IF'. </p>
+<p style="margin-left: 40px;"> With this  kind  of  approach,  we  are
+not really using all the information at our disposal.  In the middle of
+an expression, for example, the parser  "knows"  that  there  is no need
+to look for keywords,  but it has no way of telling the scanner that. 
+So the scanner  continues to do so.  This, of  course,  slows down 
+the compilation. </p>
+<p style="margin-left: 40px;"> In real-world compilers, the  designers
+often arrange  for more information  to be passed between parser  and
+scanner, just  to avoid  this  kind of problem.  But  that  can  get
+awkward, and certainly destroys a lot of the modularity of the
+structure. </p>
+<p style="margin-left: 40px;"> The  alternative  is  to seek some  way
+to use  the  contextual information that comes from knowing where we are
+in  the parser. This leads us  back  to  the  notion of a distributed
+scanner, in which various portions  of  the scanner are called
+depending upon the context. </p>
+<p style="margin-left: 40px;"> In KISS, as  in  most  languages,
+keywords ONLY  appear  at the beginning of a statement.  In places like 
+expressions,  they are not allowed.  Also, with one minor exception
+(the multi-character relops)  that  is  easily  handled,  all operators
+are  single characters, which means that we don't need GetOp at all. </p>
+<p style="margin-left: 40px;"> So it turns out  that  even  with
+multi-character tokens, we can still always tell from the  current
+lookahead character exactly what kind of token is coming,  except  at
+the very beginning of a statement. </p>
+<p style="margin-left: 40px;"> Even at that point, the ONLY  kind  of
+token we can accept is an identifier.  We need only to determine if that
+identifier  is  a keyword or the target of an assignment statement. </p>
+<p style="margin-left: 40px;"> We end up, then, still needing only
+GetName and GetNum, which are used very much as we've used them in
+earlier installments. </p>
+<p style="margin-left: 40px;"> It may seem  at first to you that this is
+a step backwards, and a rather  primitive  approach.   In fact, it is an
+improvement over the classical scanner, since we're  using  the
+scanning routines only where they're really needed.  In places  where
+keywords are not allowed, we don't slow things down by looking for them. </p>
+<p style="margin-left: 40px;"> MERGING SCANNER AND PARSER </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> Now that we've covered  all  of the
+theory and general aspects of lexical scanning that we'll be needing,
+I'm FINALLY ready to back up my claim that  we  can  accomodate
+multi-character tokens with minimal change to our previous work.  To
+keep things  short  and simple I will restrict myself here to a subset
+of what we've done before; I'm allowing only one control construct (the
+IF) and no Boolean expressions.  That's enough to demonstrate the
+parsing of both keywords and expressions.  The extension to the full
+set of constructs should be  pretty  apparent  from  what  we've already
+done. </p>
+<p style="margin-left: 40px;"> All  the  elements  of  the  program to
+parse this subset,  using single-character tokens, exist  already in our
+previous programs. I built it by judicious copying of these files, but
+I  wouldn't dare try to lead you through that process.  Instead, to
+avoid any confusion, the whole program is shown below: </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} program
+KISS; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Constant Declarations } </p>
+<p style="margin-left: 40px;"> const TAB = ^I; </p>
+<p style="margin-left: 40px;"> CR  = ^M; </p>
+<p style="margin-left: 40px;"> LF  = ^J; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Type
+Declarations } </p>
+<p style="margin-left: 40px;"> type Symbol = string[8]; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> SymTab = array[1..1000] of Symbol; </p>
+<p style="margin-left: 40px;"> TabPtr = ^SymTab; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Variable Declarations } </p>
+<p style="margin-left: 40px;"> var Look  : char;              {
+Lookahead Character }     Lcount: integer;           { Label Counter
+} </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Read
+New Character From Input Stream } </p>
+<p style="margin-left: 40px;"> procedure GetChar; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Read(Look); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Report an Error } </p>
+<p style="margin-left: 40px;"> procedure Error(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> WriteLn; </p>
+<p style="margin-left: 40px;"> WriteLn(^G, 'Error: ', s, '.'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Report Error and Halt } </p>
+<p style="margin-left: 40px;"> procedure Abort(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Error(s); </p>
+<p style="margin-left: 40px;"> Halt; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Report What Was Expected } </p>
+<p style="margin-left: 40px;"> procedure Expected(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Abort(s + ' Expected'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize an Alpha Character } </p>
+<p style="margin-left: 40px;"> function IsAlpha(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsAlpha := UpCase(c) in ['A'..'Z']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize a Decimal Digit } </p>
+<p style="margin-left: 40px;"> function IsDigit(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsDigit := c in ['0'..'9']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize an AlphaNumeric Character } </p>
+<p style="margin-left: 40px;"> function IsAlNum(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsAlNum := IsAlpha(c) or IsDigit(c); end;
+ {--------------------------------------------------------------} {
+Recognize an Addop } </p>
+<p style="margin-left: 40px;"> function IsAddop(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsAddop := c in ['+', '-']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize a Mulop } </p>
+<p style="margin-left: 40px;"> function IsMulop(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsMulop := c in ['*', '/']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize White Space } </p>
+<p style="margin-left: 40px;"> function IsWhite(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsWhite := c in [' ', TAB]; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Skip
+Over Leading White Space } </p>
+<p style="margin-left: 40px;"> procedure SkipWhite; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while IsWhite(Look) do </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Match
+a Specific Input Character } </p>
+<p style="margin-left: 40px;"> procedure Match(x: char); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Look &lt;&gt; x then Expected('''' + x
++ '''');    GetChar;    SkipWhite; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Skip
+a CRLF } </p>
+<p style="margin-left: 40px;"> procedure Fin; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Look = CR then GetChar; </p>
+<p style="margin-left: 40px;"> if Look = LF then GetChar; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Identifier } </p>
+<p style="margin-left: 40px;"> function GetName: char; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> if not IsAlpha(Look) then
+Expected('Name'); Getname := UpCase(Look);    GetChar;    SkipWhite;
+end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get a
+Number } </p>
+<p style="margin-left: 40px;"> function GetNum: char; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if not IsDigit(Look) then
+Expected('Integer'); GetNum := Look;    GetChar;    SkipWhite; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Generate a Unique Label } </p>
+<p style="margin-left: 40px;"> function NewLabel: string; </p>
+<p style="margin-left: 40px;"> var S: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Str(LCount, S); </p>
+<p style="margin-left: 40px;"> NewLabel := 'L' + S; </p>
+<p style="margin-left: 40px;"> Inc(LCount); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Post
+a Label To Output } </p>
+<p style="margin-left: 40px;"> procedure PostLabel(L: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> WriteLn(L, ':'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Output a String with Tab } procedure Emit(s: string); begin   
+Write(TAB, s); end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> { Output a String with Tab and CRLF } </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure EmitLn(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Emit(s); </p>
+<p style="margin-left: 40px;"> WriteLn; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate an Identifier } </p>
+<p style="margin-left: 40px;"> procedure Ident; </p>
+<p style="margin-left: 40px;"> var Name: char; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Name := GetName; </p>
+<p style="margin-left: 40px;"> if Look = '(' then begin </p>
+<p style="margin-left: 40px;"> Match('('); </p>
+<p style="margin-left: 40px;"> Match(')'); </p>
+<p style="margin-left: 40px;"> EmitLn('BSR ' + Name); </p>
+<p style="margin-left: 40px;"> end </p>
+<p style="margin-left: 40px;"> else </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE ' + Name + '(PC),D0'); end; </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Math Factor } </p>
+<p style="margin-left: 40px;"> procedure Expression; Forward; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure Factor; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Look = '(' then begin </p>
+<p style="margin-left: 40px;"> Match('('); </p>
+<p style="margin-left: 40px;"> Expression; </p>
+<p style="margin-left: 40px;"> Match(')'); </p>
+<p style="margin-left: 40px;"> end </p>
+<p style="margin-left: 40px;"> else if IsAlpha(Look) then </p>
+<p style="margin-left: 40px;"> Ident </p>
+<p style="margin-left: 40px;"> else </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE #' + GetNum + ',D0'); end; </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate the First Math Factor } </p>
+<p style="margin-left: 40px;"> procedure SignedFactor; </p>
+<p style="margin-left: 40px;"> var s: boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> s := Look = '-'; </p>
+<p style="margin-left: 40px;"> if IsAddop(Look) then begin </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> if s then </p>
+<p style="margin-left: 40px;"> EmitLn('NEG D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize and Translate a Multiply } </p>
+<p style="margin-left: 40px;"> procedure Multiply; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('*'); </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> EmitLn('MULS (SP)+,D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{-------------------------------------------------------------} {
+Recognize and Translate a Divide } </p>
+<p style="margin-left: 40px;"> procedure Divide; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('/'); </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE (SP)+,D1'); </p>
+<p style="margin-left: 40px;"> EmitLn('EXS.L D0'); </p>
+<p style="margin-left: 40px;"> EmitLn('DIVS D1,D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Completion of Term Processing  (called by Term and FirstTerm } </p>
+<p style="margin-left: 40px;"> procedure Term1; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while IsMulop(Look) do begin </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE D0,-(SP)'); </p>
+<p style="margin-left: 40px;"> case Look of </p>
+<p style="margin-left: 40px;"> '*': Multiply; </p>
+<p style="margin-left: 40px;"> '/': Divide; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Math Term } </p>
+<p style="margin-left: 40px;"> procedure Term; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> Term1; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Math Term with Possible Leading Sign } </p>
+<p style="margin-left: 40px;"> procedure FirstTerm; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> SignedFactor; </p>
+<p style="margin-left: 40px;"> Term1; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Recognize and Translate an Add } </p>
+<p style="margin-left: 40px;"> procedure Add; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('+'); </p>
+<p style="margin-left: 40px;"> Term; </p>
+<p style="margin-left: 40px;"> EmitLn('ADD (SP)+,D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Recognize and Translate a Subtract } </p>
+<p style="margin-left: 40px;"> procedure Subtract; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('-'); </p>
+<p style="margin-left: 40px;"> Term; </p>
+<p style="margin-left: 40px;"> EmitLn('SUB (SP)+,D0'); </p>
+<p style="margin-left: 40px;"> EmitLn('NEG D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate an Expression } </p>
+<p style="margin-left: 40px;"> procedure Expression; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> FirstTerm; </p>
+<p style="margin-left: 40px;"> while IsAddop(Look) do begin </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE D0,-(SP)'); </p>
+<p style="margin-left: 40px;"> case Look of </p>
+<p style="margin-left: 40px;"> '+': Add; </p>
+<p style="margin-left: 40px;"> '-': Subtract; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Boolean Condition } { This version is a dummy } </p>
+<p style="margin-left: 40px;"> Procedure Condition; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> EmitLn('Condition'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Recognize and Translate an IF Construct } </p>
+<p style="margin-left: 40px;"> procedure Block; </p>
+<p style="margin-left: 40px;"> Forward; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure DoIf; </p>
+<p style="margin-left: 40px;"> var L1, L2: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('i'); </p>
+<p style="margin-left: 40px;"> Condition; </p>
+<p style="margin-left: 40px;"> L1 := NewLabel; </p>
+<p style="margin-left: 40px;"> L2 := L1; </p>
+<p style="margin-left: 40px;"> EmitLn('BEQ ' + L1); </p>
+<p style="margin-left: 40px;"> Block; </p>
+<p style="margin-left: 40px;"> if Look = 'l' then begin </p>
+<p style="margin-left: 40px;"> Match('l'); </p>
+<p style="margin-left: 40px;"> L2 := NewLabel; </p>
+<p style="margin-left: 40px;"> EmitLn('BRA ' + L2); </p>
+<p style="margin-left: 40px;"> PostLabel(L1); </p>
+<p style="margin-left: 40px;"> Block; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> PostLabel(L2); </p>
+<p style="margin-left: 40px;"> Match('e'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Parse
+and Translate an Assignment Statement } </p>
+<p style="margin-left: 40px;"> procedure Assignment; </p>
+<p style="margin-left: 40px;"> var Name: char; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Name := GetName; </p>
+<p style="margin-left: 40px;"> Match('='); </p>
+<p style="margin-left: 40px;"> Expression; </p>
+<p style="margin-left: 40px;"> EmitLn('LEA ' + Name + '(PC),A0'); </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE D0,(A0)'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize and Translate a Statement Block } </p>
+<p style="margin-left: 40px;"> procedure Block; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while not(Look in ['e', 'l']) do begin
+case Look of        'i': DoIf;        CR: while Look = CR do
+Fin; else Assignment;       end;    end; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Parse
+and Translate a Program } </p>
+<p style="margin-left: 40px;"> procedure DoProgram; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Block; </p>
+<p style="margin-left: 40px;"> if Look &lt;&gt; 'e' then
+Expected('END'); EmitLn('END') end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> { Initialize } </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure Init; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> LCount := 0; </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Init; </p>
+<p style="margin-left: 40px;"> DoProgram; </p>
+<p style="margin-left: 40px;"> end. </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> A couple of comments: </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> (1) The form for the expression parser,
+using FirstTerm, etc.,      is  a  little  different from what you've
+seen before.  It's      yet another variation on the same theme.  Don't
+let it throw      you ... the change is not required for what follows. </p>
+<p style="margin-left: 40px;"> (2) Note that, as usual, I had to add
+calls to Fin  at strategic      spots to allow for multiple lines. </p>
+<p style="margin-left: 40px;"> Before we proceed to adding the scanner,
+first copy this file and verify that it does indeed  parse things
+correctly. Don't forget the "codes": 'i' for IF, 'l' for ELSE, and 'e'
+for END or ENDIF. </p>
+<p style="margin-left: 40px;"> If the program works, then let's press
+on. In adding the scanner modules to the program, it helps  to  have a
+systematic plan.  In all  the  parsers  we've  written  to  date, we've
+stuck  to  a convention that the current lookahead character should 
+always be a non-blank character.  We  preload  the  lookahead
+character in Init, and keep the "pump primed"  after  that.  To keep the
+thing working right at newlines, we had to modify this a bit  and treat
+the newline as a legal token. </p>
+<p style="margin-left: 40px;"> In the  multi-character version, the rule
+is similar: The current lookahead character should always be left at the
+BEGINNING of the next token, or at a newline. </p>
+<p style="margin-left: 40px;"> The multi-character version is shown
+next. To get it,  I've made the following changes: </p>
+<p style="margin-left: 40px;"> o Added the variables Token  and Value,
+and the type definitions    needed by Lookup. </p>
+<p style="margin-left: 40px;"> o Added the definitions of KWList and
+KWcode. </p>
+<p style="margin-left: 40px;"> o Added Lookup. </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> o Replaced GetName and GetNum by their
+multi-character versions.    (Note that the call  to  Lookup has been
+moved out of GetName,    so  that  it  will  not   be  executed  for
+calls within  an    expression.) </p>
+<p style="margin-left: 40px;"> o Created a new,  vestigial  Scan that
+calls GetName, then scans    for keywords. </p>
+<p style="margin-left: 40px;"> o Created  a  new  procedure,
+MatchString, that  looks  for  a    specific keyword.  Note that, unlike
+Match,  MatchString does    NOT read the next keyword. </p>
+<p style="margin-left: 40px;"> o Modified Block to call Scan. </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> o Changed the calls  to  Fin  a  bit.
+Fin is now called within    GetName. </p>
+<p style="margin-left: 40px;"> Here is the program in its entirety: </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} program
+KISS; {--------------------------------------------------------------} {
+Constant Declarations } </p>
+<p style="margin-left: 40px;"> const TAB = ^I; </p>
+<p style="margin-left: 40px;"> CR  = ^M; </p>
+<p style="margin-left: 40px;"> LF  = ^J; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Type
+Declarations } </p>
+<p style="margin-left: 40px;"> type Symbol = string[8]; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> SymTab = array[1..1000] of Symbol; </p>
+<p style="margin-left: 40px;"> TabPtr = ^SymTab; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Variable Declarations } </p>
+<p style="margin-left: 40px;"> var Look  : char;              {
+Lookahead Character }     Token : char;              { Encoded Token
+} Value : string[16];        { Unencoded Token     }     Lcount:
+integer; { Label Counter       } </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Definition of Keywords and Token Types } </p>
+<p style="margin-left: 40px;"> const KWlist: array [1..4] of Symbol = </p>
+<p style="margin-left: 40px;"> ('IF', 'ELSE', 'ENDIF', 'END'); </p>
+<p style="margin-left: 40px;"> const KWcode: string[5] = 'xilee'; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Read
+New Character From Input Stream } </p>
+<p style="margin-left: 40px;"> procedure GetChar; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Read(Look); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Report an Error } </p>
+<p style="margin-left: 40px;"> procedure Error(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> WriteLn; </p>
+<p style="margin-left: 40px;"> WriteLn(^G, 'Error: ', s, '.'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Report Error and Halt } </p>
+<p style="margin-left: 40px;"> procedure Abort(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Error(s); </p>
+<p style="margin-left: 40px;"> Halt; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Report What Was Expected } </p>
+<p style="margin-left: 40px;"> procedure Expected(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Abort(s + ' Expected'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize an Alpha Character } </p>
+<p style="margin-left: 40px;"> function IsAlpha(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsAlpha := UpCase(c) in ['A'..'Z']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize a Decimal Digit } </p>
+<p style="margin-left: 40px;"> function IsDigit(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsDigit := c in ['0'..'9']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize an AlphaNumeric Character } </p>
+<p style="margin-left: 40px;"> function IsAlNum(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsAlNum := IsAlpha(c) or IsDigit(c); end;
+ </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize an Addop } </p>
+<p style="margin-left: 40px;"> function IsAddop(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsAddop := c in ['+', '-']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize a Mulop } </p>
+<p style="margin-left: 40px;"> function IsMulop(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsMulop := c in ['*', '/']; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize White Space } </p>
+<p style="margin-left: 40px;"> function IsWhite(c: char): boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> IsWhite := c in [' ', TAB]; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Skip
+Over Leading White Space } </p>
+<p style="margin-left: 40px;"> procedure SkipWhite; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while IsWhite(Look) do </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Match
+a Specific Input Character } </p>
+<p style="margin-left: 40px;"> procedure Match(x: char); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Look &lt;&gt; x then Expected('''' + x
++ '''');    GetChar;    SkipWhite; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Skip
+a CRLF } </p>
+<p style="margin-left: 40px;"> procedure Fin; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Look = CR then GetChar; </p>
+<p style="margin-left: 40px;"> if Look = LF then GetChar; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Table
+Lookup } </p>
+<p style="margin-left: 40px;"> function Lookup(T: TabPtr; s: string; n:
+integer): integer; var i: integer;     found: boolean; begin    found :=
+false;    i := n;    while (i &gt; 0) and not found do       if s =
+T^[i] then          found := true       else          dec(i);    Lookup
+:= i; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Identifier } </p>
+<p style="margin-left: 40px;"> procedure GetName; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while Look = CR do </p>
+<p style="margin-left: 40px;"> Fin; </p>
+<p style="margin-left: 40px;"> if not IsAlpha(Look) then
+Expected('Name'); Value := '';    while IsAlNum(Look) do begin
+Value := Value + UpCase(Look);      GetChar;    end;    SkipWhite; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get a
+Number } </p>
+<p style="margin-left: 40px;"> procedure GetNum; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if not IsDigit(Look) then
+Expected('Integer'); Value := '';    while IsDigit(Look) do begin
+Value := Value + Look;      GetChar;    end;    Token := '#';
+SkipWhite; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Get
+an Identifier and Scan it for Keywords } </p>
+<p style="margin-left: 40px;"> procedure Scan; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> GetName; </p>
+<p style="margin-left: 40px;"> Token := KWcode[Lookup(Addr(KWlist),
+Value, 4) + 1]; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Match
+a Specific Input String } </p>
+<p style="margin-left: 40px;"> procedure MatchString(x: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Value &lt;&gt; x then Expected('''' +
+x + ''''); end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Generate a Unique Label } </p>
+<p style="margin-left: 40px;"> function NewLabel: string; </p>
+<p style="margin-left: 40px;"> var S: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Str(LCount, S); </p>
+<p style="margin-left: 40px;"> NewLabel := 'L' + S; </p>
+<p style="margin-left: 40px;"> Inc(LCount); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Post
+a Label To Output } </p>
+<p style="margin-left: 40px;"> procedure PostLabel(L: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> WriteLn(L, ':'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Output a String with Tab } </p>
+<p style="margin-left: 40px;"> procedure Emit(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Write(TAB, s); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Output a String with Tab and CRLF } </p>
+<p style="margin-left: 40px;"> procedure EmitLn(s: string); </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Emit(s); </p>
+<p style="margin-left: 40px;"> WriteLn; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate an Identifier } </p>
+<p style="margin-left: 40px;"> procedure Ident; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> GetName; </p>
+<p style="margin-left: 40px;"> if Look = '(' then begin </p>
+<p style="margin-left: 40px;"> Match('('); </p>
+<p style="margin-left: 40px;"> Match(')'); </p>
+<p style="margin-left: 40px;"> EmitLn('BSR ' + Value); </p>
+<p style="margin-left: 40px;"> end </p>
+<p style="margin-left: 40px;"> else </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE ' + Value + '(PC),D0'); end;
+ </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Math Factor } </p>
+<p style="margin-left: 40px;"> procedure Expression; Forward; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure Factor; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> if Look = '(' then begin </p>
+<p style="margin-left: 40px;"> Match('('); </p>
+<p style="margin-left: 40px;"> Expression; </p>
+<p style="margin-left: 40px;"> Match(')'); </p>
+<p style="margin-left: 40px;"> end </p>
+<p style="margin-left: 40px;"> else if IsAlpha(Look) then </p>
+<p style="margin-left: 40px;"> Ident </p>
+<p style="margin-left: 40px;"> else begin </p>
+<p style="margin-left: 40px;"> GetNum; </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE #' + Value + ',D0');    end;
+end; </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate the First Math Factor } </p>
+<p style="margin-left: 40px;"> procedure SignedFactor; </p>
+<p style="margin-left: 40px;"> var s: boolean; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> s := Look = '-'; </p>
+<p style="margin-left: 40px;"> if IsAddop(Look) then begin </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> SkipWhite; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> if s then </p>
+<p style="margin-left: 40px;"> EmitLn('NEG D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize and Translate a Multiply } </p>
+<p style="margin-left: 40px;"> procedure Multiply; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('*'); </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> EmitLn('MULS (SP)+,D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{-------------------------------------------------------------} {
+Recognize and Translate a Divide } </p>
+<p style="margin-left: 40px;"> procedure Divide; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('/'); </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE (SP)+,D1'); </p>
+<p style="margin-left: 40px;"> EmitLn('EXS.L D0'); </p>
+<p style="margin-left: 40px;"> EmitLn('DIVS D1,D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Completion of Term Processing  (called by Term and FirstTerm } </p>
+<p style="margin-left: 40px;"> procedure Term1; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> while IsMulop(Look) do begin </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE D0,-(SP)'); </p>
+<p style="margin-left: 40px;"> case Look of </p>
+<p style="margin-left: 40px;"> '*': Multiply; </p>
+<p style="margin-left: 40px;"> '/': Divide; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Math Term } </p>
+<p style="margin-left: 40px;"> procedure Term; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Factor; </p>
+<p style="margin-left: 40px;"> Term1; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Math Term with Possible Leading Sign } </p>
+<p style="margin-left: 40px;"> procedure FirstTerm; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> SignedFactor; </p>
+<p style="margin-left: 40px;"> Term1; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Recognize and Translate an Add } </p>
+<p style="margin-left: 40px;"> procedure Add; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('+'); </p>
+<p style="margin-left: 40px;"> Term; </p>
+<p style="margin-left: 40px;"> EmitLn('ADD (SP)+,D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Recognize and Translate a Subtract } </p>
+<p style="margin-left: 40px;"> procedure Subtract; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Match('-'); </p>
+<p style="margin-left: 40px;"> Term; </p>
+<p style="margin-left: 40px;"> EmitLn('SUB (SP)+,D0'); </p>
+<p style="margin-left: 40px;"> EmitLn('NEG D0'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate an Expression } </p>
+<p style="margin-left: 40px;"> procedure Expression; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> FirstTerm; </p>
+<p style="margin-left: 40px;"> while IsAddop(Look) do begin </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE D0,-(SP)'); </p>
+<p style="margin-left: 40px;"> case Look of </p>
+<p style="margin-left: 40px;"> '+': Add; </p>
+<p style="margin-left: 40px;"> '-': Subtract; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Parse and Translate a Boolean Condition } { This version is a dummy } </p>
+<p style="margin-left: 40px;"> Procedure Condition; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> EmitLn('Condition'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{---------------------------------------------------------------} {
+Recognize and Translate an IF Construct } </p>
+<p style="margin-left: 40px;"> procedure Block; Forward; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure DoIf; </p>
+<p style="margin-left: 40px;"> var L1, L2: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Condition; </p>
+<p style="margin-left: 40px;"> L1 := NewLabel; </p>
+<p style="margin-left: 40px;"> L2 := L1; </p>
+<p style="margin-left: 40px;"> EmitLn('BEQ ' + L1); </p>
+<p style="margin-left: 40px;"> Block; </p>
+<p style="margin-left: 40px;"> if Token = 'l' then begin </p>
+<p style="margin-left: 40px;"> L2 := NewLabel; </p>
+<p style="margin-left: 40px;"> EmitLn('BRA ' + L2); </p>
+<p style="margin-left: 40px;"> PostLabel(L1); </p>
+<p style="margin-left: 40px;"> Block; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> PostLabel(L2); </p>
+<p style="margin-left: 40px;"> MatchString('ENDIF'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Parse
+and Translate an Assignment Statement } </p>
+<p style="margin-left: 40px;"> procedure Assignment; </p>
+<p style="margin-left: 40px;"> var Name: string; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Name := Value; </p>
+<p style="margin-left: 40px;"> Match('='); </p>
+<p style="margin-left: 40px;"> Expression; </p>
+<p style="margin-left: 40px;"> EmitLn('LEA ' + Name + '(PC),A0'); </p>
+<p style="margin-left: 40px;"> EmitLn('MOVE D0,(A0)'); </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} {
+Recognize and Translate a Statement Block } </p>
+<p style="margin-left: 40px;"> procedure Block; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Scan; </p>
+<p style="margin-left: 40px;"> while not (Token in ['e', 'l']) do begin
+case Token of        'i': DoIf;        else Assignment;       end;
+Scan; end; end; </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> { Parse and Translate a Program } </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure DoProgram; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Block; </p>
+<p style="margin-left: 40px;"> MatchString('END'); </p>
+<p style="margin-left: 40px;"> EmitLn('END') </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> { Initialize } </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> procedure Init; </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> LCount := 0; </p>
+<p style="margin-left: 40px;"> GetChar; </p>
+<p style="margin-left: 40px;"> end; </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} { Main
+Program } </p>
+<p style="margin-left: 40px;"> begin </p>
+<p style="margin-left: 40px;"> Init; </p>
+<p style="margin-left: 40px;"> DoProgram; </p>
+<p style="margin-left: 40px;"> end. </p>
+<p style="margin-left: 40px;">
+{--------------------------------------------------------------} </p>
+<p style="margin-left: 40px;"> Compare this program with its
+single-character counterpart.   I think you will agree that the
+differences are minor. </p>
+<p style="margin-left: 40px;"> CONCLUSION </p>
+<p style="margin-left: 40px;"> </p>
+<p style="margin-left: 40px;"> At this point, you have learned how to
+parse and  generate  code for expressions,  Boolean  expressions,  and
+control structures. You have now learned how to develop lexical
+scanners, and  how to incorporate their elements into a translator. You
+have still not seen ALL the elements combined into one program, but on
+the basis of  what  we've  done before you should find it a
+straightforward matter to extend our earlier programs to include
+scanners. </p>
+<p style="margin-left: 40px;"> We are very  close  to  having  all  the
+elements that we need to build a real, functional compiler.  There are
+still a  few things missing, notably procedure  calls  and type
+definitions. We will deal with  those  in  the  next  few  sessions.
+Before doing so, however, I thought it  would  be fun to turn the
+translator above into a true compiler.  That's what we'll  be  doing in
+the next installment. </p>
+<p style="margin-left: 40px;"> Up till now, we've taken  a rather
+bottom-up approach to parsing, beginning with low-level constructs and
+working our way  up.   In the next installment,  I'll  also  be  taking
+a look from the top down,  and  we'll  discuss how the structure of the
+translator is altered by changes in the language definition. </p>
+<p style="margin-left: 40px;"> See you then. </p>
+<p> </p>
+<p><br>
+</p>
+<p> </p>
+</body>
+</html>

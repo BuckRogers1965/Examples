@@ -1,0 +1,147 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\f0\fs20\par
+\par
+Servers\par
+\par
+Local:\par
+\par
+Monty  - crawler, disk array.\par
+Box1  PDC - SQL - \par
+Box2  BDC - Exchange Server\par
+\par
+Dell1\par
+Dell2\par
+\par
+On Internet:\par
+scratchy.fvvmventures.com\par
+\par
+\par
+Are these drives bad, if bad, are they returnable.\par
+\par
+Coordinate purchase with Graham\par
+\par
+\tab big shreader to shread CD-s and shread paper at a time.\par
+\tab http://www.newegg.com/Product/Product.aspx?Item=N82E16846101016\par
+\par
+\par
+Get 4 high efficiency 500W power supplies\par
+\par
+http://www.newegg.com/Product/Product.aspx?Item=N82E16817129003\par
+\par
+Put 2 into Monty, 1 into each of the smaller machines.  \par
+\par
+Does VMWare server run better under Windows Server than Home?  \par
+Can we just change some registry settings to optimize performance?\par
+\par
+\par
+Don't starve your host OS of RAM. Watch to make sure the host OS is not swapping, add memory or reduce virtual machine memory on those that could be reduced.\par
+\par
+You want fast (high-rpm) drives, multiple drives to spread the workload and a RAID solution that fits your needs for performance/protection.  If possible, putting each VM on its own physical hard drive/array, especially one that is separate from the physical host server's system drive and other VM's drives, will increase performance as well. Putting all VM on their own physical drive will also help out. Doing so will reduce disk contention between your host and VM(s).    The 200GB hard drives might be good for this.\par
+\par
+Use Gigabit network cards. Using Gigabit Ethernet network interface cards can dramatically improve overall performance. Even though the guest OS emulates a 100Mb connection, when you have multiple VMs and the host using the same physical NIC, the performance increase from having a 1 GB NIC will be noticeable. Otherwise, dedicate a separate NIC to each server, or at least one for the host and one for the VMs. Technically, you should go through the process of discovering which systems utilize their NIC the most (most chatty), regardless of whether they are VMs or the physical host, and give them their own NIC. Then group the servers with the lowest utilization (least chatty) onto the same NIC.\par
+\par
+CPU to VM ratio. This is tricky. The rule of thumb I came across is you can try running two to four virtual servers per any newer physical CPU core in the host server. But this depends on what your virtual servers will be running. If you're building out virtual servers for low-impact, line-of-business applications, you can push towards a "high VM per core" strategy. But if you are running applications that needs lots of processing and networking horsepower, you should lean towards a "low VM per core" strategy. \par
+\par
+\par
+\par
+Keep host VMWare box as bare as possible.  Never run any apps on this server. Set the Performance option on this server to be Background Services. Thusly: \par
+\par
+http://articles.techrepublic.com.com/5100-10879_11-6132057.html\par
+\par
+Depending on what any particular Windows 2000 Server's assigned task is, it's extremely important to optimize performance to the extent possible. As Microsoft sees it, there are only two possible options. You can either optimize operations for the active application, or you can distribute operations attention equally among all applications. You can set this preference this way:\par
+\par
+   1. Open the Properties sheet on My Computer (or whatever you might have named the server you're working on).\par
+   2. Switch to the Advanced tab and click on the Performance Options button.\par
+   3. Under Applications Response, select either Applications or Background Services.\par
+\par
+As it implies, the Applications setting gives CPU favor to the active application. With Background Services, it gives each running process an equal amount of CPU time, playing no favorites. You should make sure to set very few servers to Applications since servers perform background tasks and typically do not operate with single applications in mind.\par
+\par
+\par
+--\par
+\par
+\par
+Page files:\par
+\par
+We could use the 200GB drives as drives for backing up the system drive and to store the page file to increase performance by not paging to the system drive.  Format the system drive to be 150GB and mirror to the back up drive, then store all the bubbles on a drive created with the extra room on a big \par
+\par
+http://www.zdnetasia.com/techguide/windows/0,39044904,61974084,00.htm\par
+\par
+You've read the rule: "Add RAM to increase system performance." It's true--but often, it's not always desirable, necessary, or feasible to do so. By making a few adjustments to the way that Windows Server 2003 handles the page file, you can boost the overall performance of your server.\par
+\par
+By default, Windows Server 2003 creates a page file on the system drive--usually C:. While this practice makes sense and provides you with the ability to create a dump file in the event of a system crash, disk performance can degrade if the page file is heavily used. That, combined with the need to go to disk all the time, can result in poor server performance.\par
+\par
+You may also know that moving the page file off the system drive can increase performance. While this will achieve that goal, you'll also lose the ability to create a diagnostic dump file to help troubleshoot server problems.\par
+\par
+Instead, for more efficient page file optimization that also provides a means to create a dump file, follow these tips:\par
+\par
+   1. Keep the default Windows settings for the page file on the system drive.\par
+   2. Create a second page file at least 1.5 times the size of system RAM on a less frequently used disk. Windows will automatically use the page file on the disk with the least amount of activity.\par
+\par
+If your server is constantly paging and that paging is affecting system performance, it's time to add more RAM. \par
+\par
+\par
+-- \par
+\par
+\par
+First, with more than enough RAM, change "Allow some virtual machine memory to be swapped" to "Fit all virtual memory into reserved host RAM" in the host settings. You'll be thrashing the drive swapping ("trimming") memory from guests when there's no reason to.\par
+\par
+Also, for each guest, "Disable memory page trimming" in Settings, Options, Advanced" (just in case). This will (apparently) result in one of the following entries in the guest's VMX configuration file:\par
+MemTrimRate = "0" (on Linux Hosts)\par
+MainMem.UseNamedFile = "FALSE" (on Windows Hosts)\par
+\par
+\par
+below are the global settings i use on all my hosts to maximize the resources available to the guests\par
+\par
+make sure not to overallocate memory to the guests...if you see paging on the host, you are probably giving too much memory to the guests and the host is starving....either install more memory in the host, or configure the guests with less\par
+\par
+-- \par
+\par
+sched.mem.pshare.enable = "FALSE"\par
+prefvmx.useRecommendedLockedMemSize = "TRUE"\par
+prefvmx.minVmMemPct = "100"\par
+priority.grabbed = "normal"\par
+priority.ungrabbed = "normal"\par
+mainMem.partialLazySave = "FALSE"\par
+mainMem.partialLazyRestore = "FALSE"\par
+mainMem.useNamedFile = "FALSE"\par
+MemTrimRate = "0"\par
+\par
+# adjust cpuKhz to match the cpu in the machine\par
+# entry below is for 2.33 GHz\par
+host.cpukHz = "2330000"\par
+host.noTSC = "TRUE"\par
+ptsc.noTSC = "TRUE" \par
+\par
+\par
+--\par
+\par
+http://software.techrepublic.com.com/download.aspx?docid=264210\par
+\par
+Veeam Monitor for VMware Server (5)\par
+\par
+Topics:\par
+    System Utilities - Utilities - Windows\par
+\par
+Tags:\par
+    monitor,\par
+    server,\par
+    Veeam Monitor,\par
+    VMware Inc.\par
+\par
+Source:\par
+    Veeam Software\par
+\par
+    * E-mail this page\par
+    * Related Content\par
+\par
+FREE Registration is required\par
+\par
+Overview: Veeam Monitor facilitates deployment planning and performance troubleshooting of virtual machines (VMs) on VMware Server running on Windows platform. Veeam Monitor is the only tool that directly integrates with VMware Virtualization Layer to provide the most comprehensive performance information and detailed statistics on CPU, memory, disk, network and pagefile.\par
+\par
+Format: Software | Size: 1,439KB | Date: Oct 2006 | Version: 1.5 | System Requirements: Windows XP/2003 Server | License: Free to try | Price: $200.00 | Limitations: Some features disabled | Screen Shot | Downloads: 17\par
+\par
+--\par
+\par
+\par
+}
+ 

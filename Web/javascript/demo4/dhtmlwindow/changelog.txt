@@ -1,0 +1,20 @@
+Change log for Dynamic Drive DHTML Window Widget, available at: http://www.dynamicdrive.com/dynamicindex8/dhtmlwindow/
+Usage Terms: http://www.dynamicdrive.com/notice.htm
+
+Version 1.0 (Feb 15th, 07'):
+* Script Creation date
+
+Version 1.01 (Feb 22nd, 07'):
+* Added Error handling inside "onclose" event handler, so any user defined code errors causes function to simply return true (close window)
+* For dhtmlwindow.open(), modified "recal" parameter behavior in IE so repositioning of window is done 0.4 seconds on top of window.onload. This seems to address the viewpoint properties returning 0 on very short pages (ie: a few text only).
+* Modified code used to detect page width in Firefox, discounting scrollbars.
+
+Version 1.02 (March 26th, 07'):
+* Fixed bug with window's "restore" icon not being updated to "minimize" when dhtmlwindow.open() is called on a minimized window. Only "dhtmlwindow.js" changed since v 1.01
+
+Version 1.03 (May 5th, 07'):
+* Fixed bug with window becoming resizeable again despite setting resize=0 when window is closed then reopened using dhtmlwindow.open()
+* Fixed bug with the "center" setting (center=1) not working correctly when window is closed then reopened using dhtmlwindow.open()
+
+** Install Notes for Version 1.03
+Only dhtmlwindow.js file changed from all previous versions! Just replace this file.

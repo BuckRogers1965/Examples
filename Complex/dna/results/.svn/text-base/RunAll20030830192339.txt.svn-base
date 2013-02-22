@@ -1,0 +1,591 @@
+Begin Run All 20030830192339
+
+Saving all results to RunAll20030830192339.txt
+
+Begin Base Pair Analysis 20030830192339
+
+DNA strand number 01
+
+276295680 data/01hgp10a.txt
+54212608 /mnt/cdrom/01hgp10a.txt.bz2
+
+Actual Results
+T	61431592	29.115881
+A	61491612	29.144328
+G	44001920	20.854981
+C	44064857	20.884810
+Total Unknown is 65030485
+
+Projected Results
+T	80365790	29.115881
+A	80444309	29.144328
+G	57564015	20.854981
+C	57646350	20.884810
+
+Processed 276020466 out of 276020466.
+18.79user 0.95system 0:21.22elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 02
+
+248258560 data/02hgp10a.txt
+57508864 /mnt/cdrom/02hgp10a.txt.bz2
+
+Actual Results
+T	66186825	29.900539
+A	66196315	29.904827
+G	44467511	20.088629
+C	44505975	20.106005
+Total Unknown is 26651434
+
+Projected Results
+T	74155747	29.900539
+A	74166380	29.904827
+G	49821418	20.088629
+C	49864513	20.106005
+
+Processed 248008060 out of 248008060.
+17.16user 0.89system 0:19.64elapsed 91%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 03
+
+219222016 data/03hgp10a.txt
+48034816 /mnt/cdrom/03hgp10a.txt.bz2
+
+Actual Results
+T	55741712	29.996960
+A	55742399	29.997330
+G	37198374	20.018010
+C	37142051	19.987700
+Total Unknown is 33172331
+
+Projected Results
+T	65692402	29.996960
+A	65693212	29.997330
+G	43838814	20.018010
+C	43772437	19.987700
+
+Processed 218996867 out of 218996867.
+15.08user 0.77system 0:16.70elapsed 94%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 04
+
+200376320 data/04hgp10a.txt
+43969536 /mnt/cdrom/04hgp10a.txt.bz2
+
+Actual Results
+T	52153891	30.849646
+A	52078009	30.804761
+G	32389113	19.158545
+C	32437299	19.187048
+Total Unknown is 31116843
+
+Projected Results
+T	61753326	30.849646
+A	61663478	30.804761
+G	38350647	19.158545
+C	38407702	19.187048
+
+Processed 200175155 out of 200175155.
+13.75user 0.68system 0:15.16elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 05
+
+197586944 data/05hgp10a.txt
+42974208 /mnt/cdrom/05hgp10a.txt.bz2
+
+Actual Results
+T	49960592	30.088893
+A	49877308	30.038735
+G	33103207	19.936490
+C	33102195	19.935881
+Total Unknown is 31341535
+
+Projected Results
+T	59390913	30.088893
+A	59291908	30.038735
+G	39351609	19.936490
+C	39350406	19.935881
+
+Processed 197384837 out of 197384837.
+13.37user 0.77system 0:15.11elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 06
+
+181510144 data/06hgp10a.txt
+41019904 /mnt/cdrom/06hgp10a.txt.bz2
+
+Actual Results
+T	47724322	30.079456
+A	47750151	30.095735
+G	31598363	19.915664
+C	31588021	19.909146
+Total Unknown is 22664501
+
+Projected Results
+T	54541680	30.079456
+A	54571199	30.095735
+G	36112148	19.915664
+C	36100329	19.909146
+
+Processed 181325358 out of 181325358.
+12.34user 0.63system 0:13.62elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 07
+
+166416384 data/07hgp10a.txt
+37937664 /mnt/cdrom/07hgp10a.txt.bz2
+
+Actual Results
+T	43867245	29.722021
+A	43887159	29.735514
+G	29906494	20.262988
+C	29930832	20.279478
+Total Unknown is 18655717
+
+Projected Results
+T	49412101	29.722021
+A	49434532	29.735514
+G	33686699	20.262988
+C	33714113	20.279477
+
+Processed 166247447 out of 166247447.
+11.42user 0.69system 0:12.46elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 08
+
+145084416 data/08hgp10a.txt
+32419328 /mnt/cdrom/08hgp10a.txt.bz2
+
+Actual Results
+T	37385708	29.929561
+A	37484168	30.008384
+G	25010093	20.022119
+C	25032347	20.039935
+Total Unknown is 20022038
+
+Projected Results
+T	43378216	29.929561
+A	43492458	30.008385
+G	29018929	20.022119
+C	29044750	20.039935
+
+Processed 144934354 out of 144934354.
+9.96user 0.49system 0:10.92elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 09
+
+141410304 data/09hgp10a.txt
+28334592 /mnt/cdrom/09hgp10a.txt.bz2
+
+Actual Results
+T	32218106	29.332035
+A	32228637	29.341623
+G	22663114	20.632971
+C	22729456	20.693371
+Total Unknown is 31423962
+
+Projected Results
+T	41435393	29.332035
+A	41448937	29.341623
+G	29146811	20.632972
+C	29232132	20.693370
+
+Processed 141263275 out of 141263275.
+9.57user 0.48system 0:10.47elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 0x
+
+156377088 data/0xhgp10a.txt
+31987712 /mnt/cdrom/0xhgp10a.txt.bz2
+
+Actual Results
+T	37946866	30.388407
+A	37691825	30.184167
+G	24631855	19.725551
+C	24602290	19.701875
+Total Unknown is 31343310
+
+Projected Results
+T	47471598	30.388407
+A	47152541	30.184167
+G	30814495	19.725551
+C	30777509	19.701875
+
+Processed 156216146 out of 156216146.
+10.65user 0.47system 0:11.92elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 0y
+
+67526656 data/0yhgp10a.txt
+6197760 /mnt/cdrom/0yhgp10a.txt.bz2
+
+Actual Results
+T	7774924	30.620631
+A	7693243	30.298940
+G	4995415	19.673859
+C	4927547	19.406569
+Total Unknown is 42060592
+
+Projected Results
+T	20654142	30.620631
+A	20437156	30.298941
+G	13270356	19.673859
+C	13090064	19.406569
+
+Processed 67451721 out of 67451721.
+4.31user 0.32system 0:04.86elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 10
+
+143450112 data/10hgp10a.txt
+32802304 /mnt/cdrom/10hgp10a.txt.bz2
+
+Actual Results
+T	37139234	29.240187
+A	36948997	29.090411
+G	26483075	20.850459
+C	26443047	20.818944
+Total Unknown is 16285393
+
+Projected Results
+T	41901113	29.240187
+A	41686484	29.090411
+G	29878654	20.850459
+C	29833493	20.818944
+
+Processed 143299746 out of 143299746.
+9.94user 0.44system 0:10.83elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 11
+
+147660800 data/11hgp10a.txt
+33215488 /mnt/cdrom/11hgp10a.txt.bz2
+
+Actual Results
+T	37725436	29.175941
+A	37656674	29.122762
+G	26982071	20.867282
+C	26939055	20.834015
+Total Unknown is 18204889
+
+Projected Results
+T	43036883	29.175941
+A	42958440	29.122762
+G	30780936	20.867282
+C	30731864	20.834015
+
+Processed 147508125 out of 147508125.
+10.02user 0.60system 0:11.08elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 12
+
+144871424 data/12hgp10a.txt
+32258048 /mnt/cdrom/12hgp10a.txt.bz2
+
+Actual Results
+T	37175901	29.507005
+A	37127118	29.468285
+G	25833610	20.504478
+C	25853457	20.520231
+Total Unknown is 18732591
+
+Projected Results
+T	42703327	29.507005
+A	42647291	29.468285
+G	29674630	20.504479
+C	29697427	20.520231
+
+Processed 144722677 out of 144722677.
+10.01user 0.48system 0:10.83elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 13
+
+117338112 data/13hgp10a.txt
+24323584 /mnt/cdrom/13hgp10a.txt.bz2
+
+Actual Results
+T	28614863	30.679919
+A	28674959	30.744352
+G	17971590	19.268550
+C	18007619	19.307179
+Total Unknown is 23947619
+
+Projected Results
+T	35961973	30.679919
+A	36037499	30.744352
+G	22585948	19.268550
+C	22631228	19.307179
+
+Processed 117216650 out of 117216650.
+8.00user 0.53system 0:08.80elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 14
+
+105836544 data/14hgp10a.txt
+22278144 /mnt/cdrom/14hgp10a.txt.bz2
+
+Actual Results
+T	25668841	29.720283
+A	25552154	29.585179
+G	17588477	20.364555
+C	17558618	20.329983
+Total Unknown is 19354512
+
+Projected Results
+T	31421056	29.720283
+A	31278221	29.585180
+G	21529937	20.364555
+C	21493386	20.329982
+
+Processed 105722602 out of 105722602.
+7.02user 0.48system 0:08.05elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 15
+
+83148800 data/15hgp10a.txt
+19119616 /mnt/cdrom/15hgp10a.txt.bz2
+
+Actual Results
+T	21495635	28.906275
+A	21568494	29.004252
+G	15661753	21.061157
+C	15637332	21.028317
+Total Unknown is 8699200
+
+Projected Results
+T	24010249	28.906275
+A	24091631	29.004252
+G	17493905	21.061157
+C	17466627	21.028317
+
+Processed 83062414 out of 83062414.
+5.79user 0.29system 0:06.25elapsed 97%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 16
+
+85434368 data/16hgp10a.txt
+18472448 /mnt/cdrom/16hgp10a.txt.bz2
+
+Actual Results
+T	20080909	27.476465
+A	20145367	27.564662
+G	16498704	22.574977
+C	16359054	22.383896
+Total Unknown is 12259711
+
+Projected Results
+T	23449444	27.476466
+A	23524714	27.564662
+G	19266330	22.574977
+C	19103254	22.383895
+
+Processed 85343745 out of 85343745.
+5.91user 0.28system 0:06.40elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 17
+
+89276416 data/17hgp10a.txt
+18586112 /mnt/cdrom/17hgp10a.txt.bz2
+
+Actual Results
+T	20194586	27.341793
+A	20193933	27.340909
+G	16713178	22.628255
+C	16758076	22.689043
+Total Unknown is 15321291
+
+Projected Results
+T	24383701	27.341793
+A	24382913	27.340909
+G	20180118	22.628255
+C	20234330	22.689044
+
+Processed 89181064 out of 89181064.
+6.05user 0.36system 0:06.72elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 18
+
+83894272 data/18hgp10a.txt
+18692096 /mnt/cdrom/18hgp10a.txt.bz2
+
+Actual Results
+T	21608126	29.996320
+A	21555521	29.923294
+G	14445584	20.053306
+C	14426691	20.027079
+Total Unknown is 11770782
+
+Projected Results
+T	25138927	29.996321
+A	25077726	29.923295
+G	16806014	20.053306
+C	16784034	20.027079
+
+Processed 83806704 out of 83806704.
+5.75user 0.36system 0:06.30elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 19
+
+71081984 data/19hgp10a.txt
+12961792 /mnt/cdrom/19hgp10a.txt.bz2
+
+Actual Results
+T	13958190	25.945513
+A	13987378	25.999768
+G	12914514	24.005526
+C	12938006	24.049193
+Total Unknown is 17209846
+
+Projected Results
+T	18423372	25.945512
+A	18461898	25.999768
+G	17045828	24.005526
+C	17076835	24.049193
+
+Processed 71007934 out of 71007934.
+4.70user 0.33system 0:05.39elapsed 93%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 20
+
+67272704 data/20hgp10a.txt
+15851008 /mnt/cdrom/20hgp10a.txt.bz2
+
+Actual Results
+T	17297678	28.100808
+A	17127510	27.824363
+G	13575532	22.054025
+C	13555082	22.020803
+Total Unknown is 5641164
+
+Projected Results
+T	18882890	28.100809
+A	18697127	27.824363
+G	14819635	22.054025
+C	14797311	22.020803
+
+Processed 67196966 out of 67196966.
+4.64user 0.24system 0:05.07elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 21
+
+44957696 data/21hgp10a.txt
+8787456 /mnt/cdrom/21hgp10a.txt.bz2
+
+Actual Results
+T	9962530	29.454046
+A	10032226	29.660101
+G	6908202	20.423979
+C	6921020	20.461875
+Total Unknown is 11083592
+
+Projected Results
+T	13227096	29.454047
+A	13319630	29.660101
+G	9171912	20.423978
+C	9188930	20.461874
+
+Processed 44907570 out of 44907570.
+3.09user 0.14system 0:03.42elapsed 94%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number 22
+
+47718400 data/22hgp10a.txt
+8515584 /mnt/cdrom/22hgp10a.txt.bz2
+
+Actual Results
+T	8791272	26.020651
+A	8837391	26.157156
+G	8075338	23.901610
+C	8081748	23.920583
+Total Unknown is 13876913
+
+Projected Results
+T	12402135	26.020652
+A	12467196	26.157155
+G	11392143	23.901610
+C	11401186	23.920583
+
+Processed 47662662 out of 47662662.
+3.31user 0.12system 0:03.55elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number TEST
+
+12288 data/TESThgp10a.txt
+ls: /mnt/cdrom/TESThgp10a.txt.bz2: No such file or directory
+
+Actual Results
+T	300	25.000000
+A	300	25.000000
+G	300	25.000000
+C	300	25.000000
+Total Unknown is 8800
+
+Projected Results
+T	2500	25.000000
+A	2500	25.000000
+G	2500	25.000000
+C	2500	25.000000
+
+Processed 10000 out of 10600.
+0.00user 0.00system 0:00.01elapsed 0%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number TESTRANDOM-25-25-25-25
+
+25030656 data/TESTRANDOM-25-25-25-25hgp10a.txt
+ls: /mnt/cdrom/TESTRANDOM-25-25-25-25hgp10a.txt.bz2: No such file or directory
+
+Actual Results
+T	6250897	25.003588
+A	6249375	24.997500
+G	6251705	25.006820
+C	6248023	24.992092
+
+Processed 25000000 out of 25000000.
+1.73user 0.10system 0:01.88elapsed 96%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+DNA strand number TESTRANDOM-30-30-20-20
+
+25030656 data/TESTRANDOM-30-30-20-20hgp10a.txt
+ls: /mnt/cdrom/TESTRANDOM-30-30-20-20hgp10a.txt.bz2: No such file or directory
+
+Actual Results
+T	7499013	29.996052
+A	7503744	30.014976
+G	4997985	19.991940
+C	4999258	19.997032
+
+Processed 25000000 out of 25000000.
+1.74user 0.12system 0:01.94elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (91major+13minor)pagefaults 0swaps
+
+End Base Pair Analysis 20030830192748
+
+224.19user 12.28system 4:09.16elapsed 94%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (20837major+7518minor)pagefaults 0swaps
+End Run All 20030830192748

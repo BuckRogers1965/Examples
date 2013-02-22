@@ -1,0 +1,180 @@
+
+<!--
+if(document.images)
+{
+	var add_on = new Rollover("trolley_icon_on.gif");
+	var add_off = new Rollover("trolley_icon.gif");
+	// used in catalogue, fav, home. producthistory, productsdetail
+	
+	// var home_on = new Rollover("home_over.gif");
+	// var home_off = new Rollover("home_off.gif");
+
+	// var shops_on = new Rollover("shops_over.gif");
+	// var shops_off = new Rollover("shops_off.gif");
+	
+	// var pc_on = new Rollover("pc_over.gif");
+	// var pc_off = new Rollover("pc_off.gif");
+
+	// var mac_on = new Rollover("mac_over.gif");
+	// var mac_off = new Rollover("mac_off.gif");
+
+	// var licensing_on = new Rollover("licensing_over.gif");
+	// var licensing_off = new Rollover("licensing_off.gif");
+
+	// var download_on = new Rollover("download_over.gif");
+	// var download_off = new Rollover("download_off.gif");
+
+	// Get rid!
+	// var Login1_on = new Rollover("login1_over.gif");
+	// var Login1_off = new Rollover("login1_off.gif");
+
+	// Get rid!
+	// var Logoff_on = new Rollover("logoff_over.gif");
+	// var Logoff_off = new Rollover("logoff_off.gif");
+
+	// var logon_on = new Rollover("login1_over.gif");
+	// var logon_off = new Rollover("login1_off.gif");
+
+	// var logoff_on = new Rollover("logoff_over.gif");
+	// var logoff_off = new Rollover("logoff_off.gif");
+
+	// var account_on = new Rollover("account_over.gif");
+	// var account_off = new Rollover("account_off.gif");
+
+	// var basket_on = new Rollover("basket_over.gif");
+	// var basket_off = new Rollover("basket_off.gif");
+	
+	// var info_on = new Rollover("information_over.gif");
+	// var info_off = new Rollover("information_off.gif");
+
+	// var information_on = new Rollover("info.gif");
+	// var information_off = new Rollover("info.gif");
+	
+	// var help_on = new Rollover("help_over.gif");
+	// var help_off = new Rollover("help_off.gif");
+
+	//var sitemap_on = new Rollover("sitemap_over.gif");
+	//var sitemap_off = new Rollover("sitemap_off.gif");
+
+	// var contact_on = new Rollover("contact_over.gif");
+	// var contact_off = new Rollover("contact_off.gif");
+
+//--------------//
+	
+	// var please_call_on = new Rollover("call_on.gif");
+	// var please_call_off = new Rollover("call.gif");
+	
+	// var stock_on = new Rollover("stock_available_on.gif");
+	// var stock_off = new Rollover("stock_available.gif");
+
+	// var arrow_on = new Rollover("nav_arrow_on.gif");
+	// var arrow_off = new Rollover("nav_arrow.gif");
+	
+	// var carrow_on = new Rollover("box_content_arrow_on.gif");
+	// var carrow_off = new Rollover("box_content_arrow.gif");
+	
+	// var favourites_on = new Rollover("favourites_on.gif");
+	// var favourites_off = new Rollover("favourites.gif");
+		
+	// var login_on = new Rollover("login_over.gif");
+	// var login_off = new Rollover("login_off.gif");
+
+	var company_asc_on = new Rollover("company_asc_over.gif")
+	// var company_asc_off = new Rollover("company_asc.gif")
+	
+	var company_desc_on = new Rollover("company_desc_over.gif")
+	var company_desc_off = new Rollover("company_desc.gif")
+
+	var product_asc_on = new Rollover("product_asc_over.gif")
+	// var product_asc_off = new Rollover("product_asc.gif")
+	
+	var product_desc_on = new Rollover("product_desc_over.gif")
+	var product_desc_off = new Rollover("product_desc.gif")
+
+	var manu_ref_asc_on = new Rollover("manu_ref_asc_over.gif")
+	// var manu_ref_asc_off = new Rollover("manu_ref_asc.gif")
+	
+	var manu_ref_desc_on = new Rollover("manu_ref_desc_over.gif")
+	var manu_ref_desc_off = new Rollover("manu_ref_desc.gif")
+
+	var prod_ref_asc_on = new Rollover("prod_ref_asc_over.gif")
+	// var prod_ref_asc_off = new Rollover("prod_ref_asc.gif")
+	
+	var prod_ref_desc_on = new Rollover("prod_ref_desc_over.gif")
+	var prod_ref_desc_off = new Rollover("prod_ref_desc.gif")
+
+	var avail_asc_on = new Rollover("avail_asc_over.gif")
+	// var avail_asc_off = new Rollover("avail_asc.gif")
+	
+	var avail_desc_on = new Rollover("avail_desc_over.gif")
+	var avail_desc_off = new Rollover("avail_desc.gif")
+
+	var price_asc_on = new Rollover("price_asc_over.gif")
+	// var price_asc_off = new Rollover("price_asc.gif")
+	
+	var price_desc_on = new Rollover("price_desc_over.gif")
+	var price_desc_off = new Rollover("price_desc.gif")
+
+}
+
+function Rollover(image)
+{
+	if(document.images)
+	{
+		var img = new Image();
+		img.src = "/images/1/Aqua/" + image;
+		return img;
+	}
+}
+
+function on(imageName)
+{
+  if(document.images[imageName]) document.images[imageName].src = eval(imageName + "_on.src");
+}
+function off(imageName)
+{
+  if(document.images[imageName]) document.images[imageName].src = eval(imageName + "_off.src");
+}
+
+function mouse_over(imageName)
+{
+  if(document.images[imageName]) document.images[imageName].src = eval(imageName + "_on.src");
+  return true;
+}
+function mouse_out(imageName)
+{
+  if(document.images[imageName]) document.images[imageName].src = eval(imageName + "_off.src");
+  return true;  
+}
+
+function onArrow(no)
+{
+  if(document.images["arrow" + no]) document.images["arrow" + no].src = arrow_on.src;
+}
+function offArrow(no)
+{
+  if(document.images["arrow" + no]) document.images["arrow" + no].src = arrow_off.src;
+}
+
+function onOther(name, no)
+{
+  if(document.images[name+no]) document.images[name + no].src = eval(name + "_on.src");
+}
+function offOther(name, no)
+{
+  if(document.images[name+no]) document.images[name + no].src = eval(name + "_off.src");
+}
+
+function changeImages()
+{
+  // to be replaced by on() and off()
+  if (document.images)
+  {
+    document[changeImages.arguments[0]].src = changeImages.arguments[1];
+  }
+}
+
+function preloadImages() {
+	// do nothing, get rid off ASAP!
+}
+-->

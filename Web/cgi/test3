@@ -1,0 +1,27 @@
+#!/usr/bin/perl -Tw
+
+use strict;
+my $where;
+$where = $ENV{'PATH_INFO'};
+#($where = $ENV{'PATH_INFO'}) =~ s|^/||;
+
+print "Perl-Version: $]\n";
+
+print "Content-type: text/html\n\n";
+
+print "Hello, I see you see me with
+$ENV{HTTP_USER_AGENT}\n\n";
+
+print "<BR>The stuff following the script name is >$where\<n\n";
+
+
+
+#example input:
+#
+#http://one/cgi-bin/test2/these/are/good/times/that/are/here/
+#
+#
+#example output: 
+#
+#Hello, I see you see me with Mozilla/4.03 [en] (X11; I; Linux 2.0.32 i586) 
+#The stuff following the script name is >/these/are/good/times/that/are/here/<n 

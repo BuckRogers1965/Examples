@@ -1,0 +1,286 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "prime.h"
+
+/*
+
+   This program is written to calculate the primes in the first billion
+   numbers.
+
+    Written by James M. Rogers
+    04 May 1999
+
+    A test in memory to see if it can be made faster
+*/
+
+char z[(MAXSIZE/8)+1];
+
+void set_not_prime(unsigned long i) {
+
+    ldiv_t results;
+    char   c;
+
+    results=ldiv(i, 16);
+
+    switch (results.rem) {
+
+        case 1:
+             c='\xFE';
+             break;
+        case 3:
+             c='\xFD';
+             break;
+        case 5:
+             c='\xFB';
+             break;
+        case 7:
+             c='\xF7';
+             break;
+        case 9:
+             c='\xEF';
+             break;
+        case 11:
+             c='\xDF';
+             break;
+        case 13:
+             c='\xBF';
+             break;
+        case 15:
+             c='\x7F';
+             break;
+        default:
+             break;
+    }
+    z[results.quot]=(z[results.quot] & c);
+}
+
+int is_prime(unsigned long i) {
+
+    ldiv_t results;
+    char   c;
+
+    results=ldiv(i, 16);
+
+    switch (results.rem) {
+
+        case 1:
+             c='\x01';
+             break;
+        case 3:
+             c='\x02';
+             break;
+        case 5:
+             c='\x04';
+             break;
+        case 7:
+             c='\x08';
+             break;
+        case 9:
+             c='\x10';
+             break;
+        case 11:
+             c='\x20';
+             break;
+        case 13:
+             c='\x40';
+             break;
+        case 15:
+             c='\x80';
+             break;
+        default:
+             break;
+    }
+    return (int) (z[results.quot] & c);
+}
+
+void set_matrix(unsigned long i) {
+
+    unsigned long    j;
+    unsigned long    k;
+
+    k=(MAXSIZE/i+1);
+
+    for(j=i;j<k;j+=2) {
+        set_not_prime(j*i);
+    }
+}
+
+void factors( unsigned long variable) {
+
+    unsigned long        i;
+    unsigned long max_factor;
+    unsigned long current_factor;
+    ldiv_t prime_results;
+
+    /* set the max_factor to square root of variable */
+    max_factor = sqrt(variable);
+
+    /* see if the variable is more than MAXSIZE^2 */
+    if ( max_factor > MAXSIZE ) {
+        printf ("Too large to solve, the largest number I can factor is %d.", MAXSIZE);
+        exit (1);
+    }
+
+    printf ("%d: ", variable);
+    
+    /* set the current_factor to 2 */
+    current_factor = 2;
+
+    /* while current_factor < max_factor */
+    while ( current_factor <  max_factor ){
+
+        /* Test factor */
+        prime_results = ldiv(variable, current_factor);
+        
+        /* If there is no remainder, print the current_factor, continue. */
+        if ( prime_results.rem == 0 ) {
+            printf ("%d ", current_factor);
+            variable = prime_results.quot;
+            max_factor = sqrt(variable)+1 ;
+        } else {
+            if (current_factor == 2) {
+                current_factor = 3;
+            } else {
+                current_factor = current_factor + 2;
+            }
+            for(i=current_factor; i<max_factor; i++, i++)
+                if (is_prime(i)) {
+                    current_factor = i;
+                    break;
+                }
+        }
+    }
+    printf ("%d\n", variable);
+}
+
+main(int argc, char *argv[]){
+
+    unsigned long        i;
+    div_t	results;
+    int         c,
+                j;
+
+    /* Initialize the array */
+
+    for(i=0;i<MAXSIZE/16;i++) {
+        z[i]='\xFF';
+    }
+
+    /* For loop is the main loop that controls the function of the program */
+
+    for(i=3;i<MAXSIZE; i+=2)
+        if (is_prime(i)) 
+            set_matrix(i);
+
+    factors(1);
+    factors(2);
+    factors(3);
+    factors(4);
+    factors(5);
+    factors(6);
+    factors(7);
+    factors(8);
+    factors(9);
+    factors(10);
+    factors(11);
+    factors(12);
+    factors(13);
+    factors(14);
+    factors(15);
+    factors(16);
+    factors(17);
+    factors(18);
+    factors(19);
+    factors(20);
+    factors(301);
+    factors(81);
+    factors(73);
+    factors(100);
+    factors(144);
+    factors(1045);
+    factors(12345);
+    factors(123456);
+    factors(1234567);
+    factors(12345678);
+    factors(123456789);
+    factors(109007147);
+    factors(1234567890);
+    factors(2100000001);
+    factors(2100000002);
+    factors(2100000003);
+    factors(2100000004);
+    factors(2100000005);
+    factors(2100000006);
+    factors(2100000007);
+    factors(2100000008);
+    factors(2100000009);
+    factors(2100000010);
+    factors(2100000011);
+    factors(2100000012);
+    factors(2100000013);
+    factors(2100000014);
+    factors(2100000015);
+    factors(2100000016);
+    factors(2100000017);
+    factors(2100000018);
+    factors(2100000019);
+    factors(2100000020);
+    factors(2100000021);
+    factors(2100000022);
+    factors(2100000023);
+    factors(2100000024);
+    factors(2100000025);
+    factors(2100000026);
+    factors(2100000027);
+    factors(2100000028);
+    factors(2100000029);
+    factors(2100000030);
+    factors(2100000031);
+    factors(2100000032);
+    factors(2100000033);
+    factors(2100000034);
+    factors(2100000035);
+    factors(2100000036);
+    factors(2100000037);
+    factors(2100000038);
+    factors(2100000039);
+    factors(2100000040);
+    factors(2100000041);
+    factors(2100000042);
+    factors(2100000043);
+    factors(2100000044);
+    factors(2100000045);
+    factors(2100000046);
+    factors(2100000047);
+    factors(2100000048);
+    factors(2100000049);
+    factors(2100000050);
+    factors(2100000051);
+    factors(2100000052);
+    factors(2100000053);
+    factors(2100000054);
+    factors(2100000055);
+    factors(2100000056);
+    factors(2100000057);
+    factors(2100000058);
+    factors(2100000059);
+    factors(2100000060);
+    factors(2100000061);
+    factors(2100000062);
+    factors(2100000063);
+    factors(2100000064);
+    factors(2100000065);
+    factors(2100000066);
+    factors(2100000067);
+    factors(2100000068);
+    factors(2100000069);
+
+    /* Done, flush and close */
+/*
+    for (i=0; i<MAXSIZE/16;i++)
+         putc(z[i], stdout);
+*/
+    exit (0);
+}
+

@@ -1,0 +1,163 @@
+#!/hci/root/bin/tcl
+
+# This is a demo of the hl7 message parsing routines.
+
+
+#
+#hl7_list == {{message} {seperators}} 
+#
+#Where message == {{segment} {segment} ...}  
+#
+
+# hl7split hl7_message_string
+
+proc hl7_split {message seperators} {
+
+    set current_sep [string index $seperators 0]
+    set seperators [string range $seperators 1 end]
+
+    if { [string length $seperators] < 1  } {
+        return $message
+    }
+
+    set newmessage ""
+    foreach part [split $message $current_sep] {
+        set cur_part [hl7_split $part $seperators]
+        lappend newmessage $cur_part
+        
+    }
+
+    return $newmessage
+}
+
+proc hl7_join {msg_list seperators} {
+
+    set current_sep [string index $seperators 0]
+    set seperators [string range $seperators 1 end]
+
+    if { [string length $seperators] < 1  } {
+        return $msg_list
+    }
+
+    set newmessage ""
+    foreach part $msg_list {
+
+        set cur_part [hl7_join $part $seperators]
+        lappend newmessage $cur_part
+    }
+
+    return [join $newmessage $current_sep]
+}
+
+# str2hl7 hl7_message_string
+
+    # The function is passed a string and returns an hl7_list.
+    # At first the message is the list of segments, the seperators have been found and the split flag is true
+    #
+
+proc str2hl7 { msg } {
+
+    set seperators "\r"
+    append seperators [string index $msg 3] 
+    append seperators [string index $msg 5] 
+    append seperators [string index $msg 4] 
+    append seperators [string index $msg 7] 
+    append seperators [string index $msg 6] 
+
+    set hl7_list [list $msg $seperators]
+    set hl7_list [list [hl7_split [lindex $hl7_list 0] [lindex $hl7_list 1]] $seperators]
+
+    return $hl7_list
+}
+
+proc hl72str { msg_list } {
+
+    set msg [hl7_join [lindex $msg_list 0] [lindex $msg_list 1]]
+
+    return $msg
+}
+
+# hl7join hl7_list
+
+# hl7del
+
+# hl7ins  location segment_name
+
+proc hl7_get { msg_part seperators loc_list } {
+
+    if { [llength $loc_list] == 0 } {
+        return [hl7_join $msg_part $seperators]
+    } else {
+        set part [lindex $msg_part [lindex $loc_list 0]]
+        return [hl7_get $part [string range $seperators 1 end] [lrange $loc_list 1 end]]
+    }
+}
+
+proc hl7_find_seg { msg_list seg_name iteration } {
+
+    set current_iter -1
+    set count        -1
+
+    foreach segment [lindex $msg_list 0] {
+         incr count
+
+         if { [lindex $segment 0] == $seg_name } {
+             incr current_iter
+             if { $current_iter == $iteration } {
+                 break
+             }
+         }
+    }
+
+    if { $current_iter == $iteration } {
+        return $count
+    } else {
+        return -1
+    }
+}
+
+# hl7get
+
+proc hl7get { msg_list location } {
+
+    set loc_list [split $location "\."]
+
+    set loc_list [lreplace $loc_list 0 1 [hl7_find_seg $msg_list [lindex $loc_list 0] [lindex $loc_list 1]]]
+
+    if { [lindex $loc_list 0] == -1 } {
+        return ""
+    }
+
+    return [hl7_get [lindex $msg_list 0] [lindex $msg_list 1] $loc_list]
+}
+
+# hl7set
+
+
+proc write_to_file_by_msg_type { msg_list line} {
+
+    set typea [hl7get $msg_list MSH.0.8.0.0]
+    set typeb [hl7get $msg_list MSH.0.8.0.1]
+    
+    set fh [open "hl7.$typea.$typeb.msg" a+]
+    puts $fh $line
+    close $fh
+}
+
+
+set fh [open [lindex $argv 0] r]
+
+gets $fh line
+
+
+while { $line != "" } {
+
+    set msg_list [str2hl7 $line]
+
+    write_to_file_by_msg_type $msg_list $line
+
+    set line ""
+    gets $fh line
+}
+
+close $fh

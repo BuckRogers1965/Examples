@@ -1,0 +1,60 @@
+.CDS_TEXT
+{
+padding: 2px;
+font-family=sans-serif;
+font-size: 12pt;
+text-align: left;
+overflow: hidden;
+height: 14pt;
+clip: auto;
+text-wrap: suppress;
+word-wrap: normal;
+white-space:nowrap;
+}
+
+.CDS_TEXT a:hover
+{
+color: red;
+}
+
+.CDS_TEXT  a, a:link, a:hover
+{
+font-family=sans-serif;
+font-size: 12pt;
+text-align: left;
+font-weight: bold;
+overflow: hidden;
+clip: auto;
+text-wrap: suppress;
+word-wrap: normal;
+}
+
+.CDS_H1
+{
+font-style=sans-serif;
+font-size: 12pt;
+text-align: left;
+font-weight: bold;
+overflow: hidden;
+clip: auto;
+text-wrap: suppress;
+word-wrap: normal;
+}
+
+.CDS_CLOSE
+{
+float: right;
+font-style=sans-serif;
+font-size: 12pt;
+text-align: left;
+font-weight: bold;
+}
+
+.CDS_CLOSE a:link
+{
+}
+
+.CDS_CLOSE a:hover
+{
+color: red;
+}

@@ -1,0 +1,75 @@
+HL7 Router project
+
+Milestones:
+
+Configuration
+[X] Read Configuration File
+[ ] Rewrite the config file in XML and learn to read this file
+
+Interprocess Communication
+[X] Spawn children and keep children running
+[X] Communicate with children
+
+Process HL7 Messages
+[X] Children are able to open a file named in the config file
+[X] Children are able to write to a file named in the config file
+[ ] Children are able to perform message translations
+[ ] Reading from file is from newline only. Add length encoded as well.
+[ ] Reading from tcp port is newline only. Add other HL6 protocols as well.
+[X] Children are able to open a tcp port named in the config file
+[X] Children are able to write to a tcp port named in the config file
+[ ] Children are able to open multiple files and ports for writing
+
+Acks
+[ ] "HL6" Protocols 
+[ ] wait for ack (use timeout)
+[ ] check ack
+[ ] creat ack
+[ ] send ack
+
+HL7 Routing
+[ ] Determine whether or not to route messages based on sending node,
+    message type and destination node.
+
+
+
+HL7 Library
+[X] HL7 library is written to meet the needs of an HL7 router.
+[ ] HL7 library is extended
+
+Reporting
+[ ] Parent reports to child monitor process
+[ ] Monitor process writes out text status page
+[ ] Monitor process writes out html  status page
+[ ] Monitor process reports to Argus
+[ ] Monitor process reports to Big Brother
+[ ] Monitor process reports to SNMP
+[ ] Monitor process allows you to control the status thru a secure web server
+
+Advanced HL7 Routing
+[ ] Rewrite the code to be threaded, this allows easy communication amoung all the processes.  This would simplify the interprocess comunications.  Each box would have one or more threads.  Routing commands would send HL7 messages to other threads 
+
+Security
+[ ] Connect to other boxes through ssh port redirection
+
+Overview
+
+The Basic HL7 router will allow you to read messages from a source, securely store the messages locally, process the message, route the message to one or more sources, process the message for that destination and then repeat.
+
+The Basic HL7 Router should allow you to use the UNIX filesystem to securly store data and also facilitate easy porting to use other databases by abstracting the commands used to store and retrieve HL7 messages from the message repository.
+
+Using files as databases
+
+For each process that is reading from a file you need a pointer of some kind that will store the location of the current and previous messages to allow you to start processing from the point at which you stopped.  
+
+HL7 files such as these will also need to be rotated daily by bringing down all the children, archiving the logs, rewriting all logs to only contain unsent messages, removing all file pointers and finally restarting all children.  
+
+HL7 Library
+
+I am going to implement very similar HL7 libraries in C, Tcl and Perl.  These libraries will enable the developer to quickly prototype programs in Perl or Tcl and then convert the programs to run much more rapidly under C.  Someday I will write a C++ wrapper class to hide all the dirty details from the developer!
+
+Processing Messages.
+
+I intend to write a generic HL7 parser that will read through an HL7 data structure and a complimentary HL7 definition to automatically process the message into the proper form.  
+
+

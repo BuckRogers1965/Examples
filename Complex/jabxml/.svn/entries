@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="41"
+   name=""
+   committed-date="2007-03-29T11:26:34.361879Z"
+   url="http://localhost/svn/projects/projects/examples/complex/jabxml"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="41"
+   name="jabberd.h"
+   text-time="2007-03-29T11:26:00.000000Z"
+   committed-date="2007-03-29T11:26:34.361879Z"
+   checksum="32f487eba74f07178d43dd511e54b325"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="41"
+   name="test1.xml"
+   text-time="2007-03-29T11:26:00.000000Z"
+   committed-date="2007-03-29T11:26:34.361879Z"
+   checksum="69b109fcd3d06baebd2be5b8e6e34f34"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="41"
+   name="xml_test"
+   text-time="2007-03-29T11:26:00.000000Z"
+   committed-date="2007-03-29T11:26:34.361879Z"
+   checksum="065b22442a95209a115ba76d05125bd5"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:26:00.000000Z"/>
+<entry
+   committed-rev="41"
+   name="main.c"
+   text-time="2007-03-29T11:26:00.000000Z"
+   committed-date="2007-03-29T11:26:34.361879Z"
+   checksum="4d5bb42c1f5222458fdee36d475a38bc"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+<entry
+   committed-rev="41"
+   name="Makefile"
+   text-time="2007-03-29T11:26:00.000000Z"
+   committed-date="2007-03-29T11:26:34.361879Z"
+   checksum="09f95eac7b0f1c278e6a896262522f7f"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:26:00.000000Z"/>
+<entry
+   committed-rev="41"
+   name="test.xml"
+   text-time="2007-03-29T11:26:00.000000Z"
+   committed-date="2007-03-29T11:26:34.361879Z"
+   checksum="638d8a88ed4f34205a9cbb401bc361f5"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:44:22.000000Z"/>
+</wc-entries>

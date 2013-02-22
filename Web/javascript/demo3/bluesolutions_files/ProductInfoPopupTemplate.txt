@@ -1,0 +1,18 @@
+CDS.Private.ProductInfoPopup.TemplateCallback(
+	 {
+	  ProductInfoTemplate:
+		{ 
+		  "self" : "<table cellpadding='0' cellspacing='0'><tr><td><div id='CDS_ProductInfo_Title'>Additional Information</div></td><td align='right'><img name='CDS.ProductInfoPopupCloseButton' src='{CloseButtonImageUri}' onmouseout='CDS.Private.ProductInfoPopup.CloseButtonmouseout()'  onmouseover='CDS.Private.ProductInfoPopup.CloseButtonmouseover()' onclick='CDS.Private.ProductInfoPopup.CloseButtononclick(event)'/></td></tr><tr><td colspan='2'><ul>{$.links}</ul></td></tr></table>",  
+		  "self.links[*]": "<li><a href=\"javascript:void(0)\" onclick='CDS.Private.ProductInfo.ShowProductInfoWindow(this,\"{@absurl($.url)}{@Parameter($.url)}\", \"{@dequote($.title)}\", {$.width}, {$.height}, 1)'>{$.title}</a></li>",
+		  "Syndicator": function(){return CDS.Private.gSyndicatorID;},
+		  "Parameter": function(u){
+		      var param = CDS.Private.gTrackingParameter;
+            param = CDS.Private.CreateParamIG(param,u);
+            return param;
+		  },
+        "CloseButtonImageUri": function(){return CDS.Private.gCloseButtonImageUri;},
+        "absurl": function(u) { return u.substr(0,4) == "http" ? u : CDS.Private.gContentBaseURL + u;},
+		  "dequote": function(u) {u=u.replace("\"",""); u=u.replace("&quot;","") ; return u;}
+      }
+	 }
+)

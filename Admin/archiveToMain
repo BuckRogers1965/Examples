@@ -1,0 +1,1 @@
+rsync -avz -e ssh  --exclude /dev --exclude /proc /*  root@192.168.0.102:/home/jrogers/laptop/

@@ -1,0 +1,5 @@
+
+
+Never change a data value once it has been passed from what generated the value.  
+
+For common variables such as 0, 1, 2 and the like you can have defined

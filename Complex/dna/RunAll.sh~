@@ -1,0 +1,13 @@
+#!/bin/bash
+
+filename=`date +"RunAll%Y%m%d%H%M%S.txt"` 
+
+exec > results/$filename 2>&1
+
+echo Begin Run All `date +"RunAll%Y%m%d%H%M%S"`
+
+echo Saving all results to $filename
+
+time ./bp.sh 
+
+echo End Run All `date +"RunAll%Y%m%d%H%M%S"`

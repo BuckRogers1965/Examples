@@ -1,0 +1,38 @@
+This project has the same goals as the original project, but instead it is going to not use a special data structure to store the messages.
+
+Instead the messages will be kept in ascii string fromat and split as needed.  This will remove a lot of management overhead from the users of the library.
+
+The funtions of the library are as follows:
+
+hl7 ("get", $msg, "PID.0.3.1.0")
+
+hl7 ("exists", $msg, "PID.0.3.1.0")
+
+hl7 ("set", $msg, "MSH.8.0.0", (char *)0)
+hl7 ("set", $msg, "MSH.8.0.0", "test")
+
+hl7 ("ins", $msg, "EVN.1", "ZVN")
+
+hl7 ("clean", $msg)
+
+Notes:
+
+get
+  Get the specified location from the message.  If the location doesn't exist or is empty, return an empty string. Otherwise return the string at the given location.  A present but NULL is returned as a pair of double quotes.  The string returned from this function will need to be freed once the function is finished with it.
+
+exists
+  If the location is in the message return a 0, otherwise return a 1.
+
+set
+  Set the given location to the given data value.  If the data value is a NULL then blank it without creating any unneeded characters.  If a segment doesn't exist then don't do anything to the message and don't return an error.
+
+ins
+  Insert the new segment after the named location.
+
+clean
+  Remove unneeded sepatators from a message.
+
+
+SPECIFICATIONS
+
+

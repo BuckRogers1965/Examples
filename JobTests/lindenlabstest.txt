@@ -1,0 +1,635 @@
+Here are my test answers.  See attached perl program for the solution
+to problem 12.
+
+
+Linden Lab Engineering Test
+Instructions:
+
+   * You are not expected to answer all of the questions. Instead,
+choose the five questions that you feel are in your domain expertise.
+   * Answer the questions without anyone else's help.
+   * You may use other reference sources but must include
+descriptions of the references you consulted.
+   * Please record how much time you spent working on the test.
+   * Please submit answers as text.
+
+This test is in no way an offer of employment with Linden Lab, nor
+does it guarantee an interview or an offer of employment.
+
+Problem 1
+Part A:
+Given a list of URLs containing query strings where the query string
+of each URL may contain a field of refsrc assigned to some value,
+provide code which:
+
+   * Collates the URLs into a associative container where the refsrc
+is the key and the value is another associative container where the
+URL is the key and the value is the number of times that URL was
+encountered in the list.
+   * Stores this information into one or more database tables. Please
+provide the SQL data declaration suitable for your storage routine.
+
+You can implement the procedural code in a language of your choice.
+You can use any form of input of the URLs into your code including
+having them available in memory.
+
+--
+
+--
+
+Part B:
+What are possible purposes for this code?
+
+--
+
+If you are running a referral program and want to track what clients
+have sent customers to what part of your sites, then you could use a
+method like this.
+
+-- -- --
+
+Problem 2
+Write a shell script to find all of the IPV4 IP addresses in any and
+all of the files under /var/lib/output/*, ignoring whatever else may
+be in those files. Perform a reverse look up on each, and format the
+output neatly, like:
+
+IP=192.168.0.1, hostname=poodle.lindenlab.com
+IP=10.9.33.1, hostname=liger.lindenlab.com
+
+Your script can use perl, sed, awk, etc, but don't use the perl libraries.
+
+--
+
+for i in `grep -REo
+'(([01]{0,1}[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.){3}([01]{0,1}[0-9]{1,2}|2[0-4][0-9]|25[0-5])'
+/var/lib/output/ | sort -u`; do j=`dig +short -x $i`; echo "IP=$i,
+hostname=$j"; done
+
+-- -- --
+
+Problem 3
+On a unix host, what are some ways to tell if a given file is
+presently being used by a process? How can you tell what sort of
+access the process has to the file (read from, written to, filehandle
+held open, etc)? Can more than one process access the file at the same
+time?
+
+--
+
+Lsof  filename
+
+The FD column gives the mode the file is opened with.  R is read, w is
+write and u is read and write.
+
+The command name is in the COMMAND column, and it's PID is under the PID column.
+
+Yes, depending on the locking used a file can be read from or written
+to by multiple processes. Multiple writing, or reading while writing
+can be very bad if great care is not taken.
+
+-- -- --
+
+Problem 4
+You have a compiled C binary which you can execute and run, but you
+suspect it may be hanging. You do not have the source. What can you do
+to gather information and/or clues about what the program is doing?
+
+--
+
+Strace will show the system calls that a process is making.  You can
+also use a debugger like gdb even without the source code, or even
+with the library symbols stripped out, to give you an idea of what the
+program is doing.
+
+-- -- --
+
+Problem 5
+You have a simple form you plan to store in the database:
+
+<form>
+ Search for: <input type=text size=35 name="keywords">
+ <input type=submit>
+</form>
+
+Enumerate some things you would do to secure this form against attack.
+
+When I got the form into the server I would assume that the input was
+tained until it was cleaned and validated.
+
+To clean the input data I would remove all characters with any special
+meaning from the data, and if any are found return the form to the
+user with the bad fields marked.  This would include quotes, angle
+brackets, backslashes, and a few others which I would have to
+research.
+
+Once I am satisfied that I am rejecting overtly bad data I would then
+check to ensure that the data was positively valid.
+
+If it were supposed to be a number in a certain format I would ensure
+that the numbers were in the proper range and place as well as the
+seperator characters being correct.
+
+If it were a text field I would ensure it only contained valid text
+characters of no more than the length allowed.  In the above case I
+would ensure that the keywords were all text seperated by white space.
+
+Combining both methods makes it more difficult for anyone to slip
+anything through.
+
+-- -- --
+
+Problem 6
+Create a web entry form that accepts a username, password, and email.
+Write code which validates the form for security and adherence to all
+of the following rules:
+
+   * The username has no spaces or numbers.
+   * The password starts with a letter and has at least one number in it.
+   * The email is a valid email address.
+
+If the user fails to validate:
+
+   * The user should be prompted.
+   * The form should re-populate the valid fields and clear out invalid fields.
+   * The invalid fields are highlighted in some manner.
+
+The form, and all of the error condition variants, must be HTML. You
+may use ECMAScript validation of the entries, but the server code must
+adhere to the same validation rues. The server code can be in any
+appropriate language but must not rely on any frameworks which
+automate the validation.
+
+-- -- --
+
+Problem 7
+Given a database table USER which is used to track information about
+users, you now need to store and track additional information about
+users not currently in the table.
+
+Describe at least two ways you can modify your DB schema to do this,
+and give some pros and cons of each approach.
+
+Include sample SQL DDL statements needed for each approach.
+
+--
+One method would be to add in an extra column to the user table to
+determine if the row is a valid user or not.  This is fast and you
+only have to change a few programs that list these issues.
+
+A con to this approach is what happens when you add 20 different
+classifications of people, each with their own column.  That gets very
+strange.
+
+CREATE TABLE USER (
+   id            INTEGER   PRIMARY KEY,
+   first_name    CHAR(50)  NULL,
+   last_name     CHAR(75)  NOT NULL,
+   dateofbirth   DATE      NULL,
+   validuser     BOOLEAN   NOT NULL
+);
+
+--
+
+A second method is to use a person table seperate from the user table
+that stores all the information about people in your database.  Link
+from the user table to the person table for valid users.
+
+This is at expense of a more complicated database.
+
+You can also turn this around and go further to create a table that
+lists what groups people are members of in a more normalized manner.
+You run a query on the membership table and it returns the list of
+groups a person belongs to. Or you can run a query and get the list of
+people that belong to a group.
+
+In this case seeing if someone is a user is a simple matter of
+checking if they are a member of group user in the membership table.
+
+A negative to this method is that the normaziation makes querying the
+table a little more difficult, but it is often very easy to create
+views that denormalize the tables for people. There is also more
+maintenance with the foreign keys.
+
+CREATE TABLE people (
+   id            INTEGER   PRIMARY KEY,
+   first_name    CHAR(50)  NULL,
+   last_name     CHAR(75)  NOT NULL,
+   dateofbirth   DATE      NULL
+);
+
+
+CREATE TABLE membership (
+   person_id     INTEGER FOREIGN KEY,
+   group_id      INTEGER FOREIGN KEY
+);
+
+CREATE TABLE group (
+       id      INTEGER PRIMARY KEY,
+       name    CHAR(75) NOT NULL
+}
+
+-- -- --
+
+Problem 8
+You need to immediately remove an entire section of the website,
+written in PHP, from general access. Enumerate as many ways to do this
+as you can think of.
+
+--
+
+Delete that section from the website.  You can always recover from the
+deployment packages.  The problem with this is that it breaks any
+links you have to those pages.
+
+Swap out the entry point to that section to a maintenance page,
+redirect all access to that area to the page.
+
+Make the needed changes in the deployment system to disable that
+section of your website and then deploy the package to the website.
+
+If that is the only section of your site written in PHP, then you may
+be able to do something with PHP itself to deactive those pages
+without removing them.
+
+Using PHP you can look for a stop sign file in entry directory to that
+section and deactive that section if the file exists.  Or you can have
+a file with date ranges of when to present the maintenance page.  I've
+used this method before in batch processing code and in alert code to
+not alert during maitenance windows.
+
+-- -- --
+
+Problem 9
+Describe a schema for storing an acyclic-directed graph in an
+SQL-based relational database. Provide the SQL DDL.
+
+Seems to be patented.
+
+US Patent 6633886 - Method of implementing an acyclic directed graph
+structure using a relational data-base
+http://www.patentstorm.us/patents/6633886/claims.html
+
+The obvious way is patented, I'd have to look for a non-obvious manner
+to implement this patented algorithm.
+
+-- -- --
+
+Problem 10
+Part A:
+Your company is writing a feature for your customer base of 5 million
+to check how many times an upload fee was assessed last month. Another
+developer wrote the following SQL query:
+
+SELECT c.*, t.*, FROM customer c LEFT JOIN transactions t ON
+t.customer_id = c.customer_id WHERE c.name='$customer_name' ORDER BY
+c.name ASC, t.date DESC;
+
+You know nothing about the database except that it is MySQL, but your
+goal is to optimize this query as much as you can. How would you
+start?
+
+--
+
+I would start by only returning exactly what I needed.  So if I only
+care about customer_id and the number of times a fee was assessed,
+then I could limit the columns to just the customer_id and a group
+count where the fee was more than zero.  (oh, saw below that you are
+looking at transaction_type for update, made the change below for
+that.)
+
+SELECT c.customer_id, COUNT(*) FROM customer c LEFT JOIN transactions
+t ON t.customer_id = c.customer_id WHERE c.name='$customer_name' AND
+t.transaction_type = 'upload' GROUP BY c.customer_id;
+
+I'd double check to make sure a left join was good, or if another kind
+would be better for this query.  I would also profile the queries to
+make sure that the query plan was good.  Add an index if needed to a
+table to speed things up if it would make a difference.
+
+--
+
+Part B:
+You then look at the PHP code which uses this SQL query: the developer
+uses PHP to connect to the MySQL database, run the query above, and
+return the results in an array $results. This query is not used
+anywhere else but here.
+
+Then the developer writes the following:
+
+ $count = 0;
+ for ($i = 0; ++$i < count($results); )
+ {
+  $element = $results[$i];
+  if ($element[transaction_type] == 'upload')
+  $count = $count + 1;
+ }
+
+What suggestions would you make to improve this implementation?
+
+--
+
+Add "transaction_type = 'upload'" to the WHERE clause of the query so
+you don't have to do this processing here.  You can just have sql
+return the count of rows alone if that is what you want.
+
+
+-- -- --
+
+Problem 11
+Debug the following code - explain the problems you find. Optionally,
+provide an improved version.
+
+#include <stdio.h>
+#include <string.h>
+
+char *gText = 0;
+unsigned int gSize = 0; // the length of gText, in bytes
+
+int
+append (const char *s)
+{
+ if (s && s[0])
+   {
+     if ((!gText) || (gSize = 0))
+       {
+         gText = (char *) s;
+         gSize = strlen (s);
+       }
+
+     else
+       {
+         unsigned int len = gSize;
+         unsigned int s_len = strlen (s);
+         gSize += s_len;
+         char *temp = new char[gSize];
+         memcpy (temp, gText, len);
+         memcpy (temp + len, s, s_len + 1);
+         temp[gSize - 1] = '\0';
+         gText = temp;
+       }
+
+     return gSize;
+   }
+}
+
+--
+
+You have a function accessing a global variable instead of passing the
+values into the function.  Functions aren't supposed to create side
+effects in global variables without notice.
+
+You use an equality instead of comparison here : if( (! gText) || (gSize = 0) )
+
+When the function fails because s is null or a zero length string you
+don't return a value.  I stuck a return 0 on there to indicate a
+failure to process the string.
+
+The function does not free the old memory when you replace gText with
+temp: gText = temp;  That means that you will leak memory.  You need
+to add a delete.
+
+When you add a delete there it fails because the first append you are
+assigning a constant string to gText: gText = (char *)s;
+
+If you need to append to a second string there is no easy way to do so
+without copying this whole function and changing the global variables
+it represents.
+
+There is no way to reclaim memory once it is used, except by working
+on the global variables directly, this could cause side effects, or be
+hard to spot where else you are changing these global variables.
+
+You are chopping off the last character of each string you append with
+this line: temp[gSize - 1] = '\0';   This line appears to not be
+needed at all.
+
+--
+Improved version:
+--
+
+#include <stdio.h>
+#include <iostream>
+#include <sstream>
+using namespace std;
+
+class gStr
+{
+public:
+ char *gText;
+ unsigned int gSize;           // the length of gText, in bytes
+   gStr ()
+ {
+   gText = 0;
+   gSize = 0;
+ }
+  ~gStr ()
+ {
+   if (gText)
+     delete gText;
+ }
+
+int
+append (const char *s)
+{
+ if (s && s[0])
+   {
+     unsigned int s_len = strlen (s);
+     if (!(gText) || (gSize == 0))
+       {
+         gSize = s_len;
+         char *temp = new char[gSize];
+         memcpy (temp, s, s_len + 1);
+         gText = temp;
+       }
+
+     else
+       {
+         unsigned int len = gSize;
+         gSize += s_len;
+         char *temp = new char[gSize];
+         memcpy (temp, gText, len);
+         memcpy (temp + len, s, s_len + 1);
+         if (gText)
+           delete gText;
+         gText = temp;
+       }
+
+     return gSize;
+   }
+
+ return 0;
+}
+};
+
+int
+main ()
+{
+
+ gStr *theStr = new gStr;
+
+ theStr->append ("1this is a test");
+ cout << theStr->gText << "\n" << theStr->gSize << "\n";
+
+ theStr->append ("2this is a testa");
+ cout << theStr->gText << "\n" << theStr->gSize << "\n";
+
+ theStr->append ("3this is a testaa");
+ cout << theStr->gText << "\n" << theStr->gSize << "\n";
+
+ theStr->append ("4this is a testaaa");
+ cout << theStr->gText << "\n" << theStr->gSize << "\n";
+
+ theStr->append ("5this is a testaaaa");
+ cout << theStr->gText << "\n" << theStr->gSize << "\n";
+
+ delete theStr;
+
+ return 0;
+}
+
+
+-- -- --
+Problem 12
+You have a set of web logs from 4 web servers in 4 files on a single
+host. These logs are in "Combined Log Format". See
+http://httpd.apache.org/docs/1.3/logs.html#combined as a reference.
+The logs cover a period of several days, totaling 40 million access
+records and about 10 gigs of data.
+
+Submit code which extracts a single time-ordered sequence of access
+records for a particular IP address and between a two points in time.
+The code can be in any appropriate language.
+
+--
+
+See attached perl program.
+
+-- -- --
+
+Problem 13
+Write a function "void parenPermutations(char *expression)" that
+prints all the possible different results you can get from different
+grouping of parentheses in the given expression.
+
+The string 'expression' contains the operators '+', '-', '*' and
+positive integers (or possibly no operators and just one integer). The
+expression is entirely unparenthesized. Your function should determine
+the result of every possible parenthesization of the expression and
+print the distinct ones.
+
+Don't worry about overflowing int or strange formatting of the expression.
+
+Use any language that you would like. Explain your choice.
+
+Examples:
+
+A. expression "1 + 2 - 3 * 4"
+(((1 + 2) - 3) * 4) = 0
+((1 + 2) - (3 * 4)) = -9
+(1 + (2 - 3) * 4) = 0
+(1 + ((2 - 3) * 4)) = -3
+(1 + (2 - (3 * 4))) = -9
+There were five possible, but two were the same, so your function
+should print:
+3 unique { 0, -9, -3 }
+
+B. expression "1 - 1 + 1"
+((1 - 1) + 1) = 1
+(1 - (1 + 1)) = -1
+Your function should print:
+2 unique { 1, -1 }
+
+C. expression "10"
+1 unique { 10 }
+
+D. expression "1 + 2 + 3 * 4 - 5 * 2"
+18 unique { 38, 14, -12, -36, 20, 5, 17, 0, -3, -15, 32, 11, 31,//
+// -8, -9, -29, 19, -1 }
+
+-- -- --
+
+Problem 14
+Computer A is sending packets to computer B over a 1 Mbps connection
+with a latency of 100 msec. Computer A is running two processes, P1
+and P2. P1 is sending data via TCP, and P2 is sending data via UDP.
+The application in each process attempts to send data in random bursts
+that average out to 750 kbps. Describe the expected throughput and
+loss characteristics for packets from P1 and P2 as seen at computer B.
+
+--
+
+75% of the data line being used is maxing out the line in the ethernet
+protocol.  Since this is the average usage then when both processes
+are sending a burst at the same time it will over-saturate the line.
+
+Computer B will have to ask for tcp retransmissions of some of the
+packets from Computer A on the P1 process, while they will be losing
+some of the udp packets on process P2.  There will be retransmit
+storms from the TCP protocol used in process P1 on the line that block
+most of the packets, including the retransmission requests.
+
+-- -- --
+
+Problem 15
+Please read this document:
+
+http://www.infrastructures.org/bootstrap/ALL.shtml
+
+We have used many of these ideas in building the Second Life
+infrastructure, and are interested in your thoughts on this model.
+
+--
+
+The only issue with process is that it can tend to make individuals
+feel constrained.  Make them think in the box.  It can also take a
+while to come up to speed in a company when there is heavy process
+around every action.  The dusty 1100 page procedure document on the
+shelf is a scary thing when they thump it down in front of the new
+hire.
+
+The other side of the coin is that process is institutional memory.
+These are the policies that were put into place in order to keep
+problems from happening again.  Every policy was made in order to
+prevent future problems.
+
+If the process is clearly documented in a living form, like in a wiki,
+then it can grow and change to meet new challenges and is easily
+readable and search-able for how to perform tasks.  The process also
+has to empower the employees to come up with better ways to do things
+that then become the new process.
+
+"In an enterprise-cluster infrastructure made up of commodity nodes,
+only the people need to move; they log off of their old workstation,
+walk over to their new desk, sit down, log in, and keep working. "
+
+This is the mode of operation that I have championing for years.  I
+have ran X Terminals at home for over a decade now, throwing them out
+in the living room for people to check their mail or find a link on
+the web.
+
+I noticed how easy it was in college and at the hospitals I worked at
+over the years that used X Terminal front ends to clusters of big
+servers that failed over to one an other that could keep running no
+matter what was happening.
+
+If a particular terminal was dead you just walked over to another
+terminal.  If an X Terminal died it was easy for even a user to just
+swap it out on their own and configure a couple of values and be right
+back up and running at their own desk in just a few minutes.  The
+terminals are very low cost and low power as well, which is becoming
+more critical as energy costs continue to rise.
+
+No matter what computer you logged onto, your home directory was
+mounted to that computer for you.
+
+It was even secure to work on the X Terminals from home, because all
+the data was still at work or at school and the data was going through
+an ssh tunnel.
+
+And because all the processes on the main servers share memory for all
+the read portions of executables, starting up a copy of the browser or
+the text editor was blazing fast, it was already loaded in memory by
+another user.
+
+Central servers also make it easy to back up all the data on the network.

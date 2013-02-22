@@ -1,0 +1,117 @@
+#!/usr/bin/perl
+#
+# This program will read an HL7 message and output the message
+# as a list of tags and values.
+#
+# The tags are in the form of MSH 0 1 2 3
+# where the MSG is the segment, the 0 is the field, the 1 is the repeat of
+# the field, the 2 is the component, and the 3 is the repeat of the 
+# component.
+#
+# Author:  James M. Rogers    08 July 1998
+#
+#
+
+# 
+# Read the command line that the user entered
+# for now we will assume that the messages enter on stdin
+# and we output to standard out
+#
+
+# 
+# Read each hl7 message
+#
+
+while ($line = <>) {
+ chop $line;
+
+#
+# Find the message seperators
+#
+
+# The 3th character is the field seperator
+# The 4th character is the component seperator
+# The 5th character is the field repetition
+# The 6th character is the escape character
+# The 7th character is the subcomponent seperator
+# The last character of the message is the segment seperator
+
+$field = "\\" . substr($line, 3, 1);
+$component = "\\" . substr($line, 4, 1);
+$repetition = "\\" . substr($line, 5, 1);
+$escape = "\\" . substr($line, 6, 1);
+$subcomponent = "\\" . substr($line, 7, 1);
+$segment="\r";
+$n=2;
+
+#
+# Fix the message to correct for the seperators not being visible
+#
+  substr($line,0,8)="MSH". substr($line, 3, 1) . substr($line, 3, 1) ;
+
+# 
+# Break the message into segments
+#
+  @segments = split(/$segment/, $line);
+  $number_of_segments=$#segments + 1;
+  for ($i=0; $i<$number_of_segments; $i++){
+
+# 
+# Break the segments into fields
+#
+  @fields = split(/$field/, @segments[$i]);
+  $number_of_fields=$#fields + 1;
+  for ($j=0; $j<$number_of_fields; $j++){
+
+# 
+# Break the fields into repeating fields
+#
+  @rep_fields = split(/$repetition/, @fields[$j]);
+  $number_of_rep_fields=$#rep_fields + 1;
+  for ($k=0; $k<$number_of_rep_fields; $k++){
+
+
+# 
+# Break the repeating fields into components
+#
+  @components = split(/$component/, @rep_fields[$k]);
+  $number_of_components=$#components + 1;
+  for ($l=0; $l<$number_of_components; $l++){
+
+# 
+# Break the components into subcomponents
+#
+
+  @rep_components = split(/$subcomponent/, @components[$l]);
+  $number_of_rep_components=$#rep_components + 1;
+  for ($m=0; $m<$number_of_rep_components; $m++){
+
+# 
+# Load the info into a data structure
+#
+    @segment_list[$n] = "     $i @fields[0] $j $k $l $m	@rep_components[$m]";
+    $n++;
+
+} # end subcomponent for
+} # end component for
+} # end repetition for
+} # end field for
+} # end segment for
+
+#
+# Correct the first few fields of the message to print the correct tokens
+#
+  @segment_list[0]=@segment_list[2];
+  @segment_list[1]="     0 MSH 1 0 0 0	" . substr($field,1,1);
+  @segment_list[2]="     0 MSH 2 0 0 0	" . substr($component,1,1) . substr($repetition,1,1) . substr($escape,1,1) . substr($subcomponent,1,1);
+
+#
+# Print out the data structure 
+#
+  for ($i=0; @segment_list[$i]; $i++) {
+    print @segment_list[$i],"\n";
+  }
+  print "\n\n";
+  undef @segment_list
+
+} # end message while

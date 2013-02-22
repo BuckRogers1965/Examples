@@ -1,0 +1,38 @@
+Use the language of your choice.
+Proper error handling is important.
+Your code should compile (if applicable) and run.
+
+
+1) Given a log file with lines that look like this:
+
+1220907563   192.168.0.5   http://example.amazon.com/foo/   200
+1220907570   192.168.1.115   http://example.amazon.com/gone/   404
+(timestamp)  (IP address)   (URI)   (response)
+
+(see the attached file for an example)
+
+  a. Write a program to print a report of how many times each URI was
+  requested each hour.
+
+  b. Write a program to print a report of all requested URIs with 404s,
+  and how many times each one was requested.
+
+
+2) Write a function (not a program) which, given a sequence (your
+language’s preferred array, vector, or list type) of integers,
+identifies the sequence and returns the next integer.  The sequence may
+be:
+
+  a. Fibonacci-like: f(x) = f(x – 1) + f(x – 2)
+
+  b. Exponential: f(x) = f(x – 1) * n, where n is an arbitrary
+  constant integer
+
+  c. Factorial: f(x) = f(x – 1) * (f(x – 1) / f(x – 2) + 1)
+
+Examples:
+
+  a. [2, 5, 7, 12] -> Fibonacci-like, next element will be 19.
+  b. [3, 6, 12, 24] -> exponential, next element will be 48.
+  c. [4, 8, 24, 96] -> factorial, next element will be 480.
+  d. [2, 3, 5, 17] -> not a valid sequence, signal an error.

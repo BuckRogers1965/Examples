@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/process/dna/src"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="test"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="29cd1e4cd7ae2f90bf5e99608a9e53fd"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="bptree"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="eeec105c2fbefb2eed0706ed061f7476"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:16.000000Z"/>
+<entry
+   committed-rev="40"
+   name="basepairfreqency.c"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="55aedc0e8dfa01523321c276e1fde4e2"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="treecharnode.c"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="b34857c89f427c9eb20269ea7897a8f6"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:16.000000Z"/>
+<entry
+   committed-rev="40"
+   name="genRandomGenes.c"
+   text-time="2007-03-29T11:23:16.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="52d9ac88d399d65cdc5e05de0b195bf3"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+</wc-entries>

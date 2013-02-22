@@ -1,0 +1,63 @@
+
+#define SEQLEN 4
+
+int facTest(int seq[]){
+	int change;
+
+	if (seq[0] == 0 || seq[1] == 0 || seq[2] == 0 || seq[3] == 0)
+		return 0;
+
+	change = seq[1]/seq[0];
+
+	if (((change +1) == (seq[2]/seq[1])) && ((change+2) == (seq[3]/seq[2])))
+		return seq[3]*(change +3);
+
+	return 0; 
+}
+
+int expTest(int seq[]){
+	int change;
+
+	if (seq[0] == 0 || seq[1] == 0 || seq[2] == 0 || seq[3] == 0)
+		return 0;
+
+	change = seq[1]/seq[0];
+
+	if ((change == (seq[2]/seq[1])) && (change == (seq[3]/seq[2])))
+		return seq[3]*change;
+
+	return 0; 
+}
+
+int fibTest(int seq[]){
+
+	if ( (seq[0] < seq [1]) && (seq[0]+seq[1] == seq[2] ) && ( seq[1]+seq[2]==seq[3]))
+		return seq[2]+seq[3];
+
+	return 0;
+
+}
+
+int seqTest(int seq[]){
+	int result;
+
+	if (result = facTest(seq)){
+		printf("Factorial, next element will be %d\n", result);
+		return result;
+		}
+
+	if (result = expTest(seq)){
+		printf("Exponential, next element will be %d\n", result);
+		return result;
+		}
+
+	if (result = fibTest(seq)){
+		printf("Fibonacci, next element will be %d\n", result);
+		return result;
+		}
+
+
+	printf("Not a valid sequence.\n");
+	return 0;
+}
+

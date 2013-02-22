@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="5"
+   name=""
+   committed-date="2007-03-14T12:38:00.537101Z"
+   url="http://localhost/svn/projects/docs/parsing/crenshaw/edited2"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="5"
+   name="lesson09.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="cb708b2d48b72919a835df62b7088bd0"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson10.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="920598c2854a4f8690f9a10484293f91"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson01.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="405454bda9a5578f7b9e739b944c93b7"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson11.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="5aec8653528aa56d601c1961dca68540"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson02.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="97b5d0afecdb5fa1a8c826e7a922e7af"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson12.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="c331b0155505ad4103b06c6926603074"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson03.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="0beb81896b5c35ea31cd0fe26e36ec7d"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson13.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="87576eb8155c1a10549f95b81d14aede"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson04.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="9b239b4136fe0399680c620f8b81e185"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson14.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="6dc92fa3ee015ceef0b4d56c36244f45"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson05.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="62b588ee7070a9b33f4e08f3dbd072a2"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson15.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="1482ac640704add30e26172a75367ada"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson06.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="61d5c1bfad9e12dbff48682a7f266596"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson16.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="16e9f509d97355ef20115a38616fd45b"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson07.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="fd0cea9e2f67d2c173414223400fb383"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lesson08.html"
+   text-time="2007-03-21T08:43:30.000000Z"
+   committed-date="2007-03-14T12:38:00.537101Z"
+   checksum="a6d065adc014bca7fc0c101aa98936d2"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:43:30.000000Z"/>
+</wc-entries>

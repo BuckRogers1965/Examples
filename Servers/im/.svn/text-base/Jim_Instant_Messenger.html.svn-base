@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+  <title>Jim Instant Messenger</title>
+</head>
+<body>
+<b>Jim Instant messaging (JIM).</b><br>
+<br>
+A system that is scalable to millions of simultaneous users.<br>
+<br>
+This is done with a two way message flow.&nbsp; Once a message is received
+it is acked by the receiving system.<br>
+<br>
+&lt;ack /&gt;<br>
+<br>
+&lt;from&gt;&lt;/from&gt; tags are also always filled in by the server to
+keep users from stealing someone elses identity.<br>
+<br>
+The primary concern behind the entire structure of this messaging system
+is security. The server never knows the users password or the contents of
+any message. &nbsp; The server also restricts the user from sending messages
+to users that they aren't subscribed to, or receiving messages from people
+that they aren't subscribed to.&nbsp; The server also keeps the users username,
+nickname, public and encrypted private keys, roster and filter rules for
+the user&nbsp; so that a user can use any JIM client on any computer and
+still have the same access to all their messaging.<br>
+<br>
+<b>Modular and extendable.</b><br>
+<br>
+One of the cool things is the ability to connect to services that look like
+normal people and download a modual from that service to allow special filtering
+and content to be viewed.&nbsp; This allows people to extend services to
+any client without having to extend the clients capability.<br>
+<br>
+<b>Establish connection.</b><br>
+<br>
+Server gives client its public key.<br>
+<br>
+&lt;public&gt;&lt;/public&gt;<br>
+<br>
+Client then encripts all communication using the servers public key.<br>
+<br>
+Now the the communication channel is established the rest of the communication
+can happen is a secure manner.<br>
+<br>
+This is the first layer of encryption that hides the communications between
+the client and server.&nbsp; This includes usernames and passwords.&nbsp;
+This also hides who a user is communicating with.<br>
+<br>
+<b>Registration.</b><br>
+<br>
+People must first register with a service.&nbsp; This step can be skipped
+if a seperate registration method is used.&nbsp; <br>
+<br>
+The client generates a public and encrypted private key at this point and
+also passes this to the server.&nbsp; This is part of the users identity
+and can never be changed.<br>
+<br>
+The password that is used to encrypt the user name is never sent to the server.&nbsp;
+<br>
+<br>
+&lt;reg&gt;&lt;name&gt;&lt;/name&gt;&lt;nick&gt;&lt;/nick&gt;&lt;public&gt;&lt;/public&gt;&lt;private&gt;&lt;/private&gt;&lt;/reg&gt;<br>
+<br>
+<b>Authentication.</b><br>
+<br>
+Once a user is registered then they can be authenticated.<br>
+<br>
+The user requests an authentication token.<br>
+&lt;auth id="request"&gt;&lt;/auth&gt;<br>
+<br>
+The server sends a random token encryped with the claimed users public key
+and that users public key and encrypted public key.&nbsp; At this point the
+client decrypts the users private key with the password that it stored. <br>
+&lt;auth id="token"&gt;&lt;token&gt;&lt;/token&gt;&lt;key&gt;&lt;pub&gt;&lt;/pub&gt;&lt;priv&gt;&lt;/priv&gt;&lt;/key&gt;&lt;/auth&gt;<br>
+<br>
+The client decrypts the token and sends it back through the encrypted channel.<br>
+&lt;auth id="responce"&gt;&lt;token&gt;&lt;/token&gt;&lt;/auth&gt;<br>
+<br>
+The server sends back an ack if the token is correct, or a nack otherwise.&nbsp;
+<br>
+&lt;ack /&gt; or &lt;nak /&gt;<br>
+<br>
+At this point the user has proven that they are who they say they are and
+can do more.<br>
+<br>
+<b>Subscription.<br>
+</b><br>
+In order to communicate with other users and services the user needs to request
+a subscription. <br>
+<br>
+&lt;sub id="request" &gt;&lt;from&gt;&lt;user&gt;&lt;/user&gt;&lt;nick&gt;&lt;/nick&gt;&lt;pub&gt;&lt;/pub&gt;&lt;/from&gt;&lt;to&gt;&lt;user&gt;&lt;/user&gt;&lt;/to&gt;&lt;msg&gt;&lt;msg&gt;&lt;/sub&gt;<br>
+<br>
+The client and server will each put the person in the users roster as a request.<br>
+<br>
+&lt;sub id="decline|accept"&gt;&lt;from&gt;&lt;user&gt;&lt;/user&gt;&lt;nick&gt;&lt;/nick&gt;&lt;pub&gt;&lt;/pub&gt;&lt;/from&gt;&lt;to&gt;&lt;/to&gt;&lt;/sub&gt;<br>
+<br>
+<b>Roster.</b><br>
+<br>
+This is kept on the server and ephasizes the person over the protocol.<br>
+<br>
+First you define people and then add their methods of communication.&nbsp;
+It is the methods that need to be subscribed to.<br>
+<br>
+&lt;roster&gt;<br>
+ &nbsp;&nbsp; &lt;person&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &lt;nickname&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &lt;/nickname&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &lt;method&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;id&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/id&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;user&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/user&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;dt_last_online&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/dt_last_online&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;pub&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;/pub&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &lt;/method&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &lt;method&gt;<br>
+ &nbsp;&nbsp; &nbsp; &nbsp; &lt;/method&gt;<br>
+ &nbsp;&nbsp; &lt;/person&gt;<br>
+ &nbsp;&nbsp; &lt;person&gt;<br>
+ &nbsp;&nbsp; &lt;/person&gt;<br>
+&lt;/roster&gt;<br>
+<br>
+<b>Presence.</b><br>
+<br>
+You can configure your client to send a presence message to people when you
+login to the server.&nbsp; By default this is set to true.&nbsp; The server
+should only send offline status to those that you sent online messages and
+only if you were disconnected.<br>
+<br>
+&lt;pres&gt;&lt;from&gt;&lt;/from&gt;&lt;to&gt;&lt;/to&gt;&lt;status&gt;&lt;/status&gt;&lt;/pres&gt;<br>
+<br>
+<b>Messaging.</b><br>
+<br>
+This is the heart of the system and the reason why it exists.&nbsp; The body
+of the message is encrypted with the receivers public key, because only that
+person needs to be reading that message.&nbsp; This keeps the people on the
+server from "inadvertantly" reading a message.<br>
+<br>
+&lt;msg&gt;&lt;from&gt;&lt;/from&gt;&lt;to&gt;&lt;/to&gt;&lt;pri&gt;&lt;/pri&gt;&lt;body&gt;&lt;/body&gt;&lt;/msg&gt;<br>
+<br>
+<br>
+</body>
+</html>

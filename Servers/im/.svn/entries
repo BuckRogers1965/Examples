@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/servers/im"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="client.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="6d33d7e6095bbfe76f3fcb42b03b280f"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="jim"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="1fa988da124f5963260b328620919070"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:52.000000Z"/>
+<entry
+   committed-rev="40"
+   name="xml.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="ce09ca456fe1649795f82770ccb095f2"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="jab.h"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="f9077f1fdc825e306fe0bf7c424d4de7"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   name="backup"
+   kind="dir"/>
+<entry
+   committed-rev="40"
+   name="main.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="60cf0033bbfd9bf25d654098f0b8dac3"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="Jim_Instant_Messenger.html"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="c2bbdf4ba724e97547e9d26b0328abcc"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-21T08:45:50.000000Z"/>
+<entry
+   committed-rev="40"
+   name="Makefile"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="a06244241e7562fc7a0f1ff193a0dff3"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:52.000000Z"/>
+</wc-entries>

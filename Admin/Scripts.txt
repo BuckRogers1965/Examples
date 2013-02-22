@@ -1,0 +1,257 @@
+
+This houses helpfull little hints to run
+on the command line to do amazing, helpful things.
+
+------
+
+To use perl to help format text.
+
+Find book with extra garbage in it:
+
+  grep "1 of" */*.txt
+  
+Remove link, page count, date, and time:
+
+This is if the date and time just follow the page count:
+perl -pe 's/file:.*.txt //' < *.txt  | perl -pe 's/\([0-9]+ of [0-9]+\)[0-9 -:]+//;' | ~/bin/formatxt > a
+
+Added a few extra things to remove square brackets and  AM PM - This should work for both:
+perl -pe 's/file:.*.txt //' < *.txt  | perl -pe 's/\([0-9]+ of [0-9]+\)[0-9\[\]ampAMP -:]+//;' | ~/bin/formatxt > a
+
+
+--
+
+To scan a page:
+
+scanimage -d artec_eplus48u:libusb:001:008  -y 350 -x 216 --mode gray --resolution 300  > test.pnm
+
+--
+
+Create a movie from images:
+
+mencoder "mf://*.JPG" -mf fps=10 -o test.avi -ovc lavc -lavcopts vcodec=msmpeg4v2:vbitrate=800  -vf crop=2000:1500:400:400,scale=720:-2
+
+Transcode a movie from my Xacti to a smaller avi format that I can play:
+
+mencoder ./SANY0121.MP4 -oac mp3lame -ovc lavc -o RollingDice.avi  -vf scale=640:400
+
+To scale to exactly half of 1080p do this scale:
+mencoder ./SANY0002.MP4 -oac mp3lame -ovc lavc -o L.avi  -vf scale=960:540
+
+The above give very small files, but they have moving blocks in areas with low contrast.  To give a very detailed picture at the cost of about 1.7 times the file size do this:
+
+mencoder ./SANY0121.MP4 -oac mp3lame -ovc lavc -o TumblinDiceN.avi  -vf scale=960:540 nr=2000 -lavcopts vcodec=mpeg4:mbd=1:vbitrate=2000
+
+--
+
+To download a bunch of similiar files from a website with the number only differing.
+
+for i in `seq 0 9`; do for j in `seq 1 3`; do wget -c http://dl.fullcirclemagazine.org/issue$j$i\_en.pdf; done; done
+
+--
+
+How to reduce a 25,000x25,000 tif file down to a manageable size.
+
+2012  tifftopnm wac_nearside.tif | pnmscale .25 | pnmtojpeg > wac_nearside.jpg
+ 2013  ls
+ 2014  ls -altr
+ 2015  tifftopnm wac_nearside.tif | pnmscale .5 | pnmtojpeg  -quality=97 > wac_nearside.jpg
+ 2016  tifftopnm wac_nearside.tif | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside.jpg
+ 2017  tifftopnm wac_nearside.tif | pnmsmooth -size 10 10 | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside2.jpg
+ 2018  tifftopnm wac_nearside.tif | pnmsmooth -size 10x10 | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside2.jpg
+ 2019  tifftopnm wac_nearside.tif | pnmsmooth -size 5 5 | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside2.jpg
+ 2020  tifftopnm wac_nearside.tif | pnmsmooth -size 9 9 | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside2.jpg
+ 2021  jpegtopnm wac_nearside2.jpg | pnmsmooth -size 9 9 | pnmscale .25 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside3.jpg
+ 2022  jpegtopnm wac_nearside3.jpg | pnmsmooth -size 9 9 | pnmscale .25 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside4.jpg
+ 2023  jpegtopnm wac_nearside3.jpg | pnmsmooth -size 9 9 | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=10 > wac_nearside4.jpg
+ 2024  jpegtopnm wac_nearside3.jpg | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=2 > wac_nearside4.jpg
+ 2025  jpegtopnm wac_nearside4.jpg | pnmscale .5 | pnmtojpeg  --quality=97 --smooth=2 > wac_nearside5.jpg
+
+
+--
+
+How to clean out firefox to run faster:
+
+
+ cd ~/.mozilla/firefox/_your_profile_.default
+  for i in *.sqlite; do echo $i; echo "VACUUM;" | sqlite3 $i; done
+
+
+--
+
+Split a book into chapters, then convert the chapters to html files.
+
+csplit -f Chapter_ -ks Schmitz\,\ James\ H.\ -\ The_Witches_of_Karres.txt '/^ Chapter/' {50}
+rename 's/Chapter_([0-9][0-9])/Chapter_\1.txt/' *
+find . -name "Chapter_*.txt" -exec ~/bin/txt2html.sh {} \;
+
+
+
+--
+
+Removing extra file url lines in text files, in place.
+
+perl -pi.orig -e 's/^file:\/\/\/.*+//e' s
+perl -pi.orig -e 's/^file:\/\/\/.*+//e' pb
+perl -pi.orig -e 's/^[ ]*+file:\/\/\/.*+//e' pb
+perl -pi.orig -e 's/^[ ]{0,}file:\/\/\/.*+//e' pb
+perl -pi.orig -e 's/^[ ]{0,}file:\/\/\/.*+//e' pb
+
+
+--
+
+Sleep better, change screen to reddish tint at dusk and change back to normal at dawn.
+
+./xflux -z 45715 -k 3000
+
+http://stereopsis.com/flux/
+
+--
+
+how to back up disks/folders:
+
+rsync -a -v --progress  /media/Action/Action/* /media/SciFi/Action/
+rsync -a --progress /media/truecrypt4/* /media/truecrypt1/
+
+I set up rsnapshot to run and back up /etc/ /home/ /opt/ and /usr/local/  to /media/Comedy/rsnapshot
+
+If Comedy isn't there I changed it to not create the root file system so it won't backup unless the usb drive is mounted.
+
+had to set exceptions for a couple of files .gvfs because of a strange error and Downloads because it is just too huge and ever changing.
+
+
+exclude	/home/*/Downloads/
+exclude	/home/*/.gvfs
+
+
+http://rsnapshot.org/howto/1.2/rsnapshot-HOWTO.en.html
+http://rsnapshot.org/
+
+--
+
+Compiling an SDL program: 
+
+gcc c4.c -I /usr/include/SDL -lSDL
+
+if you get a strange error about a symbol not found, then the module is probablly a c++ program and you compile it like this:
+
+gcc c4.c -I /usr/include/SDL -lSD++
+
+
+
+-----
+
+Convert txt file into an epub:
+
+ ebook-convert "./Hitchhikers/Adams, Douglas - Hitchhiker's Trilogy 3 - Life, the Universe, and Everything.txt" "./Hitchhikers/Adams, Douglas - Hitchhiker's Trilogy 3 - Life, the Universe, and Everything.epub" --no-default-epub-cover --pretty-print --asciiize
+  328  find . -name "*.txt" -exec ~/bin/txt2epub.sh "{}" \;
+  329  cd ..
+  330  ls
+  331  find . -name "*.txt" -exec ~/bin/txt2epub.sh "{}" \;
+
+txt2epub.sh:
+
+#!/bin/bash
+
+echo 
+echo $1
+myfile="$1"
+path=`dirname "$1"`
+name=`basename "$1" .txt`
+echo "path $path"
+echo "name $name"
+echo ebook-convert \"$path/$name.txt\" \"`pwd`/$path/$name.epub\" --no-default-epub-cover --pretty-print --asciiize
+ebook-convert "$path/$name.txt" "`pwd`/$path/$name.epub" --no-default-epub-cover --pretty-print --asciiize
+
+
+
+
+Transcode a video file:
+
+mencoder svd-tat720p.mkv -ni -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200:keyint=120:vqmin=4:vqmax=24:autoaspect    -oac mp3lame -vf scale=720:310,denoise3d -ffourcc DX50 -o svd-tat720p2.avi
+
+
+Convert a pdf into image files:
+
+  759  gs -SDEVICE=jpeg -r100x100 -sPAPERSIZE=letter -sOutputFile=x/x%04d.jpg -dNOPAUSE -dBATCH -- "filename.pdf" 
+  760  cd x/
+  761  mogrify -shave 70x10 *
+  762  mogrify -resize  70% *
+  763  cd ../filename.pdf_images/
+  764  mogrify -transpose *
+  765  mogrify -rotate -90 *
+
+
+Extract image files from a pdf:
+
+#!/bin/bash
+
+# Extracts image files from PDF files
+# For more information see www.boekhoff.info
+
+mkdir ./"$1_images"
+pdfimages -j "$1" ./"$1_images"/"$1"
+
+exit 0 
+
+
+Write a text file out to a wav file:
+
+espeak -v f2 -s 100 -f filename.txt -w filename.wav
+
+
+--
+
+Convert a wav file to an mp3
+
+ffmpeg -i  file.wav -acodec libmp3lame  -ab 96k file.mp3
+
+
+--
+
+
+
+
+Mass renaming files on disk:
+
+  395  rename 's/\(2\)\.zip/.cbz/' *.zip
+  396  rename 's/\.zip/.cbz/' *.zip
+  397  rename 's/--#//' *.zip
+  398  rename 's/--\#//' *.zip
+  399  rename 's/* --\#*//' *.zip
+  400  rename 's/The Walking Dead --#//' *.zip
+  401  rename 's/The Walking Dead --#/The Walking Dead /' *.cbz
+
+How to rename author names from 
+First Last
+First Middle Last
+First M. Last
+F. M. Last
+
+To 
+
+Last, First
+Last, First Middle
+Last, First M.
+Last, F. M.
+
+rename 's/([A-Za-z]+) ([A-Za-z]+)/$2, $1/'  *
+rename 's/([A-Za-z.]+) ([A-Za-z.]+) ([A-Za-z]+)/$3, $1 $2/'  *
+
+Comix couldn't open .cbr files:
+
+
+Converting a file from daa to iso:
+
+daa2iso Programming\ Books\ Collection\(Total\ 19\ Books\).daa Prodaa2iso Programming\ Books\ Collection\(Total\ 19\ Books\).daa Programming\ Books\ Collection\(Total\ 19\ Books\).isogramming\ Books\ Collection\(Total\ 19\ Books\).iso
+
+
+
+--
+
+
+To ignore robots.txt with wget do this:
+
+wget -e robots=off --wait 1 -rc http://www.zx81.nl/files.htm
+
+

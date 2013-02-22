@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="40"
+   name=""
+   committed-date="2007-03-29T11:24:36.932707Z"
+   url="http://localhost/svn/projects/projects/examples/servers/mud"
+   last-author="jrogers"
+   kind="dir"
+   uuid="22bebf10-a12b-0410-9fed-ee342145470e"
+   repos="http://localhost/svn/projects"
+   revision="47"/>
+<entry
+   committed-rev="40"
+   name="socket_demo.h"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="12e228a03905685d565a887222f71399"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:53.000000Z"/>
+<entry
+   committed-rev="40"
+   name="a.out"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="33a7c6e5f6e9d860771e0aba14e1606b"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:53.000000Z"/>
+<entry
+   committed-rev="40"
+   name="locations.load"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="48fd02924a02a2c7dfe2af4e3a0b2440"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:53.000000Z"/>
+<entry
+   committed-rev="40"
+   name="socket_demo.c"
+   text-time="2007-03-29T11:23:53.000000Z"
+   committed-date="2007-03-29T11:24:36.932707Z"
+   checksum="442c2e82af934ee01db9acdccf5d2be9"
+   last-author="jrogers"
+   kind="file"
+   prop-time="2007-03-29T11:23:53.000000Z"/>
+</wc-entries>

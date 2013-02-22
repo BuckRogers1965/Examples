@@ -1,0 +1,7 @@
+gcc -fPIC -c libprint.c
+ld -shared -soname libprint.so.1 -o libprint.so.1.0 -lc libprint.o
+export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+gcc -o client client.c -L. -lprint
+./client
+file client
+nm client

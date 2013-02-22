@@ -1,0 +1,3611 @@
+<HTML>
+<BODY>
+
+<P>
+
+
+<P>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     LET'S BUILD A COMPILER!
+
+<P>
+
+                                By
+<P>
+
+
+<P>
+
+                     Jack W. Crenshaw, Ph.D.
+
+<P>
+
+                           3 June 1989
+<P>
+
+
+<P>
+
+
+                 Part XI: LEXICAL SCAN REVISITED
+
+<P>
+
+
+*****************************************************************
+*                                                               *
+*                        COPYRIGHT NOTICE                       *
+*                                                               *
+*   Copyright (C) 1989 Jack W. Crenshaw. All rights reserved.   *
+*                                                               *
+*****************************************************************
+
+<P>
+
+
+INTRODUCTION
+<P>
+
+
+<P>
+
+I've got some  good news and some bad news.  The bad news is that
+this installment is  not  the  one  I promised last time.  What's
+more, the one after this one won't be, either.
+
+<P>
+
+The good news is the reason for this installment:  I've  found  a
+way  to simplify and improve the lexical  scanning  part  of  the
+compiler.  Let me explain.
+
+<P>
+
+
+BACKGROUND
+<P>
+
+
+<P>
+
+If  you'll remember, we talked at length  about  the  subject  of
+lexical  scanners in Part VII, and I left you with a design for a
+distributed scanner that I felt was about as simple  as  I  could
+make it ... more than most that I've  seen  elsewhere.    We used
+that idea in Part X.  The compiler structure  that  resulted  was
+simple, and it got the job done.
+
+<P>
+
+Recently, though, I've begun  to  have  problems, and they're the
+kind that send a message that you might be doing something wrong.
+
+<P>
+
+The  whole thing came to a head when I tried to address the issue
+of  semicolons.  Several people have asked  me  about  them,  and
+whether or not KISS will have them separating the statements.  My
+intention has been NOT to  use semicolons, simply because I don't
+like them and, as you can see, they have not proved necessary.
+
+<P>
+
+But I know that many of you, like me, have  gotten  used to them,
+and so  I  set  out  to write a short installment to show you how
+they could easily be added, if you were so inclined.
+
+<P>
+
+Well, it  turned  out  that  they weren't easy to add at all.  In
+fact it was darned difficult.
+
+<P>
+
+I guess I should have  realized that something was wrong, because
+of the issue  of  newlines.    In the last couple of installments
+we've addressed that issue,  and  I've shown you how to deal with
+newlines with a  procedure called, appropriately enough, NewLine.
+In  TINY  Version  1.0,  I  sprinkled calls to this procedure  in
+strategic spots in the code.
+
+<P>
+
+It  seems  that  every time I've addressed the issue of newlines,
+though,  I've found it to be tricky,  and  the  resulting  parser
+turned out to be quite fragile ... one addition or  deletion here
+or  there and things tended to go to pot.  Looking back on it,  I
+realize that  there  was  a  message  in  this that I just wasn't
+paying attention to.
+
+<P>
+
+When I tried to add semicolons  on  top of the newlines, that was
+the last straw.   I ended up with much too complex a solution.  I
+began to realize that something fundamental had to change.
+
+<P>
+
+So,  in  a  way this installment will cause us to backtrack a bit
+and revisit the issue of scanning all over again.    Sorry  about
+that.  That's the price you pay for watching me  do  this in real
+time.  But the new version is definitely an improvement, and will
+serve us well for what is to come.
+
+<P>
+
+As  I said, the scanner we used in Part X was about as simple  as
+one can get.  But anything can be improved.   The  new scanner is
+more like the classical  scanner,  and  not  as simple as before.
+But the overall  compiler  structure is even simpler than before.
+It's also more robust, and easier to add  to  and/or  modify.   I
+think that's worth the time spent in this digression.  So in this
+installment, I'll be showing  you  the  new  structure.  No doubt
+you'll  be  happy  to  know  that, while the changes affect  many
+procedures, they aren't very profound  and so we lose very little
+of what's been done so far.
+
+<P>
+
+Ironically, the new scanner  is  much  more conventional than the
+old one, and is very much like the more generic scanner  I showed
+you  earlier  in  Part VII.  Then I started trying to get clever,
+and I almost clevered myself clean out of business.   You'd think
+one day I'd learn: K-I-S-S!
+
+<P>
+
+
+THE PROBLEM
+<P>
+
+
+<P>
+
+The problem begins to show  itself in procedure Block, which I've
+reproduced below:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Parse and Translate a Block of Statements }
+
+<P>
+
+procedure Block;
+<P>
+
+begin
+<P>
+
+   Scan;
+<P>
+
+   while not(Token in ['e', 'l']) do begin
+      case Token of
+       'i': DoIf;
+       'w': DoWhile;
+       'R': DoRead;
+       'W': DoWrite;
+      else Assignment;
+      end;
+      Scan;
+   end;
+end;
+{--------------------------------------------------------------}
+
+<P>
+
+
+As  you   can  see,  Block  is  oriented  to  individual  program
+statements.  At each pass through  the  loop, we know that we are
+at  the beginning of a statement.  We exit the block when we have
+scanned an END or an ELSE.
+
+<P>
+
+But suppose that we see a semicolon instead.   The  procedure  as
+it's shown above  can't  handle that, because procedure Scan only
+expects and can only accept tokens that begin with a letter.
+
+<P>
+
+I  tinkered  around for quite awhile to come up with a  fix.    I
+found many possible approaches, but none were very satisfying.  I
+finally figured out the reason.
+
+<P>
+
+Recall that when we started with our single-character parsers, we
+adopted a convention that the lookahead character would always be
+prefetched.    That   is,   we  would  have  the  character  that
+corresponds to our  current  position in the input stream fetched
+into the global character Look, so that we could  examine  it  as
+many  times  as  needed.    The  rule  we  adopted was that EVERY
+recognizer, if it found its target token, would  advance  Look to
+the next character in the input stream.
+
+<P>
+
+That simple and fixed convention served us very well when  we had
+single-character tokens, and it still does.  It would make  a lot
+of sense to apply the same rule to multi-character tokens.
+
+<P>
+
+But when we got into lexical scanning, I began  to  violate  that
+simple rule.  The scanner of Part X  did  indeed  advance  to the
+next token if it found an identifier or keyword, but it DIDN'T do
+that if it found a carriage return, a whitespace character, or an
+operator.
+
+<P>
+
+Now, that sort of mixed-mode  operation gets us into deep trouble
+in procedure Block, because whether or not the  input  stream has
+been advanced depends upon the kind of token we  encounter.    If
+it's  a keyword or the target of  an  assignment  statement,  the
+"cursor," as defined by the contents of Look,  has  been advanced
+to  the next token OR to the beginning of whitespace.  If, on the
+other  hand,  the  token  is  a  semicolon,  or if we have hit  a
+carriage return, the cursor has NOT advanced.
+
+<P>
+
+Needless to say, we can add enough logic  to  keep  us  on track.
+But it's tricky, and makes the whole parser very fragile.
+
+<P>
+
+There's a much  better  way,  and  that's just to adopt that same
+rule that's worked so well before, to apply to TOKENS as  well as
+single characters.  In other words, we'll prefetch tokens just as
+we've always done for  characters.   It seems so obvious once you
+think about it that way.
+
+<P>
+
+Interestingly enough, if we do things this way  the  problem that
+we've had with newline characters goes away.  We  can  just  lump
+them in as  whitespace  characters, which means that the handling
+of  newlines  becomes  very trivial, and MUCH less prone to error
+than we've had to deal with in the past.
+
+<P>
+
+
+THE SOLUTION
+<P>
+
+
+<P>
+
+Let's  begin  to  fix  the  problem  by  re-introducing  the  two
+procedures:
+
+<P>
+
+{--------------------------------------------------------------}
+{ Get an Identifier }
+
+<P>
+
+procedure GetName;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   if Not IsAlpha(Look) then Expected('Identifier');
+   Token := 'x';
+   Value := '';
+   repeat
+      Value := Value + UpCase(Look);
+      GetChar;
+   until not IsAlNum(Look);
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get a Number }
+
+<P>
+
+procedure GetNum;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   if not IsDigit(Look) then Expected('Number');
+   Token := '#';
+   Value := '';
+   repeat
+      Value := Value + Look;
+      GetChar;
+   until not IsDigit(Look);
+end;
+{--------------------------------------------------------------}
+
+<P>
+
+
+These two procedures are  functionally  almost  identical  to the
+ones  I  showed  you in Part VII.  They each  fetch  the  current
+token, either an identifier or a number, into  the  global string
+Value.    They  also  set  the  encoded  version, Token,  to  the
+appropriate code.  The input  stream is left with Look containing
+the first character NOT part of the token.
+
+<P>
+
+We  can do the same thing  for  operators,  even  multi-character
+operators, with a procedure such as:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get an Operator }
+
+<P>
+
+procedure GetOp;
+<P>
+
+begin
+<P>
+
+   Token := Look;
+<P>
+
+   Value := '';
+<P>
+
+   repeat
+<P>
+
+      Value := Value + Look;
+<P>
+
+      GetChar;
+<P>
+
+   until IsAlpha(Look) or IsDigit(Look) or IsWhite(Look);
+end;
+{--------------------------------------------------------------}
+
+<P>
+
+Note  that  GetOp  returns,  as  its  encoded  token,  the  FIRST
+character of the operator.  This is important,  because  it means
+that we can now use that single character to  drive  the  parser,
+instead of the lookahead character.
+
+<P>
+
+We need to tie these  procedures together into a single procedure
+that can handle all three  cases.  The  following  procedure will
+read any one of the token types and always leave the input stream
+advanced beyond it:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get the Next Input Token }
+
+<P>
+
+procedure Next;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   if IsAlpha(Look) then GetName
+<P>
+
+   else if IsDigit(Look) then GetNum
+<P>
+
+   else GetOp;
+<P>
+
+end;
+<P>
+
+{--------------------------------------------------------------}
+
+<P>
+
+
+***NOTE  that  here  I have put SkipWhite BEFORE the calls rather
+than after.  This means that, in general, the variable  Look will
+NOT have a meaningful value in it, and therefore  we  should  NOT
+use it as a test value for parsing, as we have been doing so far.
+That's the big departure from our normal approach.
+
+<P>
+
+Now, remember that before I was careful not to treat the carriage
+return (CR) and line  feed  (LF) characters as white space.  This
+was  because,  with  SkipWhite  called  as the last thing in  the
+scanner, the encounter with  LF  would  trigger a read statement.
+If we were on the last line of the program,  we  couldn't get out
+until we input another line with a non-white  character.   That's
+why I needed the second procedure, NewLine, to handle the CRLF's.
+
+<P>
+
+But now, with the call  to SkipWhite coming first, that's exactly
+the behavior we want.    The  compiler  must know there's another
+token coming or it wouldn't be calling Next.  In other words,  it
+hasn't found the terminating  END  yet.  So we're going to insist
+on more data until we find something.
+
+<P>
+
+All this means that we can greatly simplify both the  program and
+the concepts, by treating CR and LF as whitespace characters, and
+eliminating NewLine.  You  can  do  that  simply by modifying the
+function IsWhite:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize White Space }
+
+<P>
+
+function IsWhite(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsWhite := c in [' ', TAB, CR, LF];
+<P>
+
+end;
+<P>
+
+{--------------------------------------------------------------}
+
+<P>
+
+
+We've already tried similar routines in Part VII,  but  you might
+as well try these new ones out.  Add them to a copy of the Cradle
+and call Next with the following main program:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Main Program }
+
+<P>
+
+begin
+<P>
+
+   Init;
+<P>
+
+   repeat
+<P>
+
+      Next;
+<P>
+
+      WriteLn(Token, ' ', Value);
+<P>
+
+   until Token = '.';
+<P>
+
+end.
+<P>
+
+{--------------------------------------------------------------}
+
+<P>
+
+
+Compile  it and verify that you can separate  a  program  into  a
+series of tokens, and that you get the right  encoding  for  each
+token.
+
+<P>
+
+This ALMOST works,  but  not  quite.    There  are  two potential
+problems:    First,  in KISS/TINY almost all of our operators are
+single-character operators.  The only exceptions  are  the relops
+>=, <=, and <>.  It seems  a  shame  to  treat  all  operators as
+strings and do a  string  compare,  when  only a single character
+compare  will  almost  always  suffice.   Second, and  much  more
+important, the  thing  doesn't  WORK  when  two  operators appear
+together, as in (a+b)*(c+d).  Here the string following 'b' would
+be interpreted as a single operator ")*(."
+
+<P>
+
+It's possible to fix that problem.  For example,  we  could  just
+give GetOp a  list  of  legal  characters, and we could treat the
+parentheses as different operator types  than  the  others.   But
+this begins to get messy.
+
+<P>
+
+Fortunately, there's a  better  way that solves all the problems.
+Since almost  all the operators are single characters, let's just
+treat  them  that  way, and let GetOp get only one character at a
+time.  This not only simplifies GetOp, but also speeds  things up
+quite a  bit.    We  still have the problem of the relops, but we
+were treating them as special cases anyway.
+
+<P>
+
+So here's the final version of GetOp:
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get an Operator }
+
+<P>
+
+procedure GetOp;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   Token := Look;
+<P>
+
+   Value := Look;
+<P>
+
+   GetChar;
+<P>
+
+end;
+<P>
+
+{--------------------------------------------------------------}
+
+<P>
+
+
+Note that I still give the string Value a value.  If you're truly
+concerned about efficiency, you could leave this out.  When we're
+expecting an operator, we will only be testing  Token  anyhow, so
+the  value of the string won't matter.  But to me it seems to  be
+good practice to give the thing a value just in case.
+
+<P>
+
+Try  this  new  version with some realistic-looking  code.    You
+should  be  able  to  separate  any program into  its  individual
+tokens, with the  caveat  that the two-character relops will scan
+into two separate tokens.  That's OK ... we'll  parse  them  that
+way.
+
+<P>
+
+Now, in Part VII the function of Next was combined with procedure
+Scan,  which  also  checked every identifier against  a  list  of
+keywords and encoded each one that was found.  As I  mentioned at
+the time, the last thing we would want  to  do  is  to use such a
+procedure in places where keywords  should not appear, such as in
+expressions.  If we  did  that, the keyword list would be scanned
+for every identifier appearing in the code.  Not good.
+
+<P>
+
+The  right  way  to  deal  with  that  is  to simply separate the
+functions  of  fetching  tokens and looking for  keywords.    The
+version of Scan shown below  does NOTHING but check for keywords.
+Notice that it operates on the current token and does NOT advance
+the input stream.
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Scan the Current Identifier for Keywords }
+
+<P>
+
+procedure Scan;
+<P>
+
+begin
+<P>
+
+   if Token = 'x' then
+<P>
+
+      Token := KWcode[Lookup(Addr(KWlist), Value, NKW) + 1];
+end;
+{--------------------------------------------------------------}
+
+<P>
+
+
+There is one last detail.  In the compiler there are a few places
+that we must  actually  check  the  string  value  of  the token.
+Mainly, this  is done to distinguish between the different END's,
+but there are a couple  of  other  places.    (I  should  note in
+passing that we could always  eliminate the need for matching END
+characters by encoding each one  to a different character.  Right
+now we are definitely taking the lazy man's route.)
+
+<P>
+
+The  following  version  of MatchString takes the  place  of  the
+character-oriented Match.  Note that, like Match, it DOES advance
+the input stream.
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Match a Specific Input String }
+
+<P>
+
+procedure MatchString(x: string);
+<P>
+
+begin
+<P>
+
+   if Value <> x then Expected('''' + x + '''');
+   Next;
+end;
+{--------------------------------------------------------------}
+
+<P>
+
+
+FIXING UP THE COMPILER
+<P>
+
+
+<P>
+
+Armed with these new scanner procedures, we can now begin  to fix
+the compiler to  use  them  properly.   The changes are all quite
+minor,  but  there  are quite a  few  places  where  changes  are
+necessary.  Rather than  showing  you each place, I will give you
+the general idea and then just give the finished product.
+
+<P>
+
+
+First of all, the code for procedure Block doesn't change, though
+its function does:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Parse and Translate a Block of Statements }
+
+<P>
+
+procedure Block;
+<P>
+
+begin
+<P>
+
+   Scan;
+<P>
+
+   while not(Token in ['e', 'l']) do begin
+      case Token of
+       'i': DoIf;
+       'w': DoWhile;
+       'R': DoRead;
+       'W': DoWrite;
+      else Assignment;
+      end;
+      Scan;
+   end;
+end;
+{--------------------------------------------------------------}
+
+<P>
+
+
+Remember that the new version of Scan doesn't  advance  the input
+stream, it only  scans  for  keywords.   The input stream must be
+advanced by each procedure that Block calls.
+
+<P>
+
+In general, we have to replace every test on Look with  a similar
+test on Token.  For example:
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Boolean Expression }
+
+<P>
+
+procedure BoolExpression;
+<P>
+
+begin
+<P>
+
+   BoolTerm;
+<P>
+
+   while IsOrOp(Token) do begin
+<P>
+
+      Push;
+<P>
+
+      case Token of
+<P>
+
+       '|': BoolOr;
+<P>
+
+       '~': BoolXor;
+<P>
+
+      end;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+{--------------------------------------------------------------}
+
+<P>
+
+
+In procedures like Add, we don't  have  to use Match anymore.  We
+need only call Next to advance the input stream:
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize and Translate an Add }
+
+<P>
+
+procedure Add;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   Term;
+<P>
+
+   PopAdd;
+<P>
+
+end;
+<P>
+
+{-------------------------------------------------------------}
+
+<P>
+
+
+Control  structures  are  actually simpler.  We just call Next to
+advance over the control keywords:
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate an IF Construct }
+
+<P>
+
+procedure Block; Forward;
+<P>
+
+
+<P>
+
+procedure DoIf;
+<P>
+
+var L1, L2: string;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   BoolExpression;
+<P>
+
+   L1 := NewLabel;
+<P>
+
+   L2 := L1;
+<P>
+
+   BranchFalse(L1);
+<P>
+
+   Block;
+<P>
+
+   if Token = 'l' then begin
+<P>
+
+      Next;
+<P>
+
+      L2 := NewLabel;
+<P>
+
+      Branch(L2);
+<P>
+
+      PostLabel(L1);
+<P>
+
+      Block;
+<P>
+
+   end;
+<P>
+
+   PostLabel(L2);
+<P>
+
+   MatchString('ENDIF');
+<P>
+
+end;
+<P>
+
+{--------------------------------------------------------------}
+
+<P>
+
+
+That's about the extent of the REQUIRED changes.  In  the listing
+of TINY  Version  1.1  below,  I've  also  made a number of other
+"improvements" that  aren't really required.  Let me explain them
+briefly:
+
+<P>
+
+ (1)  I've deleted the two procedures Prog and Main, and combined
+      their functions into the main program.  They didn't seem to
+      add  to program clarity ... in fact  they  seemed  to  just
+      muddy things up a little.
+
+<P>
+
+ (2)  I've  deleted  the  keywords  PROGRAM  and  BEGIN  from the
+      keyword list.  Each  one  only occurs in one place, so it's
+      not necessary to search for it.
+
+<P>
+
+ (3)  Having been  bitten  by  an  overdose  of  cleverness, I've
+      reminded myself that TINY  is  supposed  to be a minimalist
+      program.  Therefore I've  replaced  the  fancy  handling of
+      unary minus with the dumbest one I could think of.  A giant
+      step backwards in code quality, but a  great simplification
+      of the compiler.  KISS is the right place to use  the other
+      version.
+
+<P>
+
+ (4)  I've added some  error-checking routines such as CheckTable
+      and CheckDup, and  replaced  in-line code by calls to them.
+      This cleans up a number of routines.
+
+<P>
+
+ (5)  I've  taken  the  error  checking  out  of  code generation
+      routines  like Store, and put it in  the  parser  where  it
+      belongs.  See Assignment, for example.
+
+<P>
+
+ (6)  There was an error in InTable and Locate  that  caused them
+      to search all locations  instead  of  only those with valid
+      data  in them.  They now search only  valid  cells.    This
+      allows us to eliminate  the  initialization  of  the symbol
+      table, which was done in Init.
+
+<P>
+
+ (7)  Procedure AddEntry now has two  arguments,  which  helps to
+      make things a bit more modular.
+
+<P>
+
+ (8)  I've cleaned up the  code  for  the relational operators by
+      the addition of the  new  procedures  CompareExpression and
+      NextExpression.
+
+<P>
+
+ (9)  I fixed an error in the Read routine ... the  earlier value
+      did not check for a valid variable name.
+
+<P>
+
+
+ CONCLUSION
+<P>
+
+
+<P>
+
+The resulting compiler for  TINY  is given below.  Other than the
+removal  of  the  keyword PROGRAM, it parses the same language as
+before.    It's  just  a  bit cleaner, and more importantly  it's
+considerably more robust.  I feel good about it.
+
+<P>
+
+The next installment will be another  digression:  the discussion
+of  semicolons  and  such that got me into this mess in the first
+place.  THEN we'll press on  into  procedures and types.  Hang in
+there with me.  The addition of those features will go a long way
+towards removing KISS from  the  "toy  language" category.  We're
+getting very close to being able to write a serious compiler.
+
+<P>
+
+
+TINY VERSION 1.1
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+program Tiny11;
+
+<P>
+
+{--------------------------------------------------------------}
+{ Constant Declarations }
+
+<P>
+
+const TAB = ^I;
+<P>
+
+      CR  = ^M;
+<P>
+
+      LF  = ^J;
+<P>
+
+
+<P>
+
+      LCount: integer = 0;
+<P>
+
+      NEntry: integer = 0;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Type Declarations }
+
+<P>
+
+type Symbol = string[8];
+<P>
+
+
+<P>
+
+     SymTab = array[1..1000] of Symbol;
+
+<P>
+
+     TabPtr = ^SymTab;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Variable Declarations }
+
+<P>
+
+var Look : char;             { Lookahead Character }
+    Token: char;             { Encoded Token       }
+    Value: string[16];       { Unencoded Token     }
+
+<P>
+
+
+const MaxEntry = 100;
+<P>
+
+
+<P>
+
+var ST   : array[1..MaxEntry] of Symbol;
+    SType: array[1..MaxEntry] of char;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Definition of Keywords and Token Types }
+
+<P>
+
+const NKW =   9;
+<P>
+
+      NKW1 = 10;
+<P>
+
+
+<P>
+
+const KWlist: array[1..NKW] of Symbol =
+              ('IF', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
+               'READ', 'WRITE', 'VAR', 'END');
+
+<P>
+
+const KWcode: string[NKW1] = 'xileweRWve';
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Read New Character From Input Stream }
+
+<P>
+
+procedure GetChar;
+<P>
+
+begin
+<P>
+
+   Read(Look);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+{--------------------------------------------------------------}
+{ Report an Error }
+
+<P>
+
+procedure Error(s: string);
+<P>
+
+begin
+<P>
+
+   WriteLn;
+<P>
+
+   WriteLn(^G, 'Error: ', s, '.');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Report Error and Halt }
+
+<P>
+
+procedure Abort(s: string);
+<P>
+
+begin
+<P>
+
+   Error(s);
+<P>
+
+   Halt;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Report What Was Expected }
+
+<P>
+
+procedure Expected(s: string);
+<P>
+
+begin
+<P>
+
+   Abort(s + ' Expected');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+{--------------------------------------------------------------}
+{ Report an Undefined Identifier }
+
+<P>
+
+procedure Undefined(n: string);
+<P>
+
+begin
+<P>
+
+   Abort('Undefined Identifier ' + n);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Report a Duplicate Identifier }
+
+<P>
+
+procedure Duplicate(n: string);
+<P>
+
+begin
+<P>
+
+   Abort('Duplicate Identifier ' + n);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Check to Make Sure the Current Token is an Identifier }
+
+<P>
+
+procedure CheckIdent;
+<P>
+
+begin
+<P>
+
+   if Token <> 'x' then Expected('Identifier');
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize an Alpha Character }
+
+<P>
+
+function IsAlpha(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsAlpha := UpCase(c) in ['A'..'Z'];
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize a Decimal Digit }
+
+<P>
+
+function IsDigit(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsDigit := c in ['0'..'9'];
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize an AlphaNumeric Character }
+
+<P>
+
+function IsAlNum(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsAlNum := IsAlpha(c) or IsDigit(c);
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize an Addop }
+
+<P>
+
+function IsAddop(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsAddop := c in ['+', '-'];
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize a Mulop }
+
+<P>
+
+function IsMulop(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsMulop := c in ['*', '/'];
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize a Boolean Orop }
+
+<P>
+
+function IsOrop(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsOrop := c in ['|', '~'];
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize a Relop }
+
+<P>
+
+function IsRelop(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsRelop := c in ['=', '#', '<', '>'];
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize White Space }
+
+<P>
+
+function IsWhite(c: char): boolean;
+<P>
+
+begin
+<P>
+
+   IsWhite := c in [' ', TAB, CR, LF];
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Skip Over Leading White Space }
+
+<P>
+
+procedure SkipWhite;
+<P>
+
+begin
+<P>
+
+   while IsWhite(Look) do
+<P>
+
+      GetChar;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Table Lookup }
+
+<P>
+
+function Lookup(T: TabPtr; s: string; n: integer): integer;
+var i: integer;
+    found: Boolean;
+begin
+   found := false;
+   i := n;
+   while (i > 0) and not found do
+      if s = T^[i] then
+         found := true
+      else
+         dec(i);
+   Lookup := i;
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Locate a Symbol in Table }
+{ Returns the index of the entry.  Zero if not present. }
+
+<P>
+
+function Locate(N: Symbol): integer;
+<P>
+
+begin
+<P>
+
+   Locate := Lookup(@ST, n, NEntry);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Look for Symbol in Table }
+
+<P>
+
+function InTable(n: Symbol): Boolean;
+<P>
+
+begin
+<P>
+
+   InTable := Lookup(@ST, n, NEntry) <> 0;
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Check to See if an Identifier is in the Symbol Table         }
+{ Report an error if it's not. }
+
+<P>
+
+
+procedure CheckTable(N: Symbol);
+<P>
+
+begin
+<P>
+
+   if not InTable(N) then Undefined(N);
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Check the Symbol Table for a Duplicate Identifier }
+{ Report an error if identifier is already in table. }
+
+<P>
+
+
+procedure CheckDup(N: Symbol);
+<P>
+
+begin
+<P>
+
+   if InTable(N) then Duplicate(N);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Add a New Entry to Symbol Table }
+
+<P>
+
+procedure AddEntry(N: Symbol; T: char);
+begin
+   CheckDup(N);
+   if NEntry = MaxEntry then Abort('Symbol Table Full');
+   Inc(NEntry);
+   ST[NEntry] := N;
+   SType[NEntry] := T;
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get an Identifier }
+
+<P>
+
+procedure GetName;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   if Not IsAlpha(Look) then Expected('Identifier');
+   Token := 'x';
+   Value := '';
+   repeat
+      Value := Value + UpCase(Look);
+      GetChar;
+   until not IsAlNum(Look);
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get a Number }
+
+<P>
+
+procedure GetNum;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   if not IsDigit(Look) then Expected('Number');
+   Token := '#';
+   Value := '';
+   repeat
+      Value := Value + Look;
+      GetChar;
+   until not IsDigit(Look);
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get an Operator }
+
+<P>
+
+procedure GetOp;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   Token := Look;
+<P>
+
+   Value := Look;
+<P>
+
+   GetChar;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Get the Next Input Token }
+
+<P>
+
+procedure Next;
+<P>
+
+begin
+<P>
+
+   SkipWhite;
+<P>
+
+   if IsAlpha(Look) then GetName
+<P>
+
+   else if IsDigit(Look) then GetNum
+<P>
+
+   else GetOp;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Scan the Current Identifier for Keywords }
+
+<P>
+
+procedure Scan;
+<P>
+
+begin
+<P>
+
+   if Token = 'x' then
+<P>
+
+      Token := KWcode[Lookup(Addr(KWlist), Value, NKW) + 1];
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Match a Specific Input String }
+
+<P>
+
+procedure MatchString(x: string);
+<P>
+
+begin
+<P>
+
+   if Value <> x then Expected('''' + x + '''');
+   Next;
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Output a String with Tab }
+
+<P>
+
+procedure Emit(s: string);
+<P>
+
+begin
+<P>
+
+   Write(TAB, s);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Output a String with Tab and CRLF }
+
+<P>
+
+procedure EmitLn(s: string);
+<P>
+
+begin
+<P>
+
+   Emit(s);
+<P>
+
+   WriteLn;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Generate a Unique Label }
+
+<P>
+
+function NewLabel: string;
+<P>
+
+var S: string;
+<P>
+
+begin
+<P>
+
+   Str(LCount, S);
+<P>
+
+   NewLabel := 'L' + S;
+<P>
+
+   Inc(LCount);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Post a Label To Output }
+
+<P>
+
+procedure PostLabel(L: string);
+<P>
+
+begin
+<P>
+
+   WriteLn(L, ':');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Clear the Primary Register }
+
+<P>
+
+procedure Clear;
+<P>
+
+begin
+<P>
+
+   EmitLn('CLR D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Negate the Primary Register }
+
+<P>
+
+procedure Negate;
+<P>
+
+begin
+<P>
+
+   EmitLn('NEG D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Complement the Primary Register }
+
+<P>
+
+procedure NotIt;
+<P>
+
+begin
+<P>
+
+   EmitLn('NOT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Load a Constant Value to Primary Register }
+
+<P>
+
+procedure LoadConst(n: string);
+<P>
+
+begin
+<P>
+
+   Emit('MOVE #');
+<P>
+
+   WriteLn(n, ',D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Load a Variable to Primary Register }
+
+<P>
+
+procedure LoadVar(Name: string);
+<P>
+
+begin
+<P>
+
+   if not InTable(Name) then Undefined(Name);
+   EmitLn('MOVE ' + Name + '(PC),D0');
+end;
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Push Primary onto Stack }
+
+<P>
+
+procedure Push;
+<P>
+
+begin
+<P>
+
+   EmitLn('MOVE D0,-(SP)');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Add Top of Stack to Primary }
+
+<P>
+
+procedure PopAdd;
+<P>
+
+begin
+<P>
+
+   EmitLn('ADD (SP)+,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Subtract Primary from Top of Stack }
+
+<P>
+
+procedure PopSub;
+<P>
+
+begin
+<P>
+
+   EmitLn('SUB (SP)+,D0');
+<P>
+
+   EmitLn('NEG D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Multiply Top of Stack by Primary }
+
+<P>
+
+procedure PopMul;
+<P>
+
+begin
+<P>
+
+   EmitLn('MULS (SP)+,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Divide Top of Stack by Primary }
+
+<P>
+
+procedure PopDiv;
+<P>
+
+begin
+<P>
+
+   EmitLn('MOVE (SP)+,D7');
+<P>
+
+   EmitLn('EXT.L D7');
+<P>
+
+   EmitLn('DIVS D0,D7');
+<P>
+
+   EmitLn('MOVE D7,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ AND Top of Stack with Primary }
+
+<P>
+
+procedure PopAnd;
+<P>
+
+begin
+<P>
+
+   EmitLn('AND (SP)+,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ OR Top of Stack with Primary }
+
+<P>
+
+procedure PopOr;
+<P>
+
+begin
+<P>
+
+   EmitLn('OR (SP)+,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ XOR Top of Stack with Primary }
+
+<P>
+
+procedure PopXor;
+<P>
+
+begin
+<P>
+
+   EmitLn('EOR (SP)+,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Compare Top of Stack with Primary }
+
+<P>
+
+procedure PopCompare;
+<P>
+
+begin
+<P>
+
+   EmitLn('CMP (SP)+,D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Set D0 If Compare was = }
+
+<P>
+
+procedure SetEqual;
+<P>
+
+begin
+<P>
+
+   EmitLn('SEQ D0');
+<P>
+
+   EmitLn('EXT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Set D0 If Compare was != }
+
+<P>
+
+procedure SetNEqual;
+<P>
+
+begin
+<P>
+
+   EmitLn('SNE D0');
+<P>
+
+   EmitLn('EXT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Set D0 If Compare was > }
+
+<P>
+
+procedure SetGreater;
+<P>
+
+begin
+<P>
+
+   EmitLn('SLT D0');
+<P>
+
+   EmitLn('EXT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Set D0 If Compare was < }
+
+<P>
+
+procedure SetLess;
+<P>
+
+begin
+<P>
+
+   EmitLn('SGT D0');
+<P>
+
+   EmitLn('EXT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Set D0 If Compare was <= }
+
+<P>
+
+procedure SetLessOrEqual;
+<P>
+
+begin
+<P>
+
+   EmitLn('SGE D0');
+<P>
+
+   EmitLn('EXT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Set D0 If Compare was >= }
+
+<P>
+
+procedure SetGreaterOrEqual;
+<P>
+
+begin
+<P>
+
+   EmitLn('SLE D0');
+<P>
+
+   EmitLn('EXT D0');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Store Primary to Variable }
+
+<P>
+
+procedure Store(Name: string);
+<P>
+
+begin
+<P>
+
+   EmitLn('LEA ' + Name + '(PC),A0');
+<P>
+
+   EmitLn('MOVE D0,(A0)')
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Branch Unconditional  }
+
+<P>
+
+procedure Branch(L: string);
+<P>
+
+begin
+<P>
+
+   EmitLn('BRA ' + L);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Branch False }
+
+<P>
+
+procedure BranchFalse(L: string);
+<P>
+
+begin
+<P>
+
+   EmitLn('TST D0');
+<P>
+
+   EmitLn('BEQ ' + L);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Read Variable to Primary Register }
+
+<P>
+
+procedure ReadIt(Name: string);
+<P>
+
+begin
+<P>
+
+   EmitLn('BSR READ');
+<P>
+
+   Store(Name);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{ Write from Primary Register }
+<P>
+
+
+<P>
+
+procedure WriteIt;
+<P>
+
+begin
+<P>
+
+   EmitLn('BSR WRITE');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Write Header Info }
+
+<P>
+
+procedure Header;
+<P>
+
+begin
+<P>
+
+   WriteLn('WARMST', TAB, 'EQU $A01E');
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Write the Prolog }
+
+<P>
+
+procedure Prolog;
+<P>
+
+begin
+<P>
+
+   PostLabel('MAIN');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Write the Epilog }
+
+<P>
+
+procedure Epilog;
+<P>
+
+begin
+<P>
+
+   EmitLn('DC WARMST');
+<P>
+
+   EmitLn('END MAIN');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Allocate Storage for a Static Variable }
+
+<P>
+
+procedure Allocate(Name, Val: string);
+<P>
+
+begin
+<P>
+
+   WriteLn(Name, ':', TAB, 'DC ', Val);
+end;
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Math Factor }
+
+<P>
+
+procedure BoolExpression; Forward;
+<P>
+
+
+<P>
+
+procedure Factor;
+<P>
+
+begin
+<P>
+
+   if Token = '(' then begin
+<P>
+
+      Next;
+<P>
+
+      BoolExpression;
+<P>
+
+      MatchString(')');
+<P>
+
+      end
+<P>
+
+   else begin
+<P>
+
+      if Token = 'x' then
+<P>
+
+         LoadVar(Value)
+<P>
+
+      else if Token = '#' then
+<P>
+
+         LoadConst(Value)
+<P>
+
+      else Expected('Math Factor');
+<P>
+
+      Next;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize and Translate a Multiply }
+
+<P>
+
+procedure Multiply;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   Factor;
+<P>
+
+   PopMul;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{-------------------------------------------------------------}
+{ Recognize and Translate a Divide }
+
+<P>
+
+procedure Divide;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   Factor;
+<P>
+
+   PopDiv;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Math Term }
+
+<P>
+
+procedure Term;
+<P>
+
+begin
+<P>
+
+   Factor;
+<P>
+
+   while IsMulop(Token) do begin
+<P>
+
+      Push;
+<P>
+
+      case Token of
+<P>
+
+       '*': Multiply;
+<P>
+
+       '/': Divide;
+<P>
+
+      end;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize and Translate an Add }
+
+<P>
+
+procedure Add;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   Term;
+<P>
+
+   PopAdd;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{-------------------------------------------------------------}
+{ Recognize and Translate a Subtract }
+
+<P>
+
+procedure Subtract;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   Term;
+<P>
+
+   PopSub;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate an Expression }
+
+<P>
+
+procedure Expression;
+<P>
+
+begin
+<P>
+
+   if IsAddop(Token) then
+<P>
+
+      Clear
+<P>
+
+   else
+<P>
+
+      Term;
+<P>
+
+   while IsAddop(Token) do begin
+<P>
+
+      Push;
+<P>
+
+      case Token of
+<P>
+
+       '+': Add;
+<P>
+
+       '-': Subtract;
+<P>
+
+      end;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Get Another Expression and Compare }
+
+<P>
+
+procedure CompareExpression;
+<P>
+
+begin
+<P>
+
+   Expression;
+<P>
+
+   PopCompare;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Get The Next Expression and Compare }
+
+<P>
+
+procedure NextExpression;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   CompareExpression;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate a Relational "Equals" }
+
+<P>
+
+procedure Equal;
+<P>
+
+begin
+<P>
+
+   NextExpression;
+<P>
+
+   SetEqual;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate a Relational "Less Than or Equal" }
+
+<P>
+
+procedure LessOrEqual;
+<P>
+
+begin
+<P>
+
+   NextExpression;
+<P>
+
+   SetLessOrEqual;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate a Relational "Not Equals" }
+
+<P>
+
+procedure NotEqual;
+<P>
+
+begin
+<P>
+
+   NextExpression;
+<P>
+
+   SetNEqual;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate a Relational "Less Than" }
+
+<P>
+
+procedure Less;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   case Token of
+<P>
+
+     '=': LessOrEqual;
+<P>
+
+     '>': NotEqual;
+<P>
+
+   else begin
+<P>
+
+           CompareExpression;
+<P>
+
+           SetLess;
+<P>
+
+        end;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate a Relational "Greater Than" }
+
+<P>
+
+procedure Greater;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   if Token = '=' then begin
+<P>
+
+      NextExpression;
+<P>
+
+      SetGreaterOrEqual;
+<P>
+
+      end
+<P>
+
+   else begin
+<P>
+
+      CompareExpression;
+<P>
+
+      SetGreater;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Relation }
+
+<P>
+
+
+procedure Relation;
+<P>
+
+begin
+<P>
+
+   Expression;
+<P>
+
+   if IsRelop(Token) then begin
+<P>
+
+      Push;
+<P>
+
+      case Token of
+<P>
+
+       '=': Equal;
+<P>
+
+       '<': Less;
+<P>
+
+       '>': Greater;
+<P>
+
+      end;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Boolean Factor with Leading NOT }
+
+<P>
+
+procedure NotFactor;
+<P>
+
+begin
+<P>
+
+   if Token = '!' then begin
+<P>
+
+      Next;
+<P>
+
+      Relation;
+<P>
+
+      NotIt;
+<P>
+
+      end
+<P>
+
+   else
+<P>
+
+      Relation;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Boolean Term }
+
+<P>
+
+procedure BoolTerm;
+<P>
+
+begin
+<P>
+
+   NotFactor;
+<P>
+
+   while Token = '&' do begin
+<P>
+
+      Push;
+<P>
+
+      Next;
+<P>
+
+      NotFactor;
+<P>
+
+      PopAnd;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize and Translate a Boolean OR }
+
+<P>
+
+procedure BoolOr;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   BoolTerm;
+<P>
+
+   PopOr;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Recognize and Translate an Exclusive Or }
+
+<P>
+
+procedure BoolXor;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   BoolTerm;
+<P>
+
+   PopXor;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Parse and Translate a Boolean Expression }
+
+<P>
+
+procedure BoolExpression;
+<P>
+
+begin
+<P>
+
+   BoolTerm;
+<P>
+
+   while IsOrOp(Token) do begin
+<P>
+
+      Push;
+<P>
+
+      case Token of
+<P>
+
+       '|': BoolOr;
+<P>
+
+       '~': BoolXor;
+<P>
+
+      end;
+<P>
+
+   end;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Parse and Translate an Assignment Statement }
+
+<P>
+
+procedure Assignment;
+<P>
+
+var Name: string;
+<P>
+
+begin
+<P>
+
+   CheckTable(Value);
+<P>
+
+   Name := Value;
+<P>
+
+   Next;
+<P>
+
+   MatchString('=');
+<P>
+
+   BoolExpression;
+<P>
+
+   Store(Name);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{---------------------------------------------------------------}
+{ Recognize and Translate an IF Construct }
+
+<P>
+
+procedure Block; Forward;
+<P>
+
+
+<P>
+
+procedure DoIf;
+<P>
+
+var L1, L2: string;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   BoolExpression;
+<P>
+
+   L1 := NewLabel;
+<P>
+
+   L2 := L1;
+<P>
+
+   BranchFalse(L1);
+<P>
+
+   Block;
+<P>
+
+   if Token = 'l' then begin
+<P>
+
+      Next;
+<P>
+
+      L2 := NewLabel;
+<P>
+
+      Branch(L2);
+<P>
+
+      PostLabel(L1);
+<P>
+
+      Block;
+<P>
+
+   end;
+<P>
+
+   PostLabel(L2);
+<P>
+
+   MatchString('ENDIF');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Parse and Translate a WHILE Statement }
+
+<P>
+
+procedure DoWhile;
+<P>
+
+var L1, L2: string;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   L1 := NewLabel;
+<P>
+
+   L2 := NewLabel;
+<P>
+
+   PostLabel(L1);
+<P>
+
+   BoolExpression;
+<P>
+
+   BranchFalse(L2);
+<P>
+
+   Block;
+<P>
+
+   MatchString('ENDWHILE');
+<P>
+
+   Branch(L1);
+<P>
+
+   PostLabel(L2);
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Read a Single Variable }
+
+<P>
+
+procedure ReadVar;
+<P>
+
+begin
+<P>
+
+   CheckIdent;
+<P>
+
+   CheckTable(Value);
+<P>
+
+   ReadIt(Value);
+<P>
+
+   Next;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Process a Read Statement }
+
+<P>
+
+procedure DoRead;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   MatchString('(');
+<P>
+
+   ReadVar;
+<P>
+
+   while Token = ',' do begin
+<P>
+
+      Next;
+<P>
+
+      ReadVar;
+<P>
+
+   end;
+<P>
+
+   MatchString(')');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Process a Write Statement }
+
+<P>
+
+procedure DoWrite;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   MatchString('(');
+<P>
+
+   Expression;
+<P>
+
+   WriteIt;
+<P>
+
+   while Token = ',' do begin
+<P>
+
+      Next;
+<P>
+
+      Expression;
+<P>
+
+      WriteIt;
+<P>
+
+   end;
+<P>
+
+   MatchString(')');
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Parse and Translate a Block of Statements }
+
+<P>
+
+procedure Block;
+<P>
+
+begin
+<P>
+
+   Scan;
+<P>
+
+   while not(Token in ['e', 'l']) do begin
+      case Token of
+       'i': DoIf;
+       'w': DoWhile;
+       'R': DoRead;
+       'W': DoWrite;
+      else Assignment;
+      end;
+      Scan;
+   end;
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Allocate Storage for a Variable }
+
+<P>
+
+procedure Alloc;
+<P>
+
+begin
+<P>
+
+   Next;
+<P>
+
+   if Token <> 'x' then Expected('Variable Name');
+   CheckDup(Value);
+   AddEntry(Value, 'v');
+   Allocate(Value, '0');
+   Next;
+end;
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Parse and Translate Global Declarations }
+
+<P>
+
+procedure TopDecls;
+<P>
+
+begin
+<P>
+
+   Scan;
+<P>
+
+   while Token = 'v' do
+<P>
+
+      Alloc;
+<P>
+
+      while Token = ',' do
+<P>
+
+         Alloc;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Initialize }
+
+<P>
+
+procedure Init;
+<P>
+
+begin
+<P>
+
+   GetChar;
+<P>
+
+   Next;
+<P>
+
+end;
+<P>
+
+
+<P>
+
+
+{--------------------------------------------------------------}
+{ Main Program }
+
+<P>
+
+begin
+<P>
+
+   Init;
+<P>
+
+   MatchString('PROGRAM');
+<P>
+
+   Header;
+<P>
+
+   TopDecls;
+<P>
+
+   MatchString('BEGIN');
+<P>
+
+   Prolog;
+<P>
+
+   Block;
+<P>
+
+   MatchString('END');
+<P>
+
+   Epilog;
+<P>
+
+end.
+<P>
+
+{--------------------------------------------------------------}
+*****************************************************************
+*                                                               *
+*                        COPYRIGHT NOTICE                       *
+*                                                               *
+*   Copyright (C) 1989 Jack W. Crenshaw. All rights reserved.   *
+*                                                               *
+*****************************************************************
+
+<P>
+

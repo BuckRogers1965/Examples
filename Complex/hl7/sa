@@ -1,0 +1,19 @@
+#!/usr/bin/ksh
+
+ftp -i -n alphad <<EOF
+
+    user ancill_chgs cloverleaf
+
+    cd "test\$disk:[ancill_chgs.test]"
+
+    lcd /hci/root3.3.1P/vmbatch/pomniserv
+
+    ascii
+
+    pwd
+
+    ls
+
+    quit
+EOF
+

@@ -1,0 +1,367 @@
+CDS.Private.ProductInfo.Callback({
+  "vistastart": {
+    name: "Microsoft Windows Vista Starter Edition",
+    sku: "VISTA-START",
+    links: [
+      {
+        title: "Microsoft Windows Vista Comparison Chart",
+        url: "36E33768A32D413B8E4A9D43F4401F1F/VistaComparisonChart.html",
+        height: "874",
+        width: "819"
+      },
+      {
+        title: "Features and Benefits",
+        url: "2AF63149036641EE98F8031952E0F1DA/Microsoft_Vista_Starter_features_and_benefits.html",
+        height: "797",
+        width: "845"
+      },
+      {
+        title: "System Requirements",
+        url: "3FABBA7226EA4C45AC8F5BD8B4EC3C62/vista_system_requirements_HomeStarter.html",
+        height: "548",
+        width: "672"
+      }
+    ]
+  },
+  "vistahb": {
+    name: "Microsoft Windows Vista Home Basic Edition",
+    sku: "VISTA-HB",
+    links: [
+      {
+        title: "Microsoft Windows Vista Comparison Chart",
+        url: "36E33768A32D413B8E4A9D43F4401F1F/VistaComparisonChart.html",
+        height: "874",
+        width: "819"
+      },
+      {
+        title: "Features and Benefits",
+        url: "1A428FC80C374BEABF1DA61B030A0216/Microsoft_Vista_Home_Basic_features_and_benefits.html",
+        height: "792",
+        width: "824"
+      },
+      {
+        title: "System Requirements",
+        url: "509A3DF5A167452F935D893CC110793F/vista_system_requirements_HomeBasic.html",
+        height: "544",
+        width: "651"
+      }
+    ]
+  },
+  "vistahp": {
+    name: "Microsoft Windows Vista Home Premium Edition",
+    sku: "VISTA-HP",
+    links: [
+      {
+        title: "Top Reasons to Upgrade to Microsoft Windows Vista",
+        url: "7A6455951E6740E8A609B8E86937109F/Vista_upgrade.html",
+        height: "841",
+        width: "781"
+      },
+      {
+        title: "Microsoft Windows Vista Comparison Chart",
+        url: "36E33768A32D413B8E4A9D43F4401F1F/VistaComparisonChart.html",
+        height: "874",
+        width: "819"
+      },
+      {
+        title: "Features and Benefits",
+        url: "87EB920D3F8D4CA1BA2411B97EC6AD35/Microsoft_Vista_Home_premium_features_and_benefits.html",
+        height: "909",
+        width: "845"
+      },
+      {
+        title: "System Requirements",
+        url: "FD6D09D2EE73430CB3E41911DD0B1987/vista_system_requirements_HomePremium.html",
+        height: "548",
+        width: "651"
+      }
+    ]
+  },
+  "vistabiz": {
+    name: "Microsoft Windows Vista Business Edition",
+    sku: "VISTA-BIZ",
+    links: [
+      {
+        title: "Top Reasons to Upgrade to Microsoft Windows Vista",
+        url: "7A6455951E6740E8A609B8E86937109F/Vista_upgrade.html",
+        height: "841",
+        width: "781"
+      },
+      {
+        title: "Microsoft Windows Vista Comparison Chart",
+        url: "36E33768A32D413B8E4A9D43F4401F1F/VistaComparisonChart.html",
+        height: "874",
+        width: "819"
+      },
+      {
+        title: "Features and Benefits",
+        url: "32DB3AC06DB246AF915957FE789F04EF/Microsoft_Vista_Business_features_and_benefits.html",
+        height: "1218",
+        width: "827"
+      },
+      {
+        title: "System Requirements",
+        url: "EE2DD07172C34BD181B7C1D4269BDCD9/vista_system_requirements_Business.html",
+        height: "546",
+        width: "654"
+      }
+    ]
+  },
+  "vistault": {
+    name: "Microsoft Windows Vista Ultimate Edition",
+    sku: "VISTA-ULT",
+    links: [
+      {
+        title: "Microsoft Windows Vista Comparison Chart",
+        url: "36E33768A32D413B8E4A9D43F4401F1F/VistaComparisonChart.html",
+        height: "874",
+        width: "819"
+      },
+      {
+        title: "Features and Benefits",
+        url: "0D37A20FB6A946ADB412D4C32A3237EF/Microsoft_Vista_Ultmate_features_and_benefits.html",
+        height: "826",
+        width: "826"
+      },
+      {
+        title: "System Requirements",
+        url: "33BCC5C7E8CE42629E7D8F5A3E205E0D/vista_system_requirements_VistaUltimate.html",
+        height: "550",
+        width: "653"
+      }
+    ]
+  },
+  "ofcb": {
+    name: "Microsoft Office 2007 Basic Edition",
+    sku: "OFC-B",
+    links: [
+      {
+        title: "Top Reasons to Upgrade to the Microsoft Office 2007 Release",
+        url: "40900612438A428EA1D7F41F554FD4AB/Office_upgrade.html",
+        height: "672",
+        width: "649"
+      },
+      {
+        title: "Microsoft Office 2007 Comparison Chart",
+        url: "D6055930123B4DB5B23A07EB0A15765D/Office_Comparison.html",
+        height: "358",
+        width: "1007"
+      },
+      {
+        title: "Features and Benefits",
+        url: "7B4B2990991D4B1A896DA0F645594BF1/Microsoft_Office_Basic_2007_features_and_benefits.html",
+        height: "1189",
+        width: "843"
+      },
+      {
+        title: "System Requirements",
+        url: "188E89EF70E544D18D704D749518FAAF/office_system_requirementsBasic.html",
+        height: "710",
+        width: "826"
+      }
+    ]
+  },
+  "ofchs": {
+    name: "Microsoft Office 2007 Home and Student Edition",
+    sku: "OFC-HS",
+    links: [
+      {
+        title: "Microsoft Office 2007 Comparison Chart",
+        url: "D6055930123B4DB5B23A07EB0A15765D/Office_Comparison.html",
+        height: "358",
+        width: "1007"
+      },
+      {
+        title: "Features and Benefits",
+        url: "04F9DAC4FEE64CFD971CD64745E96E0E/Microsoft_Office_Home_and_Student_Features_and_Benefits_2007.html",
+        height: "550",
+        width: "750"
+      },
+      {
+        title: "System Requirements",
+        url: "F0D3439C5BA14D77869C77E1221CEC39/office_system_requirementsHomeStudent.html",
+        height: "550",
+        width: "750"
+      }
+    ]
+  },
+  "ofcsmb": {
+    name: "Microsoft Office 2007 Small Business Edition",
+    sku: "OFC-SMB",
+    links: [
+      {
+        title: "Top Reasons to Upgrade to the Microsoft Office 2007 Release",
+        url: "40900612438A428EA1D7F41F554FD4AB/Office_upgrade.html",
+        height: "672",
+        width: "649"
+      },
+      {
+        title: "Microsoft Office 2007 Comparison Chart",
+        url: "D6055930123B4DB5B23A07EB0A15765D/Office_Comparison.html",
+        height: "358",
+        width: "1007"
+      },
+      {
+        title: "Features and Benefits",
+        url: "58168BB3C4514B2A8B8FE47BB26E04E7/Microsoft_Office_Small_Business_2007_Features_and_Benefits.html",
+        height: "1285",
+        width: "826"
+      },
+      {
+        title: "System Requirements",
+        url: "D8F72FB20FDB4BA2BB03383223F7E2B3/office_system_requirementsSmallBusiness.html",
+        height: "872",
+        width: "826"
+      }
+    ]
+  },
+  "ofcpro": {
+    name: "Microsoft Office 2007 Professional Edition",
+    sku: "OFC-PRO",
+    links: [
+      {
+        title: "Top Reasons to Upgrade to the Microsoft Office 2007 Release",
+        url: "40900612438A428EA1D7F41F554FD4AB/Office_upgrade.html",
+        height: "672",
+        width: "649"
+      },
+      {
+        title: "Microsoft Office 2007 Comparison Chart",
+        url: "D6055930123B4DB5B23A07EB0A15765D/Office_Comparison.html",
+        height: "358",
+        width: "1007"
+      },
+      {
+        title: "Features and Benefits",
+        url: "EAE6A4F4667C4B7CAF961158AEBFC17E/Microsoft_Office_Professional_2007_Features_and_Benefits.html",
+        height: "1583",
+        width: "826"
+      },
+      {
+        title: "System Requirements",
+        url: "302A1C09F8AF46E383DBB1A03BA8E9B7/office_system_requirementsProfessional.html",
+        height: "872",
+        width: "826"
+      }
+    ]
+  },
+  "ofcult": {
+    name: "Microsoft Office 2007 Ultimate Edition",
+    sku: "OFC-ULT",
+    links: [
+      {
+        title: "Microsoft Office 2007 Comparison Chart",
+        url: "D6055930123B4DB5B23A07EB0A15765D/Office_Comparison.html",
+        height: "358",
+        width: "1007"
+      },
+      {
+        title: "Features and Benefits",
+        url: "A67C153DD5174CA389D8213C63403EF7/Microsoft_Office_Ultimate_2007_features_and_benefits.html",
+        height: "1581",
+        width: "824"
+      },
+      {
+        title: "System Requirements",
+        url: "DFB08C60D2BF4B21B6823A733899BDDF/office_system_requirementsUltimate.html",
+        height: "869",
+        width: "824"
+      }
+    ]
+  },
+  "sbss": {
+    name: "Microsoft Small Business Server 2003 R2 Standard Edition",
+    sku: "SBS-S",
+    links: [
+      {
+        title: "Benefits of Upgrading to Small Business Server 2003 R2",
+        url: "9691819091D043B285D464CD7ED2585E/Server_upgrade.html",
+        height: "666",
+        width: "662"
+      },
+      {
+        title: "Microsoft Small Business Server Comparison Chart",
+        url: "1B755E7207BE41F4BA65EEBBD713D8F7/SmallBusinessServerComparison.html",
+        height: "946",
+        width: "668"
+      },
+      {
+        title: "Features and Benefits",
+        url: "420EA91063454C979A9FBA934D9E9760/Small_Business_Server_2003_R2_Features_and_Benefits.html",
+        height: "1159",
+        width: "826"
+      },
+      {
+        title: "System Requirements",
+        url: "4F9252E1A6664AFDBA38300810F52E95/server_system_requirementsStandard.htm",
+        height: "728",
+        width: "914"
+      }
+    ]
+  },
+  "sbsp": {
+    name: "Microsoft Small Business Server 2003 R2 Premium Edition",
+    sku: "SBS-P",
+    links: [
+      {
+        title: "Benefits of Upgrading to Small Business Server 2003 R2",
+        url: "9691819091D043B285D464CD7ED2585E/Server_upgrade.html",
+        height: "666",
+        width: "662"
+      },
+      {
+        title: "Microsoft Small Business Server Comparison Chart",
+        url: "1B755E7207BE41F4BA65EEBBD713D8F7/SmallBusinessServerComparison.html",
+        height: "946",
+        width: "668"
+      },
+      {
+        title: "Features and Benefits",
+        url: "420EA91063454C979A9FBA934D9E9760/Small_Business_Server_2003_R2_Features_and_Benefits.html",
+        height: "1159",
+        width: "826"
+      },
+      {
+        title: "System Requirements",
+        url: "9A7C9F4A83F84FA1ACD1AFE8403F86C4/server_system_requirementsPremium.htm",
+        height: "710",
+        width: "875"
+      }
+    ]
+  },
+  "66g00512": "vistahb",
+  "66g00544": "vistahb",
+  "66g00576": "vistahb",
+  "66g00613": "vistahb",
+  "66g00649": "vistahb",
+  "66g00660": "vistahb",
+  "66g00697": "vistahb",
+  "66i00715": "vistahp",
+  "66i00752": "vistahp",
+  "66i00788": "vistahp",
+  "66i00825": "vistahp",
+  "66i01594": "vistahp",
+  "66i01595": "vistahp",
+  "66j02225": "vistabiz",
+  "66j02257": "vistabiz",
+  "66j02289": "vistabiz",
+  "66j02326": "vistabiz",
+  "66j02362": "vistabiz",
+  "66j02373": "vistabiz",
+  "66j02410": "vistabiz",
+  "66r00765": "vistault",
+  "66r00802": "vistault",
+  "66r00838": "vistault",
+  "66r00875": "vistault",
+  "66r01442": "vistault",
+  "66r01443": "vistault",
+  "s5501347": "ofcb",
+  "s5501348": "ofcb",
+  "9qa00443": "ofcsmb",
+  "9qa00444": "ofcsmb",
+  "26911521": "ofcpro",
+  "26911618": "ofcpro",
+  "26911936": "ofcpro",
+  "t7201849": "sbss",
+  "t7501713": "sbsp"
+})

@@ -1,0 +1,519 @@
+	/*H1*/
+	H1							{font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-style: normal; font-weight: bold; color: #001D36; margin:0; padding:0;}
+	H2 							{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H2:link 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H2:visited 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #800080; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H2:hover 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: Underline; margin:0; padding:0;}
+	H3 							{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0; }
+	a.H3:link 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0; }
+	a.H3:visited 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #800080; font-weight: normal; text-decoration: none; margin:0; padding:0; }
+	a.H3:hover 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: Underline; margin:0; padding:0;}
+	H4 							{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H4:link 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H4:visited 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #800080; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H4:hover 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: Underline; margin:0; padding:0;}
+	H5	 						{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H5:link 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H5:visited 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #800080; font-weight: normal; text-decoration: none; margin:0; padding:0;}
+	a.H5:hover 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: Underline; margin:0; padding:0;}
+	/*Site wide styles*/
+	.bodytext 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #000000; margin:0; padding:0;}
+	.bodytextbold				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #000000;}
+	.inputboxes 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px;  font-weight: normal; color: #000000;}
+	.headingwhite 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #FFFFFF;}
+	.headingblack				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #000000;}
+	.headinglightblue 			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #6699cc;}
+	.headingdarkblue			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #001D36;}
+	.pageheadingdarkblue 		{font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-style: normal; font-weight: bold; color: #001D36;}
+	.pageheadingwhite	 		{font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-style: normal; font-weight: bold; color: #ffffff;}
+	.pageheadinglightblue 		{font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-style: normal; font-weight: bold; color: #6699cc;}
+	.asterisk 					{color: red; font-size:16px; padding-left: 5px; padding-right: 5px;}
+	/*Where is this used*/
+	.smallred 					{font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: #FF0000; font-size: 8pt;}	
+	.hyperlink_pageheadingdarkblue 		{font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-style: normal; font-weight: bold; color: ##001D36; text-decoration: Underline;}
+	/*Background Colours*/
+	.lightblue 					{background-color: #D1E0F0;}
+	.medblue 					{background-color: #6ea0e3;}
+	.medblue2 					{background-color: #A8C6EE;}	
+	.darkblue 					{background-color: #001D36;}
+	.grey	 					{background-color: #E2E2E2;}
+	.red 						{color: #FF0000;}
+	.white 						{color: #ffffff;}
+	.greybackground				{background-color: #EEEEEE;}
+	form 						{margin-bottom: 0;}
+	.fullheight					{height:82%;}
+	.fullheight100				{height:100%;}
+	/*Hyperlink with Underline*/
+	.hyperlink_underline 			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #006699; text-decoration: Underline;}
+	a.hyperlink_underline:link 		{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #006699; text-decoration: Underline;}
+	a.hyperlink_underline:visited 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #800080; text-decoration: Underline;}
+	a.hyperlink_underline:hover 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #006699; text-decoration: Underline;}
+	
+	a 			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #006699; text-decoration: Underline;}
+	a:link 		{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #006699; text-decoration: Underline;}
+	a:visited 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #800080; text-decoration: Underline;}
+	a:hover 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #006699; text-decoration: Underline;}
+	
+	
+	/*Hyperlink BLACK*/
+	.hyperlink_black			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #ffffff; text-decoration: Underline;}
+	a.hyperlink_black:link 		{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #ffffff; text-decoration: Underline;}
+	a.hyperlink_black:visited 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #ffffff; text-decoration: Underline;}
+	a.hyperlink_black:hover 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #ffffff; text-decoration: Underline;}
+	
+	
+	/*Hyperlink Rollovers*/
+	.hyperlink 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none;}
+	a.hyperlink:link 			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: none;}
+	a.hyperlink:visited 		{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #800080; font-weight: normal; text-decoration: none;}
+	a.hyperlink:hover 			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #006699; font-weight: normal; text-decoration: Underline;}
+	
+	
+	/*Hyperlink White for Main Menu*/
+	.hyperlink_menu				{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #ffffff; text-decoration: none;}
+	a.hyperlink_menu:link 		{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #ffffff; text-decoration: none;}
+	a.hyperlink_menu:visited 	{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #ffffff; text-decoration: none;}
+	a.hyperlink_menu:hover 		{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #ffffff; text-decoration: Underline;}
+	/*Hyperlink White Rollover*/
+	.hyperlink_white			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #ffffff; text-decoration: none;}
+	a.hyperlink_white:link 		{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #ffffff; text-decoration: none;}
+	a.hyperlink_white:visited 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #ffffff; text-decoration: none;}
+	a.hyperlink_white:hover 	{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #ffffff; text-decoration: Underline;}
+	/*Search box text (needs all the border styles to remove default outline)*/
+	.Searchbox					{font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000000; text-decoration:none;	border-color: #ffffff; border-top-style: solid; border-top-width: 0px; background-color: #FFFFFF;
+								border-right-style: solid; border-right-width: 0px; border-bottom-style: solid;	border-bottom-width: 0px; border-left-style: solid; border-left-width: 0px;}
+	
+	
+	/* homepage specific */
+	.boxcontent 				{background-color: #F7F7F7;}
+	.boxtext 					{font-family: arial; font-size: 12px; color: #000000; margin:12px 12px 12px 12px; padding-left:12px}
+	.boxtext a:HOVER			{font-family: arial; font-size: 12px; color: #336699; text-decoration: Underline; }
+	.boxtext b, .boxtext2 b 	{color: #336699;}
+	.boxwhite 					{font-family: arial;font-size: 12px;color: #ffffff; line-height: 14px;}
+	.boxwhite a, .boxwhite a.type2 {color: #FFFFFF;	text-decoration: none;}
+	.boxwhite a:HOVER 			{color: #336699; text-decoration: none;}
+	.boxwhite a.type2:HOVER 	{color: #6699CC; text-decoration: none;}
+	/* catalog specific */
+	.title 						{font-family: arial; font-size: 12px; color: #4e7faa;}
+	.title b 					{color: #6699cc;}
+	.tracking 					{font-family: arial; font-size: 12px; color: #4e7faa;}
+	.tracking a 				{color: #4e7faa; text-decoration: none;}
+	.boxtext2 					{font-family: arial; font-size: 12px; color: #000000;}
+	.boxtext2 a 				{color: #336699; text-decoration: none;	font-weight: bold;}
+	.boxtext2 a:HOVER 			{color: #6699cc; text-decoration: none; font-weight: bold;}
+	.rightboxtitle 				{font-family: arial; font-size: 10px; color: #ffffff; margin:0px 0px 0px 5px;}
+	.rightboxtitle a 			{font-weight: bold; color: #ffffff; text-decoration: none;}
+	.rightboxtitle a:HOVER 		{font-weight: bold; color: #336699; text-decoration: none;}
+	/* search results specific */
+	.boxtext_blue 				{font-family: arial; font-size: 12px; color: #336699;}
+	.boxtext_blue a 			{color: #336699; text-decoration: none;	font-weight: bold;}
+	.boxtext_blue a:HOVER 		{color: #6699cc; text-decoration: none;	font-weight: bold;}
+	
+	
+	/*Left menu for template*/
+	#navcontainer 				{margin-left: 0px; margin-top: 7px; font-family: arial, helvetica, sans-serif; font-size: 12px;}
+	#navcontainer ul			{margin: 0; padding: 0; list-style-type: none; font-family: arial, helvetica, sans-serif; font-size: 12px; height: 100%;}
+	#navcontainer li 			{margin: 0 0 1px 0; }
+	#navcontainer a  			{display: block; padding: 5px 10px; width: 120px; color: #ffffff; background-color: #001D36; text-decoration: none; font-family: arial, helvetica, sans-serif; font-size: 12px;}
+	#navcontainer a:hover		{color: #ffffff; background-color: #69C; text-decoration: none;}
+	#navcontainer ul ul li 		{margin: 0 0 1px 0; }
+	#navcontainer ul ul a		{display: block; padding: 5px 5px 5px 20px; width: 115px; color: #ffffff; background-color: #4895CF; text-decoration: none; font-family: arial, helvetica, sans-serif; font-size: 12px;}
+	#navcontainer ul ul a:hover	{color: #ffffff; background-color: #81B7DF; text-decoration: none;}
+
+/*New Left menu for template*/
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0;
+	font-size: 70%;
+	font-weight: bold;
+	}	
+	
+ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	}
+	
+/* =-=-=-=-=-=-=-[Menu One]-=-=-=-=-=-=-=- */
+	
+#menu {
+	width: 140px;
+	margin: 0px;
+	}
+	
+#menu li a {
+	
+  	voice-family: "\"}\""; 
+  	voice-family: inherit;
+  	height: 22px;
+	text-decoration: none;
+	}	
+	
+#menu li a:link, #menu li a:visited {
+	color: #FFFFFF;
+	display: block;
+	background: url(/images/1/template/menu1.gif);
+	padding: 8px 0 0 10px;
+	}
+	
+#menu li a:hover {
+	color: #FFFFFF;
+	background: url(/images/1/template/menu1.gif) 0 -32px;
+	padding: 8px 0 0 10px;
+	}
+	
+#menu li a:active {
+	color: #FFFFFF;
+	background: url(/images/1/template/menu1.gif) 0 -64px;
+	padding: 8px 0 0 10px;
+	}
+/* Finish */
+	
+	/*banner template */
+	.banner						{height: 127px; background-image: url('http://www.bluesolutions.co.uk/images/1/banners/background.gif');
+								border-color: #868686; border-top-style: solid; border-top-width: 1px; border-right-style: solid; border-right-width: 1px; 
+								border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+								
+	/*Product news banner Microsoft Blue*/
+	.banner_product				{height: 65px; background-image: url('http://www.bluesolutions.co.uk/images/1/banners/productnews_background.gif');}
+	
+	
+		/*Product news banner Bullguard Red*/
+	.banner_product_red				{height: 65px; background-image: url('http://www.bluesolutions.co.uk/images/1/banners/productnews_background_red.gif');}
+	
+	/*Homepage news banner*/
+	.home_banner				{height: 154px;}	
+	
+	/*Licensing addition*/
+	.bar						{height:28px; background-image: url('http://www.bluesolutions.co.uk/images/1/Licensing/bar.gif'); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #000000;}		
+									
+	/*Home page include */
+	.featurebox 				{padding-left: 12px; height: 100%; padding-top: 10px; background-image: url('/images/1/aqua/mainfeature.gif');}
+	.imageoutline 				{padding-left: 5px; padding-top: 5px; padding-right: 5px;}
+	p.newspadding 				{margin:12px 12px 12px 12px;}
+	.boxtextnews 				{font-family: arial; font-size: 12px; color: #000000; Margin: 10px 20px 10px 10px;}
+	.outer 						{background-attachment: fixed; border-color: #868686; border-top-style: solid; border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid; border-left-width: 1px;}
+	/* table and style for right border on home page*/	
+	.leftmenu_background		{background-image: url('/images/1/template/home_18.gif'); width: 130px;}								
+	.middlemenu_background		{background-image: url('/images/1/template/home_19.gif'); padding-left: 5px; padding-right: 5px; padding-top: 5px;}
+	.rightmenu_background		{background-image: url('/images/1/template/home_20.gif'); padding-left: 5px; padding-right: 5px; padding-top: 5px;} 
+	/* Homepage bestsellers box*/			
+	.homepage_products_top		{background-color: #E2E2E1;	background-repeat: no-repeat; padding-right: 2px; 
+								padding-top: 5px; border-color: #99A5AF; border-bottom-style: solid; 
+								border-bottom-width: 1px; border-left-style: solid;	border-left-width: 1px;}
+	.homepage_products_bottom1	{background-color: #FFFFFF; font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #153046; font-weight: bold; text-decoration: none;}
+	.homepage_products_bottom2	{background-image: url('/images/1/template/product_spacer.gif') background-color: #FFFFFF;}
+	.price						{font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #153046; font-weight: bold; text-decoration: none;}								
+	.bestsellers				{padding-left: 2px; height: 92px; background-attachment: fixed; background-repeat: no-repeat; 
+								background-color: #DADBE3;  border-color: #CCCCCC; border-top-style: solid; border-color: #99A5AF;
+								border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}		
+	.table_menubox 				{width: 210px; background-attachment: fixed;
+								background-repeat: no-repeat; background-color: #F0F1F3; border-color: #336699; border-top-style: solid;
+								border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;	padding-left: 10px; color: #ffffff;
+								text-align: left; font-size: 10px; font-family: Arial; text-decoration: none;}
+	.table_righthandhome 		{background-repeat: no-repeat; border-color: #ffffff; border-top-style: solid; border-top-width: 1px;
+								background-color: #F2F2F4; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;	padding-left: 10px; 
+								text-align: left; font-size: 1px; font-family: Arial; text-decoration: none;}
+	
+	.table_pageframeheader 	{width: 100%; height: 31px; background-image: url('/images/1/Aqua/titlebar_info_header.gif'); background-repeat: no-repeat; background-color: #DADBE3;  border-color: #CCCCCC; border-top-style: solid;
+								border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; font-family: arial; font-size: 14px; color: #ffffff; font-weight: bold;}	
+								
+	.table_info_header		{width: 100%; height: 39px; background-image: url('/images/1/Aqua/titlebar_info_header.gif');background-repeat: no-repeat; background-color: #ffffff;}				
+	.table_ecom_header		{width: 100%; height: 39px; background-image: url('/images/1/Aqua/titlebar_cart_header.gif');background-repeat: no-repeat; background-color: #ffffff;}	
+	.table_account_header	{width: 100%; height: 39px; background-image: url('/images/1/Aqua/titlebar_account_header.gif');background-repeat: no-repeat; background-color: #ffffff;}	
+	.table_cart_header 		{width: 100%; height: 39px; background-image: url('/images/1/Aqua/titlebar_cart_header.gif');background-repeat: no-repeat; background-color: #ffffff;}	
+	.table_licence_header 	{width: 100%; height: 39px; background-image: url('/images/1/Aqua/titlebar_licence_header.gif');background-repeat: no-repeat; background-color: #ffffff;}	
+	
+	.table_ecom_footer		{width: 100%; height: 36px; background-image: url('/images/1/Aqua/titlebar_accounts_footer.gif');background-repeat: no-repeat; background-color: #ffffff;}	
+	.blue_ecom				{height: 21px; background-color: #77A6E5}
+	.outer_ecom 			{border-color: #99A5AF; border-top-style: solid; border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid; border-left-width: 1px;}					
+								
+	/* InfoCentre Styles*/
+	.infocentre_heading			{background-attachment: fixed; background-color: #DADBE3; border-color: #cccccc; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid;	border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid;	border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 12px; font-weight: bold; color: #001D36;}
+	.infocentre_white			{background-attachment: fixed; background-color: #FFFFFF; border-color: #cccccc; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid;	border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid;	border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 12px; font-weight: normal; color: #000000;}
+	.infocentre_body			{background-attachment: fixed; background-color: #EAEAEA; border-color: #cccccc; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid;	border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid;	border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 12px; font-weight: normal; color: #000000;}
+	.infocentre_empty			{background-attachment: fixed; background-color: #FFFFFF; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid;	border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid;	border-left-width: 1px;}
+	/* cart and order history etc*/
+	.medblue_white 				{font-family: arial; font-size: 12px; color: #ffffff; background-color: #001D36;}
+	.grey_black					{font-family: arial; font-size: 12px; color: #000000; background-color: #E2E3E3;}
+	/*Used in the licensing site*/
+	.cartheadings 				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #FFFFFF}
+	.carttext 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #000000}
+	/*Shop Links Button*/		
+	.shop_link					{width: 243px; height: 33px; background-image: url('/images/1/Aqua/information_button2.gif'); background-repeat: no-repeat; border-top-width: 0px; border-right-style: solid; border-right-width: 0px; border-bottom-style: solid;
+								border-bottom-width: 0px; border-left-style: solid; border-left-width: 0px; font-family: arial; font-size: 12px; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px;}
+	.download_link				{width: 243px; height: 33px; background-image: url('/images/1/Aqua/download_button2.gif'); background-repeat: no-repeat; border-top-width: 0px; border-right-style: solid; border-right-width: 0px; border-bottom-style: solid;
+								border-bottom-width: 0px; border-left-style: solid; border-left-width: 0px; font-family: arial; font-size: 12px; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px;}
+	/*Vertical dividers for the quick links menu at the bottom of the page*/
+	.verticals					{font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #006699; text-decoration: none;}
+	/*homepage details and information*/
+	.information				{background-attachment: fixed; background-color: #F2F2F3;  border-color: #99A5AF; border-top-style: solid;	border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #153046; text-decoration: none;}		
+	/*search results box*/
+	.searchresults				{border-color: #99A5AF; border-top-style: solid; border-top-width: 1px ;background-color: #F2F2F3; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+	a.searchresults2			{border-color: #99A5AF; border-top-style: solid; border-top-width: 1px ; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+	.searchresults_text			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #153046; text-decoration: none; font-weight: bold;}
+	.search_background			{background-attachment: fixed; background-color: #F2F2F3;
+								border-color: #99A5AF; border-top-style: solid; border-top-width: 1px; 	background-repeat: no-repeat; border-bottom-style: solid;	
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; font-family: arial; font-size: 12px;}
+	/*product page illustration*/
+	.illustration				{width: 244px; background-attachment: fixed; border-color: #99a5af; border-top-style: solid; border-top-width: 1px; 
+								background-repeat: no-repeat; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+	/*product page price break table _ use class=hyperlink as the default typeface for this style*/
+	.pricebreak					{width: 244px; height: 85px; background-attachment: fixed; background-color: #E3E3E3; border-color: #99a5af; border-top-style: solid; 
+								border-top-width: 1px; background-repeat: no-repeat; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 11px; color: #153046; text-decoration: none; padding-left: 10px; padding-top: 0px; padding-right: 10px; padding-bottom: 0px;}
+	/*product page buttons _ use class=hyperlink as the default typeface for this style*/
+	.productbuttons				{width: 244px; height: 29px; background-attachment: fixed; background-color: #E3E3E3; border-color: #99a5af; border-top-style: solid; 
+								border-top-width: 1px; background-repeat: no-repeat; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 11px; color: #153046; text-decoration: none; padding-left: 10px; padding-top: 0px; padding-right: 10px; padding-bottom: 0px;}
+	/*product page buttons _ use class=hyperlink as the default typeface for this style*/
+	.otherproducts				{width: 244px; height: 29px; background-attachment: fixed; background-color: #E3E3E3; border-color: #99a5af; border-top-style: solid; 
+								border-top-width: 1px; background-repeat: no-repeat; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 11px; color: #153046; text-decoration: none; padding-left: 10px; padding-top: 0px; padding-right: 10px; padding-bottom: 0px;}
+	/*product page associated _ use class=hyperlink as the default typeface for this style _ use with class=illustration for outer border*/
+	.associatedproducts			{width: 244px; height: 29px; background-attachment: fixed; background-color: #E3E2E3; border-color: #99a5af; border-top-style: solid; border-top-width: 1px; 
+								background-repeat: no-repeat; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; font-family: Arial, Helvetica, sans-serif; 
+								font-size: 11px; color: #153046; text-decoration: none;padding-left: 10px; padding-top: 0px; padding-right: 10px; padding-bottom: 0px;}
+	/*Right Hand Home */
+	.righhandhome				{border-color: #99a5af; padding-left: 6px; padding-top: 0px; padding-right: 6px; padding-bottom: 0px;	border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;	border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+	.heading					{background-color: #001D36; font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #FFFFFF;
+								padding-left: 10px; padding-top: 0px; padding-right: 10px; padding-bottom: 0px;}
+	/*Sidetext Rollovers*/
+	.sidetext					{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #153046; text-decoration: none;}
+	a.sidetext:link			 	{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #153046; text-decoration: none;}
+	a.sidetext:visited 			{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #153046; text-decoration: none;}
+	a.sidetext:hover			{font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #153046; text-decoration: Underline;}
+	/*This style tidies up the boxes on the product page*/
+	.bottom						{border-color: #99a5af; border-bottom-style: solid; border-bottom-width: 1px;}
+	/*left margin*/
+	.LeftMargin					{padding-left: 10px}	
+	.TemplateFooterWhite        {font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; color: #4D6173}
+	/*Template Body*/
+	.templatebody				{background-color: #FFFFFF; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; height:100%}
+	/*This is for the SHOPS*/
+	.shopmenu1					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #FFFFFF; 
+								border-color: #ffffff; border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid;
+								border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;	padding-left: 1px; padding-top: 1px; padding-right: 1px; padding-bottom: 1px;}
+	.shopmenu					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #FFFFFF; padding-left: 2px; padding-top: 2px; padding-right: 2px; padding-bottom: 2px;}
+	.shopmenuheading			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #001D36; background-color: #cccccc; padding-left: 3px; padding-top: 3px; padding-right: 3px; padding-bottom: 3px;}
+	.shopmenubody				{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #001D36; background-color: #eeeeee; padding-left: 3px; padding-top: 3px; padding-right: 3px; padding-bottom: 3px;}
+	/*Styles for Portal pages*/
+	.grids						{background-image: url('/images/1/shops/grids.gif');}
+	.flag						{background-image: url('/images/1/shops/flag.gif'); padding-top: 20px; padding-bottom: 10px; padding-right: 10px;}
+	.abc						{background-image: url('/images/1/shops/abc.gif'); padding-top: 20px; padding-bottom: 10px; padding-right: 10px;}
+	.footer						{background-image: url('/images/1/shops/becta_footer.gif');}
+	/*Styles for Splash Page*/
+	.splashbackground			{background-image: url('/images/1/splash/backing.gif'); height:100%;}
+	/*Portal page layout*/	
+	.featureproducts			{background-attachment: fixed; background-color: #FFFFFF; border-color: #99A5AF; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+	.featureproducts1			{background-attachment: fixed; background-color: #FFFFFF; border-color: #99A5AF; border-top-style: solid; border-top-width: 2px;
+								border-right-style: solid; border-right-width: 2px; border-bottom-style: solid; border-bottom-width: 2px; border-left-style: solid; border-left-width: 2px;}
+	/*box for copy and icon on the catalogue page*/	
+	.cataloguebanner			{background-attachment: fixed; background-color: #EAEAEA; border-color: #B5BDC4; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px;}
+	.categorybox				{background-attachment: fixed; background-color: #DBE0E3; border-color: #B5BDC4; border-top-style: solid; border-top-width: 1px;
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; margin:0; padding:0;}
+	.itembox					{background-color: #FFFFFF; margin:0; padding:0;}
+	/*Styles for Shop Pages_OLD Delete when complete*/
+	.ShopHeadingBlackBar 		{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #FFFFFF; margin:20px 20px 20px 20px;}
+	.homepagecontent 			{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #000000;}
+	
+	/*Windows XP Family*/
+	.family_windows_xp_home		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_xp_home.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_windows_xp_pro		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_xp_pro.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_windows_xp_mce		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_xp_mce.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_windows_xp_64		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_xp_64.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	/*Windows Vista Family*/
+	.windows_vista		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_vista_home_basic	{width: 432px; height: 205px; background-image: url('/images/1/Family/windows_vista_homebasic.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_vista_home_premium	{width: 432px; height: 205px; background-image: url('/images/1/Family/windows_vista_homepremium.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_vista_business		{width: 432px; height: 205px; background-image: url('/images/1/Family/windows_vista_business.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_vista_enterprise	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_vista_ultimate		{width: 432px; height: 205px; background-image: url('/images/1/Family/windows_vista_ultimate.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+
+	/*Small Business Server 2003 Family*/
+	.sbs_server_2003_family		{width: 432px; height: 205px; background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+						
+	/*Office 2003 Family*/
+	.family_office_2003_basic	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_office_2003_basic.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2003_sbe		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_office_2003_sbe.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2003_standard {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_office_2003_standard.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2003_professional	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_office_2003_professional.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2003_student_teacher	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_office_2003_student.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	/*Office 2007 Family*/
+	.family_office_2007_basic	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_sbe		{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_standard {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_professional	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_home_student	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_professional_plus	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_enterprise	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.family_office_2007_ultimate	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_windows_vista.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+		
+	/*Sage Line 50 Family*/
+	.sage_line_50				{width: 432px; height: 205px; background-image: url('/images/1/Family/sage_line50.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.sage_line_50_accountant	{width: 432px; height: 205px; background-image: url('/images/1/Family/sage_line50.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.sage_line_50_accountant_plus {width: 432px; height: 205px; background-image: url('/images/1/Family/sage_line50.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.sage_line_50_financial_controller	{width: 432px; height: 205px; background-image: url('/images/1/Family/sage_line50.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.sage_line_50_payroll	{width: 432px; height: 205px; background-image: url('/images/1/Family/sage_line50.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	/*Symantec Backup Exec*/
+	.symantec_backup_exec_10d_Win {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_10d.gif'); background-color: #ffffff; border-color: #868686; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.symantec_backup_exec_10d_Win_SBS	{width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_10d.gif'); background-color: #ffffff; border-color: #868686; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.symantec_backup_exec_9_netware {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_10d.gif'); background-color: #ffffff; border-color: #868686; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.symantec_backup_exec_sys_recov	{width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_10d.gif'); background-color: #ffffff; border-color: #868686; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	
+	/*microsoft_windows_server_2003*/
+	.windows_server_2003_standard	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_server_2003.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_server_2003_web {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_server_2003.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_server_2003_enterprise	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_server_2003.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_server_2003_x64	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_server_2003.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_server_2003_device_cals	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_server_2003.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.windows_server_2003_user_cals	{width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_server_2003.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	/*microsoft_sql_server_2005*/
+	.microsoft_sql_server_express {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_sqlserver.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.microsoft_sql_server_mobile {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_sqlserver.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.microsoft_sql_server_workgroup {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_sqlserver.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.microsoft_sql_server_standard {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_sqlserver.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.microsoft_sql_server_enterprise {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_sqlserver.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.microsoft_sql_server_developer {width: 432px; height: 205px; background-image: url('/images/1/Family/microsoft_sqlserver.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	/*symantec_norton_antivirus_and_internet_security*/
+	.norton_antivirus_2006	 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_av.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_internet_security_2006 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_is.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_personal_firewall_2006 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_firewall.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_systemworks_2006 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_sysworks.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_antispam_2005 	{width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_antispam.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_password_manager_2004 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_password.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_ghost_10 		{width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_ghost.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_partition_magic_8 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_pm.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_goback_4		 {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_goback.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	.norton_save_and_restore {width: 432px; height: 205px; background-image: url('/images/1/Family/symantec_norton_sar.gif'); background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+							
+	/*symantec_server_antivirus_mail_security_and_antispam*/
+	.symantec_server_av_family	{width: 432px; height: 205px; background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+		
+	/*adobe_acrobat*/
+	.adobe_acrobat_family		{width: 432px; height: 205px; background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	/*adobe_creative_suite_cs2*/
+	.adobe_creative_suite_family {width: 432px; height: 205px; background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+	
+	/*Microsoft_Visual_Studio_2005*/
+	.microsoft_visual_studio_family	{width: 432px; height: 205px; background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+								
+	/*Business_Objects_Crystal_Reports*/
+	.business_objects_crystal_reports_family {width: 432px; height: 205px; background-color: #D0D0D2; border-color: #FFFFFF; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+	
+				
+	.family_content				{width: 100%; height: 205px; background-color: #ECECEE; border-color: #969698; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+
+	.family_news				{width: 100%;  background-color: #ECECEE; border-color: #969698; border-top-style: solid; border-top-width: 1px; 
+								border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px; border-left-style: solid; border-left-width: 1px; }
+														
+	.family_title				{background-image: url('/images/1/Family/windowsbanner.gif'); height: 89px;}			
+	
+	.scroll 					{font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #000000; width: 100%; height: 182px; text-align: left; 
+								overflow: auto; scrollbar-arrow-color: #001D36; scrollbar-face-color: #FFFFFF; scrollbar-shadow-color: #001D36; scrollbar-base-color: #FFFFFF; 
+								scrollbar-darkshadow-color: #FFFFFF; scrollbar-highlight-color: #000000; scrollbar-track-color: #FFFFFF; padding-top: 5; padding-left: 5px; z-index:2;}
+				
+	
+	.bluetv						{background-attachment: fixed; background-color: #EBEBEA; border-color: #99A5AF; border-top-style: solid; border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid; border-left-width: 1px;}
+								
+	.bluetv2					{background-attachment: fixed; background-color: #DCE5EF; border-color: #99A5AF; border-top-style: solid; border-top-width: 1px; border-right-style: solid; border-right-width: 1px; border-bottom-style: solid; border-bottom-width: 1px;
+								border-left-style: solid; border-left-width: 1px;}

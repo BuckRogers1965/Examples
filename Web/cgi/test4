@@ -1,0 +1,9 @@
+Content-type: text/html
+
+<B><H1>TIC TAC TOE</H1><P>Your turn. <P>
+<table border=3>
+<tr>
+<td><A HREF="tic-tac-toe.pl?A1=X&A2=?&A3=?&B1=?&B2=?&B3=?&C1=?&C2=?&C3=?">?</A></td><td><A HREF="tic-tac-toe.pl?A1=?&A2=X&A3=?&B1=?&B2=?&B3=?&C1=?&C2=?&C3=?">?</A></td><td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=X&B1=?&B2=?&B3=?&C1=?&C2=?&C3=?">?</A></td><tr>
+<td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=?&B1=X&B2=?&B3=?&C1=?&C2=?&C3=?">?</A></td><td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=?&B1=?&B2=X&B3=?&C1=?&C2=?&C3=?">?</A></td><td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=?&B1=?&B2=?&B3=X&C1=?&C2=?&C3=?">?</A></td><tr>
+<td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=?&B1=?&B2=?&B3=?&C1=X&C2=?&C3=?">?</A></td><td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=?&B1=?&B2=?&B3=?&C1=?&C2=X&C3=?">?</A></td><td><A HREF="tic-tac-toe.pl?A1=?&A2=?&A3=?&B1=?&B2=?&B3=?&C1=?&C2=?&C3=X">?</A></td></table>
+</B></BODY></HTML>

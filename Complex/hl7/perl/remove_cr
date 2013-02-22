@@ -1,0 +1,22 @@
+#! /usr/bin/perl -pi
+
+#******************************************************************************
+#
+#  An index file looks like:
+#
+#        nnnnnnnnnnMSH...nnnnnnnnnnMSH...nnnnnnnnnnMSH...nnnnnnnnnnMSH...
+#
+#  This script will convert it to:
+#
+#        MSH...
+#        MSH...
+#        MSH...
+#        MSH...
+#
+#   NOTE:  The original files are replaced with the new one!!!! NO BACKUPS!
+#
+#******************************************************************************
+
+s/$//;
+
+
