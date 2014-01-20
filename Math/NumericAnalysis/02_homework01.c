@@ -32,12 +32,23 @@ long double fex2(long double x){
 
 // p1a
 long double f1a(long double x){
-	return x*cosl(x) - 2*x  + 3*x -1;
+	return x*cosl(x) - 2*x*x  + 3*x -1;
+}
+
+
+// p1b
+long double f1b(long double x){
+	return (x-2)*(x-2) - logl(x);
 }
 
 // p1c
 long double f1c(long double x){
 	return 2*x*cosl(2*x) - (x -2)*(x-2);
+}
+
+// p1d
+long double f1d(long double x){
+	return x - powl( logl(x), x);
 }
 
 // p3b
@@ -114,20 +125,64 @@ success:
 
 hardfail:
 	;
-	printf("Done %s\n", name);
+	printf("Done %s\n\n", name);
 }
 
+void findinterval( long double a, long double b, long double (*f)(long double), char * name){
+	printf("Starting %s\n", name);
+	// test for valid search bracket
+	// one must be positive and the other negative
+	// the curve must cross the origin line.
+	printf("f(a): f(%Lf) is %Lf.\n", a, f(a));
+	printf("f(b): f(%Lf) is %Lf.\n", b, f(b));
+	if (matchSign( f(a), f(b))){
+		printf("Interval must cross origin at least once.\n");
+	} else {
+		printf("There is at least one solution between %Lf and %Lf.\n", a, b);
+	}
+
+
+	printf("Done %s\n\n", name);
+}
+
+void printgraph( long double a, long double b, long double i, long double (*f)(long double), char * name){
+
+	long double previous = f(a);
+	long double current = f(a);
+	unsigned long count = 0;
+
+	printf("Starting %s\n", name);
+	for (; a<b; a+=i){
+		current = f(a);
+		if (matchSign( previous, current)){
+		} else {
+			printf("Found sign change from %Lf to %Lf\n", a-i, a);
+		}
+		previous = current;
+		count++;
+	}
+
+	printf("Done %s after %lu iterations\n\n", name, count);
+}
 
 int main (){
 
-	findroot    (1, 2, 10, &fex, "fex");  //example from class
-	findroot    (0, 5, 10, &fex2, "fex2");  //example from class
+	//findroot    (1, 2, 10, &fex,  "fex");  //example from class
+	//findroot    (0, 5, 10, &fex2, "fex2");  //example from class
 
-	//findinterval(0.2, 0.3, &f1a, *a, *b);
-	//findinterval(1.2, 1.3, &f1a, *a, *b);
-	//findinterval(2, 3, &f1c, *a, *b);
-	//findinterval(3, 4, &f1c, *a, *b);
+	printgraph(-5, 5, 0.001, &f1a, "f1a");
+	findinterval(0.2, 0.3, &f1a, "f1a");
+	findinterval(1.2, 1.3, &f1a, "f1a");
 
+	findinterval(1,   2, &f1b, "f1b");
+	findinterval(1.71828, 4, &f1b, "f1b");
+
+	findinterval(2,   3,   &f1c, "f1c");
+	findinterval(3,   4,   &f1c, "f1c");
+
+	findinterval(4,   5,   &f1d, "f1d");
+
+	printgraph(0, 1, 0.001, &f3b, "f1a");
 	findroot (0, 1, 10, &f3b, "p3b");
 
 	
