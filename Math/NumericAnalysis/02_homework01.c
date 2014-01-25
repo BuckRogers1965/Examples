@@ -30,6 +30,24 @@ long double fex2(long double x){
 }
 
 
+
+// the function we are using to search
+long double fex3(long double x){
+	return sqrtl(x) -cosl(x);
+}
+
+// the function we are using to search
+long double fex4(long double x){
+	return x -tanl(x);
+}
+
+
+// the function we are using to search
+long double fex5(long double x){
+	return x*x - 3;
+}
+
+
 // p1a
 long double f1a(long double x){
 	return x*cosl(x) - 2*x*x  + 3*x -1;
@@ -145,6 +163,7 @@ void findinterval( long double a, long double b, long double (*f)(long double), 
 	printf("Done %s\n\n", name);
 }
 
+
 void printgraph( long double a, long double b, long double i, long double (*f)(long double), char * name){
 
 	long double previous = f(a);
@@ -157,6 +176,27 @@ void printgraph( long double a, long double b, long double i, long double (*f)(l
 		if (matchSign( previous, current)){
 		} else {
 			printf("Found sign change from %Lf to %Lf\n", a-i, a);
+		}
+		previous = current;
+		count++;
+	}
+
+	printf("Done %s after %lu iterations\n\n", name, count);
+}
+
+void findgraph( long double a, long double b, long double i, long double (*f)(long double), char * name){
+
+	long double previous = f(a);
+	long double current = f(a);
+	unsigned long count = 0;
+
+	printf("Starting %s\n", name);
+	for (; a<b; a+=i){
+		current = f(a);
+		if (matchSign( previous, current)){
+		} else {
+			printf("Found sign change from %Lf to %Lf\n", a-i, a);
+			findroot    (a-i, a, 10, f, name); 
 		}
 		previous = current;
 		count++;
@@ -182,8 +222,12 @@ int main (){
 
 	findinterval(4,   5,   &f1d, "f1d");
 
-	printgraph(0, 1, 0.001, &f3b, "f1a");
-	findroot (0, 1, 10, &f3b, "p3b");
+	//printgraph(0, 1, 0.001, &f3b, "f1a");
+	findgraph(0, 1, 0.001, &f3b, "f1a");
+	//findroot (0, 1, 10, &f3b, "p3b");
 
+	findgraph(0, 1, 0.001, &fex3, "fex3");
+	findgraph(4.4, 4.6, 0.001, &fex4, "fex4");
+	findgraph(1, 2, 0.01, &fex5, "fex5");
 	
 }
