@@ -19,6 +19,11 @@
 
 long double glob_y = 0;
 
+// the function we are using to search
+long double fex(long double x, long double p){
+        return x*x*x + 4*x*x -10;
+}
+
 long double
 fsqrt (long double x, long double p)
 {
@@ -58,8 +63,6 @@ hw2p5 (long double x, long double p)
 long double
 hw2p6 (long double x, long double p, long double Px, long double Py)
 {
-
-
   long double y = x * x;
   glob_y = y;
 
@@ -72,38 +75,44 @@ hw2p6 (long double x, long double p, long double Px, long double Py)
 long double
 hw2p7 (long double h, long double p)
 {
-
   // trough
-  // x is height of water from top of trough
+  // h is height of water from top of trough
   // volume is 12.4 feet.
+  // Got the formula for the water volume by height from here:
+  // http://answers.yahoo.com/question/index?qid=20120329114323AAgspZg
 
-  long double r = 1;		// radius
-  long double l = 10;		// length
-  long double maxVol = 3.14159265359 * r * r * l / 2 - .001;
+  long double r = 1.0L;		// radius
+  long double l = 10.0L;	// length
+  long double maxVol = M_PI * r * r * 0.5L * l;
 
-  long double b1 = r * r - h * h;
-  long double b2 = powl (b1, 0.5);
-  long double b3 = h / r - h * b2;
-  long double b4 = asinl (b3);
+  h = 1-h;
+  long double result =  l*( r*r * ( M_PI/2 -asinl((1-h)/r) ) - (r-h) * sqrtl( h*2*r - h*h) ) ;
+  //long double result = maxVol - l *(  r*r* acosl((r-h)/r) - (r-h)*powl(2*r*h - h*h, 0.5L) ) ;
+  //long double result = maxVol - l *( r*r * asinl(h/r - h* sqrtl(r*r - h*h))  ) ;
 
-
-  long double result = l * (0.5 * 3.14159265359 * r * r - r * r * b4) - p;
-
-  //printf("x %Lf L %Lf\n", x, result );
-  return result;
+  //printf("h %Lf r %Lf l %Lf max %Lf result %Lf\n", h, r, l, maxVol, result );
+  return result-p;
 }
 
 long double
-hw2p (long double x)
+hw2ptri (long double height, long double p)
 {
-  return;
+  // simple version of the above.
+  // Trough formed by nailing two 2 foot boards together
+  long double h = 2-height;
+  long double base = 2.0L * h ;
+  long double l = 10; // length
+
+  long double v =  0.5L * base * h * l ;
+  //printf ("h %Lf height %Lf base %Lf p %Lf v %Lf \n", h, height, base, p, v );
+  return  v - p;
 }
 
 // Do the signs of the two numbers match
 int
 matchSign (long double n, long double m)
 {
-  return n * m >= 0.0f;
+  return n * m >= 0.0L;
 }
 
 void
@@ -112,11 +121,8 @@ falseposition (long double a, long double b, long double error, long double p,
 {
 
 /*
-
 https://ece.uwaterloo.ca/~dwharder/NumericalAnalysis/10RootFinding/falseposition/#howto
-
 Given the interval [a, b], define c = (a f(b) − b f(a))/(f(b) − f(a)). Then
-
 if f(c) = 0 (unlikely in practice), then halt, as we have found a root,
 if f(c) and f(a) have opposite signs,
     then a root must lie on [a, c], 
@@ -124,19 +130,18 @@ if f(c) and f(a) have opposite signs,
        assign b = c,
 else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
   so assign step = c - a and assign a = c.
-
-
-
 */
 
   long double fa, fb, fc, c, test;
+  int n=0;
 
   printf ("  Starting falseposition %s with min accuricity of %Lf\n", name, error);
   printf
     ("      a             b               c             fa             f3\n");
 
   do
-    {
+    { 
+
       fa = f (a, p);
       fb = f (b, p);
       c  = a - ((fa * (b - a)) / (fb - fa));
@@ -154,13 +159,20 @@ else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
         a = c;
       }
 	
-      test = fabsl (fabsl (b) - fabsl(a));
+      test = fabsl (f(c,p));
       if (isnan (test))
 	{
-	  test = (b - a) / 2;
+	  test = (b - a) ;
 	  printf
 	    ("  *** encountered an illegal operation bailing out \n  *** use estimate at your own risk\n");
 	}
+
+      // fail gracefully
+      n++;
+      if (n>20) {
+        printf ("  *** This method is failing, use another technique \n");
+        break;
+      }
     }
   while (test > error);
 
@@ -172,42 +184,49 @@ else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
 }
 
 void
-secant (long double x1, long double x2, long double error, long double p,
+secant (long double a, long double b, long double error, long double p,
 	long double (*f) (long double, long double), char *name)
 {
 
-  long double f1, f2, x3, test, origx1 = x1, origx2 = x2;
+  long double fa, fb, c, test;
+  int n=0;
 
   printf ("  Starting secant %s with min accuricity of %Lf\n", name, error);
   printf
-    ("      x1             x2             x3            f1             f2\n");
+    ("       a             b             c             fa             fb\n");
 
   do
     {
-      f1 = f (x1, p);
-      f2 = f (x2, p);
-      x3 = x2 - ((f2 * (x2 - x1)) / (f2 - f1));
+      fa = f (a, p);
+      fb = f (b, p);
+       c = b - ((fb * (b - a)) / (fb - fa));
 
-      if (isnan (x3))
-	x3 = x1;
+      if (isnan (c))
+	c = a;
 
-      printf ("  %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf\n", x1, x2,
-	      x3, f1, f2);
-      x1 = x2;
-      x2 = x3;
+      printf ("  %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf\n", a, b,
+	      c, fa, fb);
+      a = b;
+      b = c;
 
-      test = fabsl (fabsl (x1) - fabsl(x2));
-      //test = fabsl (f2);
+      test = fabsl (f(c,p));
       if (isnan (test))
 	{
-	  test = (x2 - x1) / 2;
+          test = fabsl (b - a);
 	  printf
 	    ("  *** encountered an illegal operation bailing out \n  *** use estimate at your own risk\n");
 	}
+
+      // fail gracefully
+      n++;
+      if (n>20) {
+        printf ("  *** This method is failing, use another technique \n");
+        break;
+      }
     }
   while (test > error);
 
-  printf ("  Best Guess:     %0.17Lf \n", x3);
+  printf ("  Best Guess:     %0.17Lf \n", c);
   printf ("  Error Estimate: %0.17Lf \n", test);
 
   printf ("  Stopping secant %s\n\n", name);
@@ -238,7 +257,6 @@ bisect (long double a, long double b, long double error, long double p,
   printf ("   n\t    a\t\t  b\t\t  p\t\t  f(a)\t\tf(b)\t\tf(p)\n");
 
   // iteratively search for solution
-  // need to change this to be a function
   while ((b - a) > error)
     {
       n++;
@@ -274,8 +292,8 @@ fail:
 
 success:
 
-  printf ("  Best Guess  %24.17Lf\n", mid);
-  printf ("  Error Range %24.17Lf\n", b - a);
+  printf ("  Best Guess      %24.17Lf\n", mid);
+  printf ("  Error Estimate: %24.17Lf\n", b - a);
 
 hardfail:
   ;
@@ -442,8 +460,8 @@ findgraph (long double a, long double b, long double i, long double error,
 int
 main ()
 {
-  findgraph ( 2, 3, .1, .0001, 5,    &fsqrt, "Find square Root of 5");
-  findgraph (10,500, 5, .0000001,    5487, &fsqrt, "Find square Root of 5487");
+  //findgraph ( 2, 3, .1, .0001, 5,    &fsqrt, "Find square Root of 5");
+  //findgraph (10,500, 5, .0000001,    5487, &fsqrt, "Find square Root of 5487");
 
   findgraph ( 0, 1,   .1,  .0001,  0, &hw2p1, "hw2p1");
   findgraph ( 1, 3.2, .1,  .0001,  0, &hw2p2, "hw2p2");
@@ -455,8 +473,21 @@ main ()
 
   findpoint (0, 2, 0, 1, .001, 8, &hw2p6, "hw2p6");
 
-  findgraph (0, 1, .001, .0001, 12.4, &hw2p7, "hw2p7");
-//  findgraph (0, 1, .001, .0001, 15.7, &hw2p7, "hw2p7full");
-  findgraph (0, 1, .001, .0001, 7.5, &hw2p7, "hw2p7half");
-  findgraph (0, 1, .001, .0001, 1, &hw2p7, "hw2p7empty");
+  findgraph (0, 1, .1,  .01,  12.4,  &hw2p7, "hw2p7 trough with 12.4 volume");
+
+/*
+  printf ("finding a range of values for testing.\n");
+  long double i;
+  for (i=0; i< 15; i++){
+    char name[40];
+    sprintf(name, "hw2p7 %Lf", i);
+    findgraph (0, 1, .01, .00001, i,    &hw2p7, name);
+  }
+*/
+
+  //findgraph (-1, 3, .1, .001, 38, &hw2ptri, "hw2ptri full");
+  //findgraph (-1, 3, .1, .001, 10, &hw2ptri, "hw2ptri half full");
+  //findgraph (-1, 3, .1, .001, .1, &hw2ptri, "hw2ptri empty");
+
+  //findgraph   ( 0, 2, .1, .00000001, 0, &fex, "fex");
 }
