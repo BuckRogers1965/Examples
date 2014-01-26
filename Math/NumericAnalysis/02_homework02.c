@@ -72,6 +72,19 @@ hw2p6 (long double x, long double p, long double Px, long double Py)
   return d;
 }
 
+
+long double
+hw2p6ex2 (long double x, long double p, long double Px, long double Py)
+{
+  long double y = 4- x * x;
+  glob_y = y;
+
+  long double d = sqrtl ((x - Px) * (x - Px) + (y - Py) * (y - Py));
+
+  //printf("x %Lf y %Lf Px %Lf Py %Lf d %Lf\n", x, y, Px, Py, d);
+  return d;
+}
+
 long double
 hw2p7 (long double h, long double p)
 {
@@ -472,6 +485,12 @@ main ()
   findgraph (-1 , 1,  .1,  .00001, 0, &hw2p5, "hw2p5 from 0 to 1");
 
   findpoint (0, 2, 0, 1, .001, 8, &hw2p6, "hw2p6");
+
+  // testing the point function
+  //findpoint (0, 2, 1, 1, .001, 8, &hw2p6, "hw2p6");
+  //findpoint (1, 3, 2, 4, .001, 8, &hw2p6, "hw2p6");
+  //findpoint (1, 4, 0, 2, .001, 8, &hw2p6, "hw2p6");
+  //findpoint (1, 8, 18, 0, .001, 8, &hw2p6, "hw2p6");
 
   findgraph (0, 1, .1,  .01,  12.4,  &hw2p7, "hw2p7 trough with 12.4 volume");
 

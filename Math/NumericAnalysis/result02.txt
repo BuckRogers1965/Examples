@@ -1,0 +1,311 @@
+Starting scan of hw2p1 on interval 0.000000 to 1.000000 with increment of 0.100000
+
+  Found sign change from 0.600000 to 0.700000
+
+  Starting bisect hw2p1 with min accuricity of 0.000100
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1       0.600000       0.700000       0.650000      -0.050739       0.071818       0.010142	
+    2       0.600000       0.650000       0.625000      -0.050739       0.010142      -0.020394	
+    3       0.625000       0.650000       0.637500      -0.020394       0.010142      -0.005150	
+    4       0.637500       0.650000       0.643750      -0.005150       0.010142       0.002490	
+    5       0.637500       0.643750       0.640625      -0.005150       0.002490      -0.001332	
+    6       0.640625       0.643750       0.642188      -0.001332       0.002490       0.000579	
+    7       0.640625       0.642188       0.641406      -0.001332       0.000579      -0.000377	
+    8       0.641406       0.642188       0.641797      -0.000377       0.000579       0.000101	
+    9       0.641406       0.641797       0.641602      -0.000377       0.000101      -0.000138	
+   10       0.641602       0.641797       0.641699      -0.000138       0.000101      -0.000019	
+  Best Guess           0.64169921875000004
+  Error Estimate:      0.00009765625000000
+  Done bisect hw2p1 after 10 tries
+
+  Starting secant hw2p1 with min accuricity of 0.000100
+       a             b             c             fa             fb
+      0.600000       0.700000       0.641400      -0.050739       0.071818
+      0.700000       0.641400       0.641712       0.071818      -0.000384
+  Best Guess:     0.64171196630767050 
+  Error Estimate: 0.00000294014329659 
+  Stopping secant hw2p1
+
+  Starting falseposition hw2p1 with min accuricity of 0.000100
+      a             b               c             fa             f3
+      0.600000       0.700000       0.641400      -0.050739       0.071818
+      0.600000       0.641400       0.641716      -0.050739      -0.000384
+  Best Guess:     0.64171602081425360 
+  Error Estimate: 0.00000201744022930 
+  Stopping falseposition hw2p1
+
+Done scanning hw2p1 after 10 iterations
+
+Starting scan of hw2p2 on interval 1.000000 to 3.200000 with increment of 0.100000
+
+  Found sign change from 2.900000 to 3.000000
+
+  Starting bisect hw2p2 with min accuricity of 0.000100
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1       2.900000       3.000000       2.950000       0.119000      -0.000000       0.054875	
+    2       2.950000       3.000000       2.975000       0.054875      -0.000000       0.026234	
+    3       2.975000       3.000000       2.987500       0.026234      -0.000000       0.012811	
+    4       2.987500       3.000000       2.993750       0.012811      -0.000000       0.006328	
+    5       2.993750       3.000000       2.996875       0.006328      -0.000000       0.003145	
+    6       2.996875       3.000000       2.998438       0.003145      -0.000000       0.001567	
+    7       2.998438       3.000000       2.999219       0.001567      -0.000000       0.000782	
+    8       2.999219       3.000000       2.999609       0.000782      -0.000000       0.000391	
+    9       2.999609       3.000000       2.999805       0.000391      -0.000000       0.000195	
+   10       2.999805       3.000000       2.999902       0.000195      -0.000000       0.000098	
+  Best Guess           2.99990234375000011
+  Error Estimate:      0.00009765625000000
+  Done bisect hw2p2 after 10 tries
+
+  Starting secant hw2p2 with min accuricity of 0.000100
+       a             b             c             fa             fb
+      2.900000       3.000000       3.000000       0.119000      -0.000000
+  Best Guess:     3.00000000000000002 
+  Error Estimate: 0.00000000000000002 
+  Stopping secant hw2p2
+
+  Starting falseposition hw2p2 with min accuricity of 0.000100
+      a             b               c             fa             f3
+      2.900000       3.000000       3.000000       0.119000      -0.000000
+  Best Guess:     3.00000000000000002 
+  Error Estimate: 0.00000000000000002 
+  Stopping falseposition hw2p2
+
+Done scanning hw2p2 after 23 iterations
+
+Starting scan of hw2p3 on interval 1.000000 to 2.000000 with increment of 0.100000
+
+  Found sign change from 1.300000 to 1.400000
+
+  Starting bisect hw2p3 with min accuricity of 0.000100
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1       1.300000       1.400000       1.350000      -0.103000       0.344000       0.110375	
+    2       1.300000       1.350000       1.325000      -0.103000       0.110375       0.001203	
+    3       1.300000       1.325000       1.312500      -0.103000       0.001203      -0.051514	
+    4       1.312500       1.325000       1.318750      -0.051514       0.001203      -0.025310	
+    5       1.318750       1.325000       1.321875      -0.025310       0.001203      -0.012092	
+    6       1.321875       1.325000       1.323438      -0.012092       0.001203      -0.005454	
+    7       1.323438       1.325000       1.324219      -0.005454       0.001203      -0.002128	
+    8       1.324219       1.325000       1.324609      -0.002128       0.001203      -0.000463	
+    9       1.324609       1.325000       1.324805      -0.000463       0.001203       0.000370	
+   10       1.324609       1.324805       1.324707      -0.000463       0.000370      -0.000047	
+  Best Guess           1.32470703125000002
+  Error Estimate:      0.00009765625000000
+  Done bisect hw2p3 after 10 tries
+
+  Starting secant hw2p3 with min accuricity of 0.000100
+       a             b             c             fa             fb
+      1.300000       1.400000       1.323043      -0.103000       0.344000
+      1.400000       1.323043       1.324606       0.344000      -0.007134
+      1.323043       1.324606       1.324718      -0.007134      -0.000477
+  Best Guess:     1.32471813216467855 
+  Error Estimate: 0.00000074596943798 
+  Stopping secant hw2p3
+
+  Starting falseposition hw2p3 with min accuricity of 0.000100
+      a             b               c             fa             f3
+      1.300000       1.400000       1.323043      -0.103000       0.344000
+      1.300000       1.323043       1.324757      -0.103000      -0.007134
+      1.324757       1.323043       1.324718       0.000168      -0.007134
+  Best Guess:     1.32471789582061767 
+  Error Estimate: 0.00000026195134973 
+  Stopping falseposition hw2p3
+
+Done scanning hw2p3 after 10 iterations
+
+Starting scan of hw2p4 on interval -1.000000 to 0.000000 with increment of 0.010000
+
+  Found sign change from -0.870000 to -0.860000
+
+  Starting bisect hw2p4 with min accuricity of 0.000100
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1      -0.870000      -0.860000      -0.865000       0.013676      -0.016381      -0.001425	
+    2      -0.870000      -0.865000      -0.867500       0.013676      -0.001425       0.006107	
+    3      -0.867500      -0.865000      -0.866250       0.006107      -0.001425       0.002336	
+    4      -0.866250      -0.865000      -0.865625       0.002336      -0.001425       0.000454	
+    5      -0.865625      -0.865000      -0.865312       0.000454      -0.001425      -0.000486	
+    6      -0.865625      -0.865312      -0.865469       0.000454      -0.000486      -0.000016	
+    7      -0.865625      -0.865469      -0.865547       0.000454      -0.000016       0.000219	
+  Best Guess          -0.86554687500000000
+  Error Estimate:      0.00007812500000000
+  Done bisect hw2p4 after 7 tries
+
+  Starting secant hw2p4 with min accuricity of 0.000100
+       a             b             c             fa             fb
+     -0.870000      -0.860000      -0.865450       0.013676      -0.016381
+  Best Guess:     -0.86544996715023770 
+  Error Estimate: 0.00007240165123240 
+  Stopping secant hw2p4
+
+  Starting falseposition hw2p4 with min accuricity of 0.000100
+      a             b               c             fa             f3
+     -0.870000      -0.860000      -0.865450       0.013676      -0.016381
+  Best Guess:     -0.86544996715023770 
+  Error Estimate: 0.00007240165123240 
+  Stopping falseposition hw2p4
+
+Done scanning hw2p4 after 100 iterations
+
+Starting scan of hw2p5 from -1 to 0 on interval -1.000000 to 0.000000 with increment of 0.010000
+
+  Found sign change from -0.050000 to -0.040000
+
+  Starting bisect hw2p5 from -1 to 0 with min accuricity of 0.000010
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1      -0.050000      -0.040000      -0.045000       2.071687      -0.146163       0.962528	
+    2      -0.045000      -0.040000      -0.042500       0.962528      -0.146163       0.408125	
+    3      -0.042500      -0.040000      -0.041250       0.408125      -0.146163       0.130967	
+    4      -0.041250      -0.040000      -0.040625       0.130967      -0.146163      -0.007602	
+    5      -0.041250      -0.040625      -0.040937       0.130967      -0.007602       0.061681	
+    6      -0.040937      -0.040625      -0.040781       0.061681      -0.007602       0.027040	
+    7      -0.040781      -0.040625      -0.040703       0.027040      -0.007602       0.009719	
+    8      -0.040703      -0.040625      -0.040664       0.009719      -0.007602       0.001058	
+    9      -0.040664      -0.040625      -0.040645       0.001058      -0.007602      -0.003272	
+   10      -0.040664      -0.040645      -0.040654       0.001058      -0.003272      -0.001107	
+  Best Guess          -0.04065429687499998
+  Error Estimate:      0.00000976562500000
+  Done bisect hw2p5 from -1 to 0 after 10 tries
+
+  Starting secant hw2p5 from -1 to 0 with min accuricity of 0.000010
+       a             b             c             fa             fb
+     -0.050000      -0.040000      -0.040659       2.071687      -0.146163
+     -0.040000      -0.040659      -0.040659      -0.146163      -0.000057
+  Best Guess:     -0.04065928832270609 
+  Error Estimate: 0.00000000154023098 
+  Stopping secant hw2p5 from -1 to 0
+
+  Starting falseposition hw2p5 from -1 to 0 with min accuricity of 0.000010
+      a             b               c             fa             f3
+     -0.050000      -0.040000      -0.040659       2.071687      -0.146163
+     -0.040659      -0.040000      -0.040659      -0.000057      -0.146163
+  Best Guess:     -0.04065928832270609 
+  Error Estimate: 0.00000000154023098 
+  Stopping falseposition hw2p5 from -1 to 0
+
+Done scanning hw2p5 from -1 to 0 after 100 iterations
+
+Starting scan of hw2p5 from 0 to 1 on interval 0.000000 to 1.000000 with increment of 0.010000
+
+  Found sign change from 0.960000 to 0.970000
+
+  Starting bisect hw2p5 from 0 to 1 with min accuricity of 0.000010
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1       0.960000       0.970000       0.965000      -1.590643       5.143560       1.742803	
+    2       0.960000       0.965000       0.962500      -1.590643       1.742803       0.067709	
+    3       0.960000       0.962500       0.961250      -1.590643       0.067709      -0.763555	
+    4       0.961250       0.962500       0.961875      -0.763555       0.067709      -0.348446	
+    5       0.961875       0.962500       0.962188      -0.348446       0.067709      -0.140499	
+    6       0.962188       0.962500       0.962344      -0.140499       0.067709      -0.036428	
+    7       0.962344       0.962500       0.962422      -0.036428       0.067709       0.015632	
+    8       0.962344       0.962422       0.962383      -0.036428       0.015632      -0.010400	
+    9       0.962383       0.962422       0.962402      -0.010400       0.015632       0.002616	
+   10       0.962383       0.962402       0.962393      -0.010400       0.002616      -0.003892	
+  Best Guess           0.96239257812500002
+  Error Estimate:      0.00000976562500000
+  Done bisect hw2p5 from 0 to 1 after 10 tries
+
+  Starting secant hw2p5 from 0 to 1 with min accuricity of 0.000010
+       a             b             c             fa             fb
+      0.960000       0.970000       0.962362      -1.590643       5.143560
+      0.970000       0.962362       0.962398       5.143560      -0.024244
+      0.962362       0.962398       0.962398      -0.024244      -0.000367
+  Best Guess:     0.96239841879076771 
+  Error Estimate: 0.00000002680723457 
+  Stopping secant hw2p5 from 0 to 1
+
+  Starting falseposition hw2p5 from 0 to 1 with min accuricity of 0.000010
+      a             b               c             fa             f3
+      0.960000       0.970000       0.962362      -1.590643       5.143560
+      0.960000       0.962362       0.962399      -1.590643      -0.024244
+      0.962399       0.962362       0.962398       0.000117      -0.024244
+  Best Guess:     0.96239841873767931 
+  Error Estimate: 0.00000000857149568 
+  Stopping falseposition hw2p5 from 0 to 1
+
+Done scanning hw2p5 from 0 to 1 after 100 iterations
+
+Starting scan of hw2p5 from 0 to 1 on interval -1.000000 to 1.000000 with increment of 0.100000
+
+  Found sign change from -0.100000 to 0.000000
+
+  Starting bisect hw2p5 from 0 to 1 with min accuricity of 0.000010
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1      -0.100000       0.000000      -0.050000      13.195000      -9.000000       2.071687	
+    2      -0.050000       0.000000      -0.025000       2.071687      -9.000000      -3.469566	
+    3      -0.050000      -0.025000      -0.037500       2.071687      -3.469566      -0.700338	
+    4      -0.050000      -0.037500      -0.043750       2.071687      -0.700338       0.685312	
+    5      -0.043750      -0.037500      -0.040625       0.685312      -0.700338      -0.007602	
+    6      -0.043750      -0.040625      -0.042187       0.685312      -0.007602       0.338833	
+    7      -0.042187      -0.040625      -0.041406       0.338833      -0.007602       0.165610	
+    8      -0.041406      -0.040625      -0.041016       0.165610      -0.007602       0.079003	
+    9      -0.041016      -0.040625      -0.040820       0.079003      -0.007602       0.035700	
+   10      -0.040820      -0.040625      -0.040723       0.035700      -0.007602       0.014049	
+   11      -0.040723      -0.040625      -0.040674       0.014049      -0.007602       0.003224	
+   12      -0.040674      -0.040625      -0.040649       0.003224      -0.007602      -0.002189	
+   13      -0.040674      -0.040649      -0.040662       0.003224      -0.002189       0.000517	
+   14      -0.040662      -0.040649      -0.040656       0.000517      -0.002189      -0.000836	
+  Best Guess          -0.04065551757812495
+  Error Estimate:      0.00000610351562500
+  Done bisect hw2p5 from 0 to 1 after 14 tries
+
+  Starting secant hw2p5 from 0 to 1 with min accuricity of 0.000010
+       a             b             c             fa             fb
+     -0.100000       0.000000      -0.040550      13.195000      -9.000000
+      0.000000      -0.040550      -0.040659      -9.000000      -0.024302
+     -0.040550      -0.040659      -0.040659      -0.024302       0.000039
+  Best Guess:     -0.04065928831497431 
+  Error Estimate: 0.00000000017393782 
+  Stopping secant hw2p5 from 0 to 1
+
+  Starting falseposition hw2p5 from 0 to 1 with min accuricity of 0.000010
+      a             b               c             fa             f3
+     -0.100000       0.000000      -0.040550      13.195000      -9.000000
+     -0.040550       0.000000      -0.040659      -0.024302      -9.000000
+     -0.040550      -0.040659      -0.040659      -0.024302       0.000039
+  Best Guess:     -0.04065928831497431 
+  Error Estimate: 0.00000000017393782 
+  Stopping falseposition hw2p5 from 0 to 1
+
+Done scanning hw2p5 from 0 to 1 after 20 iterations
+
+Starting findpoint hw2p6 with min accuricity of 0.000000
+Found direction change at x 0.707000 at a y of 0.501264
+Found direction change at x 0.707100 at a y of 0.500132
+Found direction change at x 0.707110 at a y of 0.500019
+Found direction change at x 0.707107 at a y of 0.500002
+Found direction change at x 0.707107 at a y of 0.500000
+Found direction change at x 0.707107 at a y of 0.500000
+Found direction change at x 0.707107 at a y of 0.500000
+Best Guess  x 0.70710678215000001  y 0.50000000115039555
+Error Range   0.00000000010000000
+Done findpoint hw2p6 after 791 iterations
+
+Starting scan of hw2p7 trough with 12.4 volume on interval 0.000000 to 1.000000 with increment of 0.100000
+
+  Found sign change from 0.100000 to 0.200000
+
+  Starting bisect hw2p7 trough with 12.4 volume with min accuricity of 0.010000
+   n	    a		  b		  p		  f(a)		f(b)		f(p)
+    1       0.100000       0.200000       0.150000       1.311302      -0.665208       0.319252	
+    2       0.150000       0.200000       0.175000       0.319252      -0.665208      -0.174089	
+    3       0.150000       0.175000       0.162500       0.319252      -0.174089       0.072324	
+    4       0.162500       0.175000       0.168750       0.072324      -0.174089      -0.050950	
+  Best Guess           0.16875000000000001
+  Error Estimate:      0.00625000000000000
+  Done bisect hw2p7 trough with 12.4 volume after 4 tries
+
+  Starting secant hw2p7 trough with 12.4 volume with min accuricity of 0.010000
+       a             b             c             fa             fb
+      0.100000       0.200000       0.166344       1.311302      -0.665208
+  Best Guess:     0.16634431640639478 
+  Error Estimate: 0.00351601117083720 
+  Stopping secant hw2p7 trough with 12.4 volume
+
+  Starting falseposition hw2p7 trough with 12.4 volume with min accuricity of 0.010000
+      a             b               c             fa             f3
+      0.100000       0.200000       0.166344       1.311302      -0.665208
+  Best Guess:     0.16634431640639478 
+  Error Estimate: 0.00351601117083720 
+  Stopping falseposition hw2p7 trough with 12.4 volume
+
+Done scanning hw2p7 trough with 12.4 volume after 10 iterations
+
