@@ -1,13 +1,13 @@
 
 /*
 	Numeric Analysis Code
+	Using bisection to find where functions cross the origin
 
 	By James M. Rogers
-	Began work on this on 25 Jan 2014
+	Began work on this on 23 Jan 2014
+	Finished required homework on 
 
 	This cannot integrate discontinuous functions.
-        
-        Abstracted out numeric method functions to its own library
 
 	Work left to do, 
 
@@ -21,20 +21,17 @@
 int
 matchSign (long double n, long double m)
 {
-  return n * m >= 0.0f;
+  return n * m >= 0.0L;
 }
 
 void
 falseposition (long double a, long double b, long double error, long double p,
-	long double (*f) (long double, long double), char *name)
+	       long double (*f) (long double, long double), char *name)
 {
 
 /*
-
 https://ece.uwaterloo.ca/~dwharder/NumericalAnalysis/10RootFinding/falseposition/#howto
-
 Given the interval [a, b], define c = (a f(b) − b f(a))/(f(b) − f(a)). Then
-
 if f(c) = 0 (unlikely in practice), then halt, as we have found a root,
 if f(c) and f(a) have opposite signs,
     then a root must lie on [a, c], 
@@ -42,20 +39,22 @@ if f(c) and f(a) have opposite signs,
        assign b = c,
 else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
   so assign step = c - a and assign a = c.
-
 */
 
   long double fa, fb, fc, c, test;
+  int n = 0;
 
-  printf ("  Starting falseposition %s with min accuricity of %Lf\n", name, error);
+  printf ("  Starting falseposition %s with min accuricity of %Lf\n", name,
+	  error);
   printf
     ("      a             b               c             fa             f3\n");
 
   do
     {
+
       fa = f (a, p);
       fb = f (b, p);
-      c  = a - ((fa * (b - a)) / (fb - fa));
+      c = a - ((fa * (b - a)) / (fb - fa));
       fc = f (c, p);
 
       if (isnan (c))
@@ -64,18 +63,28 @@ else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
       printf ("  %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf\n", a, b,
 	      c, fa, fb);
 
-      if ( (a * fc) < 0) {
-        b = c;
-      } else {
-        a = c;
-      }
-	
-      test = fabsl (fabsl (b) - fabsl(a));
+      if ((a * fc) < 0)
+	{
+	  b = c;
+	}
+      else
+	{
+	  a = c;
+	}
+
+      test = fabsl (b - a);
       if (isnan (test))
 	{
-	  test = (b - a) / 2;
 	  printf
 	    ("  *** encountered an illegal operation bailing out \n  *** use estimate at your own risk\n");
+	}
+
+      // fail gracefully
+      n++;
+      if (n > 20)
+	{
+	  printf ("  *** This method is failing, use another technique \n");
+	  break;
 	}
     }
   while (test > error);
@@ -88,42 +97,50 @@ else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
 }
 
 void
-secant (long double x1, long double x2, long double error, long double p,
+secant (long double a, long double b, long double error, long double p,
 	long double (*f) (long double, long double), char *name)
 {
 
-  long double f1, f2, x3, test, origx1 = x1, origx2 = x2;
+  long double fa, fb, c, test;
+  int n = 0;
 
   printf ("  Starting secant %s with min accuricity of %Lf\n", name, error);
   printf
-    ("      x1             x2             x3            f1             f2\n");
+    ("       a             b             c             fa             fb\n");
 
   do
     {
-      f1 = f (x1, p);
-      f2 = f (x2, p);
-      x3 = x2 - ((f2 * (x2 - x1)) / (f2 - f1));
+      fa = f (a, p);
+      fb = f (b, p);
+      c = b - ((fb * (b - a)) / (fb - fa));
 
-      if (isnan (x3))
-	x3 = x1;
+      if (isnan (c))
+	c = a;
 
-      printf ("  %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf\n", x1, x2,
-	      x3, f1, f2);
-      x1 = x2;
-      x2 = x3;
+      printf ("  %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf\n", a, b,
+	      c, fa, fb);
+      a = b;
+      b = c;
 
-      test = fabsl (fabsl (x1) - fabsl(x2));
-      //test = fabsl (f2);
+      test = fabsl (b - a);
       if (isnan (test))
 	{
-	  test = (x2 - x1) / 2;
+	  test = fabsl (b - a);
 	  printf
 	    ("  *** encountered an illegal operation bailing out \n  *** use estimate at your own risk\n");
+	}
+
+      // fail gracefully
+      n++;
+      if (n > 20)
+	{
+	  printf ("  *** This method is failing, use another technique \n");
+	  break;
 	}
     }
   while (test > error);
 
-  printf ("  Best Guess:     %0.17Lf \n", x3);
+  printf ("  Best Guess:     %0.17Lf \n", c);
   printf ("  Error Estimate: %0.17Lf \n", test);
 
   printf ("  Stopping secant %s\n\n", name);
@@ -154,8 +171,7 @@ bisect (long double a, long double b, long double error, long double p,
   printf ("   n\t    a\t\t  b\t\t  p\t\t  f(a)\t\tf(b)\t\tf(p)\n");
 
   // iteratively search for solution
-  // need to change this to be a function
-  while ((b - a) > error)
+  while (fabsl(b - a) > error)
     {
       n++;
 
@@ -190,13 +206,56 @@ fail:
 
 success:
 
-  printf ("  Best Guess  %24.17Lf\n", mid);
-  printf ("  Error Range %24.17Lf\n", b - a);
+  printf ("  Best Guess      %24.17Lf\n", mid);
+  printf ("  Error Estimate: %24.17Lf\n", b - a);
 
 hardfail:
   ;
   printf ("  Done bisect %s after %d tries\n\n", name, n);
 }
+
+
+void
+newton (long double p0, long double b, long double error, long double p,
+	long double (*f) (long double, long double), char *name)
+{
+  long double p1, fb, fc, c, test;
+  int n = 0;
+
+  printf ("  Starting newton %s with min accuricity of %Lf\n", name, error);
+  printf ("      p0            p1               test \n");
+
+  do
+    {
+      p1 = p0 - f (p0, 0) / f (p0, 1);
+
+      if (isnan (p1))
+	goto fail;
+
+      test = fabsl (p0 - p1);
+
+      printf ("  %12.6Lf   %12.6Lf   %12.6Lf   \n", p0, p1, test);
+      p0 = p1;
+
+      // fail gracefully
+      n++;
+      if (n > 20)
+	{
+	  printf ("  *** This method is failing, use another technique \n");
+	  break;
+	}
+
+    }
+  while (test > error);
+
+fail:
+  printf ("  Best Guess:     %0.17Lf \n", p1);
+  printf ("  Error Estimate: %0.17Lf \n", test);
+
+  printf ("  Stopping newton %s\n\n", name);
+
+}
+
 
 void
 findinterval (long double a, long double b, long double p,
@@ -220,106 +279,6 @@ findinterval (long double a, long double b, long double p,
   printf ("Done findinterval %s\n\n", name);
 }
 
-void
-printgraph (long double a, long double b, long double i, long double p,
-	    long double (*f) (long double, long double), char *name)
-{
-
-  long double previous = f (a, p);
-  long double current = f (a, p);
-  unsigned long count = 0;
-
-  printf ("Starting printgraph %s\n", name);
-  for (; a < b; a += i)
-    {
-      current = f (a, p);
-      if (matchSign (previous, current))
-	{
-	}
-      else
-	{
-	  printf ("Found sign change from %Lf to %Lf\n", a - i, a);
-	}
-      previous = current;
-      count++;
-    }
-
-  printf ("Done printgraph %s after %lu iterations\n\n", name, count);
-}
-
-unsigned long
-findpointfunc (long double a, long double b, long double Px, long double Py,
-	       long double i, long double p,
-               long double (*f) (long double, long double, long double, long double),
-	       char *name)
-{
-
-
-  // this will get closer and closer and then start moving away. 
-  // the two points where it changes is the new interval.
-  // track if we are increasing or decreasing
-
-  long double previous = f (a, p, Px, Py);
-  long double current = f (a, p, Px, Py);
-  unsigned long count = 0;
-
-  long double prevDirect = previous - current;
-  long double currDirect = previous - current;
-
-  for (; a < b; a += i)
-    {
-      current = f (a, p, Px, Py);
-      currDirect = previous - current;
-
-      if (matchSign (prevDirect, currDirect))
-	{
-	}
-      else
-	{
-//	  printf ("Found direction change at x %Lf at a y of %Lf\n", a - i,
-//		  glob_y);
-	  if (p < 1)
-	    {
-//	      printf ("Best Guess  x %0.17Lf  y %0.17Lf\n", a + i / 2,
-//		      glob_y);
-	      printf ("Error Range    %0.17Lf\n", i);
-	      goto done;
-	    }
-	  else
-	    {
-	      return (findpointfunc
-		      (a - i * 2, a, Px, Py, i / 10, p - 1, f, name) + count);
-	    }
-
-	}
-      previous = current;
-      prevDirect = currDirect;
-
-      count++;
-    }
-
-done:
-
-//  printf ("Best Guess  x %0.17Lf  y %0.17Lf\n", a + i / 2, glob_y);
-  printf ("Error Range   %0.17Lf\n", i);
-  return count;
-}
-
-void
-findpoint (long double a, long double b, long double Px, long double Py,
-	   long double i, long double p,
-           long double (*f) (long double, long double, long double, long double),
-	   char *name)
-{
-
-  // stub function so header is only printed once
-  unsigned long count;
-
-  printf ("Starting findpoint %s with min accuricity of %Lf\n", name, 0.0L);
-  count = findpointfunc (a, b, Px, Py, i, p, f, name);
-
-  printf ("Done findpoint %s after %lu iterations\n\n", name, count);
-}
 
 void
 findgraph (long double a, long double b, long double i, long double error,
@@ -354,4 +313,3 @@ findgraph (long double a, long double b, long double i, long double error,
 
   printf ("Done scanning %s after %lu iterations\n\n", name, count);
 }
-
