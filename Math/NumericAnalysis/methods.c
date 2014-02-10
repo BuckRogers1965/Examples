@@ -44,7 +44,7 @@ else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
   long double fa, fb, fc, c, test;
   int n = 0;
 
-  printf ("  Starting falseposition %s with min accuricity of %Lf\n", name,
+  printf ("  Starting falseposition %s with min accuracy of %Lf\n", name,
 	  error);
   printf
     ("      a             b               c             fa             f3\n");
@@ -65,14 +65,16 @@ else f(c) and f(b) must have opposite signs, and thus a root must lie on [c, b],
 
       if ((a * fc) < 0)
 	{
+	  test = fabsl (c - b);
 	  b = c;
 	}
       else
 	{
+	  test = fabsl (a - c);
 	  a = c;
 	}
 
-      test = fabsl (b - a);
+      //test = fabsl (b - a);
       if (isnan (test))
 	{
 	  printf
@@ -104,7 +106,7 @@ secant (long double a, long double b, long double error, long double p,
   long double fa, fb, c, test;
   int n = 0;
 
-  printf ("  Starting secant %s with min accuricity of %Lf\n", name, error);
+  printf ("  Starting secant %s with min accuracy of %Lf\n", name, error);
   printf
     ("       a             b             c             fa             fb\n");
 
@@ -119,10 +121,12 @@ secant (long double a, long double b, long double error, long double p,
 
       printf ("  %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf   %12.6Lf\n", a, b,
 	      c, fa, fb);
-      a = b;
-      b = c;
+      //a = b;
+      //b = c;
+        test = fabsl (c - a);
 
-      test = fabsl (b - a);
+	a = c;
+
       if (isnan (test))
 	{
 	  test = fabsl (b - a);
@@ -156,7 +160,7 @@ bisect (long double a, long double b, long double error, long double p,
 
   int n = 0;			// Search depth
 
-  printf ("  Starting bisect %s with min accuricity of %Lf\n", name, error);
+  printf ("  Starting bisect %s with min accuracy of %Lf\n", name, error);
 
   // test for valid search bracket
   // one must be positive and the other negative
@@ -222,7 +226,7 @@ newton (long double p0, long double b, long double error, long double p,
   long double p1, fb, fc, c, test;
   int n = 0;
 
-  printf ("  Starting newton %s with min accuricity of %Lf\n", name, error);
+  printf ("  Starting newton %s with min accuracy of %Lf\n", name, error);
   printf ("      p0            p1               test \n");
 
   do

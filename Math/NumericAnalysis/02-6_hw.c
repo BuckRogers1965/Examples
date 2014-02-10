@@ -123,7 +123,7 @@ findpoint (long double a, long double b, long double Px, long double Py,
   // stub function so header is only printed once
   unsigned long count;
 
-  printf ("Starting findpoint %s with min accuricity of %Lf\n", name, 0.0L);
+  printf ("Starting findpoint %s with min accuracy of %Lf\n", name, 0.0L);
   count = findpointfunc (a, b, Px, Py, i, p, f, name);
 
   printf ("Done findpoint %s after %lu iterations\n\n", name, count);

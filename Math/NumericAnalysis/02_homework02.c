@@ -1,7 +1,7 @@
 
 /*
 	Numeric Analysis Code
-	Using bisection to find where functions cross the origin
+	Homework 02
 
 	By James M. Rogers
 	Began work on this on 23 Jan 2014
@@ -109,15 +109,21 @@ main ()
   findgraph ( 0, 1,   .1,  .0001,  0, &hw2p1, "hw2p1");
   findgraph ( 1, 3.2, .1,  .0001,  0, &hw2p2, "hw2p2");
   findgraph ( 1, 2,   .1,  .0001,  0, &hw2p3, "hw2p3");
+ 
+  printf("---------------------------------\n\n");
 
-  findgraph (-1, 0,   .01, .001,  0, &hw2p4, "hw2p4");
+  //findgraph (-1, 0,   .01, .001,  0, &hw2p4, "hw2p4");
   secant (-1, 0, .001,  0, &hw2p4, "hw2p4");
   falseposition (-1, 0, .001,  0, &hw2p4, "hw2p4");
 
+  printf("---------------------------------\n\n");
+
   findgraph (-1, 0,   .01, .00001, 0, &hw2p5, "hw2p5 from -1 to 0");
   findgraph ( 0, 1,   .01, .00001, 0, &hw2p5, "hw2p5 from 0 to 1");
-  findgraph (-1 , 1,  .1,  .00001, 0, &hw2p5, "hw2p5 from -1 to 1");
+  //findgraph (-1 , 1,  .1,  .00001, 0, &hw2p5, "hw2p5 from -1 to 1");
+
+  printf("---------------------------------\n\n");
 
   findgraph (0, 1, .1,  .01,  12.4,  &hw2p7, "hw2p7 trough with 12.4 volume");
-  findgraph (0, 1, .1,  .01,  12.4,  &hw2p7a, "hw2p7a modified formula for trough with 12.4 volume");
+  //findgraph (0, 1, .1,  .01,  12.4,  &hw2p7a, "hw2p7a modified formula for trough with 12.4 volume");
 }
