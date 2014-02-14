@@ -42,9 +42,9 @@ NevilleRecurse (int n, int depth, Point Points[], Point P[], long double x)
     int i = 0;
     for (; i < max; i++) {
       //printf ("\nd %d i %d x0  %Lf  x1  %Lf  P0  %Lf  P1  %Lf ", depth, i, P[i  ].x, P[i+1+depth].x, Points[i  ].y, Points[i+1].y);
-      NewP[i].y = ((x - P[i+1+depth].x) * (Points[i  ].y)
+      NewP[i].y = ((x - P[i+depth].x) * (Points[i  ].y)
                   - (x - P[i        ].x) * (Points[i+1].y))
-                  / (P[i].x - P[i+1+depth].x);
+                  / (P[i].x - P[i+depth].x);
       //printf("%Lf\t", NewP[i].y);
     }
   }
@@ -54,7 +54,7 @@ NevilleRecurse (int n, int depth, Point Points[], Point P[], long double x)
 
 long double
 FindSolution (int n, Point Points[], long double x){
-  return NevilleRecurse (n, 0, Points, Points, 3);
+  return NevilleRecurse (n, 1, Points, Points, 3);
 }
 
 void
