@@ -10,16 +10,15 @@ divides(long double first, long double second){
       return 0;
 }
 
-void
-main (){
 
-  long double  find = 600851475143;
-  //long double  find = 256;
+void
+findprime (long double find){
+
   printf("Factors of %0.0Lf are ", find);
   long double i;
   int count = 0;
-
-  for ( i = 2 ; i < 50000;  i++, i++){
+  int max = sqrtl(find);
+  for ( i = 2 ; i < max;  i++, i++){
     loop:
     if (divides(i, find)) {
         count ++;
@@ -38,4 +37,10 @@ main (){
        i=1;
   }
   printf("\n");
+}
+
+void
+main (){
+  findprime(600851475143);
+  findprime(256);
 }
