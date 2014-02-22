@@ -17,14 +17,16 @@ findprime (long double find){
   printf("Factors of %0.0Lf are ", find);
   long double i;
   int count = 0;
-  int max = sqrtl(find);
-  for ( i = 2 ; i < max;  i++, i++){
+  long double max = sqrtl(find) +2 ;
+  int factor_count = 0;
+  for ( i = 2 ; i <= max;  i++, i++){
     loop:
+    factor_count++;
     if (divides(i, find)) {
         count ++;
-        find = find/i;
         if (count <2)
 	  printf("%0.0Lf", i);
+        find = find/i;
         goto loop;
     } 
     if (count > 1)
@@ -36,11 +38,19 @@ findprime (long double find){
     if (i==2)
        i=1;
   }
+  if (find != 1) printf("%0.0Lf", find);
   printf("\n");
 }
 
 void
 main (){
+  long double i;
+
   findprime(600851475143);
   findprime(256);
+  findprime(32);
+
+  printf("\n");
+  for (i = 2; i<21 ; i++)
+    findprime(i);
 }
