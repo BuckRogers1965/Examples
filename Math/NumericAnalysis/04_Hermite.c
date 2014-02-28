@@ -1,74 +1,14 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include "stack.h"
 
 /*
 	James M. Rogers
 	For this we have the concept of a list of points.
 */
 
-
-
-typedef struct Que Que;
-struct Que
-{
-  long double x;
-  int depth;
-  Que *next;
-
-} myQue;
-
-
 Que *Q;
-
-Que *
-QCreate ()
-{
-  //printf("Create Q\n");
-  Que *Head = malloc (sizeof (myQue));
-  Head->x = 0;
-  Head->depth = 0;
-  Head->next = NULL;
-  return Head;
-}
-
-void
-Push (Que * queue, long double value)
-{
-  // printf("Push $Lf\n", value);
-  Que *newQ = malloc (sizeof (myQue));
-  newQ->next = queue->next;
-  newQ->x = value;
-  queue->next = newQ;
-  queue->depth++;
-
-}
-
-long double
-Pop (Que * queue)
-{
-
-  long double result = 0;
-
-  if (queue->depth)
-    {
-      result = queue->next->x;
-      queue->depth--;
-      Que *temp = queue->next;
-      queue->next = queue->next->next;
-      free (temp);
-    }
-
-  //printf("Pop $Lf\n", result);
-  return result;
-}
-
-int
-QDepth (Que * queue)
-{
-
-  return (queue->depth);
-}
 
 typedef struct Point Point;
 struct Point
@@ -86,11 +26,11 @@ PrintPoints (int count, Point Points[])
 
   int n = 0;
 
-  for (n = 0; n < count; n++)
+  for (n = 0; n < count; n++, n++)
     printf ("%Lf\t", Points[n].x);
   printf ("\n");
 
-  for (n = 0; n < count; n++)
+  for (n = 0; n < count; n++, n++)
     printf ("%Lf\t", Points[n].y);
   printf ("\n");
 
@@ -178,7 +118,8 @@ main ()
   long double i;
   int n = 6;
   long double x;
-  Point Points[n];
+  long double y;
+  Point Points[1000];
 
   Points[0].x = 1.3;
   Points[0].y = 0.6200860;
@@ -216,6 +157,65 @@ main ()
       }
 */
   x = 1.5;
-  long double y = FindHermite (n, Points, x);
-  printf ("\nSolution for %Lf with %d points is %30.20Lf\n", x, n, y);
+  y = FindHermite (n, Points, x);
+  printf ("\nSolution for %Lf with %d points is %30.20Lf\n", x, n/2, y);
+
+  Points[0].x   = 0;
+  Points[0].y   = 0;
+  Points[0].dif = 75;
+
+  Points[1].x   = 0;
+  Points[1].y   = 0;
+  Points[1].dif = 75;
+
+
+  Points[2].x   = 3;
+  Points[2].y   = 225;
+  Points[2].dif = 77;
+
+  Points[3].x   = 3;
+  Points[3].y   = 225;
+  Points[3].dif = 77;
+
+
+  Points[4].x   = 5;
+  Points[4].y   = 383;
+  Points[4].dif = 80;
+
+  Points[5].x   = 5;
+  Points[5].y   = 383;
+  Points[5].dif = 80;
+
+
+  Points[6].x   = 8;
+  Points[6].y   = 623;
+  Points[6].dif = 74;
+
+  Points[7].x   = 8;
+  Points[7].y   = 623;
+  Points[7].dif = 74;
+
+
+  Points[8].x   = 13;
+  Points[8].y   = 993;
+  Points[8].dif = 72;
+
+  Points[9].x   = 13;
+  Points[9].y   = 993;
+  Points[9].dif = 72;
+
+  n = 10;
+  //  55mph is 80.6667 feet per second
+
+  long double prev = 0;
+  //long double step = .0001;
+  long double step = 1;
+  printf ("\nSolution\ttime\tdistance\tdist per unit\tspeed\n");
+  //for (i=0; i< (13+step); i = i + step) {
+  for (i=10; i< (10+step); i = i + step) {
+    y = FindHermite (n, Points, i);
+    printf ("\nSolution\t%Lf\t%30.20Lf\t%Lf\t%Lf\n", i, y, (y-prev), (y-prev)*(1/step)*3600/5280);
+    prev = y;
+  }
+
 }

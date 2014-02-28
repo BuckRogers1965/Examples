@@ -45,15 +45,19 @@ NevilleRecurse (int n, int depth, Point Points[], Point P[], long double x)
       NewP[i].y = ((x - P[i+depth].x) * (Points[i  ].y)
                   - (x - P[i        ].x) * (Points[i+1].y))
                   / (P[i].x - P[i+depth].x);
-      //printf("%Lf\t", NewP[i].y);
+      printf("%Lf\t", NewP[i].y);
     }
   }
-  //printf("\n");
+  printf("\n");
   return NevilleRecurse (max, depth+1, NewP, P, x);
 }
 
 long double
 FindSolution (int n, Point Points[], long double x){
+  printf("\nSet of points entered:\n\n");
+  PrintPoints(n, Points);
+
+  printf("\nSet of calculated values:\n\n");
   return NevilleRecurse (n, 1, Points, Points, 3);
 }
 
@@ -62,8 +66,10 @@ main ()
 {
 
   long double i;
-  int n = 0;
-  Point Points[200001];
+  int n = 3;
+  Point Points[21];
+
+  printf("Example 1  - Neville's method\n");
 
   Points[0].x = 2;
   Points[0].y = 0.5;
@@ -74,17 +80,42 @@ main ()
   Points[2].x = 4;
   Points[2].y = 0.25;
 
-  Points[3].x = 5;
-  Points[3].y = 0.2;
 
-
+/*
   if (n == 0)
     for (n = 0, i = 2; i < 4; i = i + .03001, n++)
       {
 	Points[n].x = i;
 	Points[n].y = 1/i ;
       }
+*/
 
   long double y = FindSolution (n, Points, 3);
+  printf ("\nResult for 1/3 with %d points is %30.20Lf\n", n, y);
+
+
+  printf("\nHomework Set 3 Problem 1  - Neville's method\n\n");
+  n=0;
+
+  Points[n].x = 0.0;
+  Points[n].y = -2;
+  n++;
+
+  Points[n].x = 1;
+  Points[n].y = -1;
+  n++;
+
+  Points[n].x = 2;
+  Points[n].y = 0;
+  n++;
+
+  Points[n].x = 3;
+  Points[n].y = 1;
+  n++;
+
+  Points[n].x = 4;
+  Points[n].y = 2;
+
+  y = FindSolution (n, Points, 3);
   printf ("\nResult for 1/3 with %d points is %30.20Lf\n", n, y);
 }

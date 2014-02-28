@@ -8,3 +8,5 @@ gcc 02-6_hw.c                 -o 02-6_hw       -lm
 
 gcc 03_homework.c   methods.c -o 03_homework   -lm
 ./03_homework > 03_homework.results.txt
+
+

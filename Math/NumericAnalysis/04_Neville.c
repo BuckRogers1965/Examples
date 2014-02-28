@@ -57,14 +57,38 @@ main ()
 
   long double i;
   int n = 0;
-  Point Points[200001];
+  Point Points[2001];
 
+  printf("Homework Set 3 Problem 1  - Neville's method\n");
+  
+  Points[n].x = 0.0;
+  Points[n].y = -2;
+  n++;
+  
+  Points[n].x = 1;
+  Points[n].y = -1;
+  n++;
+  
+  Points[n].x = 2;
+  Points[n].y = 0;
+  n++;
+  
+  Points[n].x = 3;
+  Points[n].y = 1;
+  n++;
+  
+  Points[n].x = 4;
+  Points[n].y = 2;
+  
+
+/*
   if (n == 0)
     for (n = 0, i = 1; i < 10; i = i + .4, n++)
       {
 	Points[n].x = i;
 	Points[n].y = i*i ;
       }
+*/
 
   long double y = FindSolution (n, Points, 3);
   printf ("\nResult for 3^2 with %d points is %30.20Lf\n", n, y);
