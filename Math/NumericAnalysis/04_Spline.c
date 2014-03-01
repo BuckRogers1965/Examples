@@ -203,45 +203,10 @@ main ()
   FindSpline (n, P);
 
   // now that the solution values are stored in P you can call SolveSpline()
-  printf("\n");
+  printf("\n\nSolution test\n\n");
 
-  x = -1.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 1.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 3.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 4.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 5.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 6.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 7.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 8.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 9.5;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
-
-  x = 15;
-  printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
-  printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
+  for (x=0.5;x< 11; x++){
+    printf("Solution for x: %Lf with %d points: %Lf \n", x, n, SolveSpline(n, P, x));
+    printf("First derivative at x: %Lf \n\n", SolveSplineDerive(n, P, x));
+  }
 }
