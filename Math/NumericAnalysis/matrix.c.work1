@@ -1,0 +1,233 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
+typedef struct matrix matrix;
+struct matrix
+{
+  int row;
+  int col;
+  long double **a;
+
+} myMatrix;
+
+matrix * 
+NewMatrix (int row, int col) {
+  int i=0;
+  matrix * m = (matrix *) calloc (sizeof(myMatrix), 1);
+  if (m == NULL) return NULL;
+  m->a =  calloc (sizeof(long double), row);
+  if (m->a == NULL){
+    goto fail2;
+  }
+  for(;i<row;i++) {
+    m->a[i] =  calloc (sizeof(long double), col);
+    if (m->a[i] == NULL) {
+      for(i--;i>0;i--) {
+        free(m->a[i]);
+      }
+      goto fail1;
+    }
+  }
+  m->row = row;
+  m->col = col;
+  return m;
+
+  fail1:
+  free (m->a);
+  fail2:
+  free (m);
+  return NULL;
+}
+
+matrix * 
+DisposeMatrix(matrix *m){
+  int i=0;
+  if (m == NULL) return NULL;
+  for(i=m->row-1;i>0;i--) {
+        free(m->a[i]);
+  }
+  free (m->a);
+  free (m);
+  return NULL;
+}
+
+bool
+SetMatrix (matrix * m, int row, int col, long double val){
+  if (m == NULL) return false;
+  if(row>m->row || row<1) return false;
+  if(col>m->col || col<1) return false;
+  m->a[row-1][col-1] = val;
+  return true;
+}
+
+long double
+GetMatrix (matrix * m, int row, int col){
+  if (m == NULL) return NAN;
+  if(row>m->row || row<1) return NAN;
+  if(col>m->col || col<1) return NAN;
+  return m->a[row-1][col-1];
+}
+
+void
+LoadMatrix (matrix * m, long double a[]){
+  int r,c;
+  for (r=0;r<m->row;r++) {
+    for (c=0;c<m->col;c++){
+        m->a[r][c]=a[r*m->col + c];
+        //printf("<%d  %d>\t", r*m->col , c);
+    }
+  //printf("\n");
+  }
+}
+
+void
+printMatrix (matrix * m){
+  int r,c;
+  if (m == NULL) {
+    printf("\nprintMatrix: matrix does not exist.\n");
+    return;
+  }
+  printf("\n");
+  for (r=0;r<m->row;r++) {
+    for (c=0;c<m->col;c++)
+      printf("%15.9Lf ", m->a[r][c]);
+    printf("\n");
+  }
+  printf("\n");
+}
+
+matrix *
+createIdentity (int n ){
+  matrix * m = NewMatrix (n,n);
+  if (m == NULL) return NULL;
+  int r = 0,
+      c = 0;
+     
+  while (r<n) {
+    SetMatrix(m, r, c, 1);
+    r++; c++;
+  }
+  return m;
+}
+
+matrix * 
+dupMatrix (matrix * x){
+  matrix * m = NewMatrix (x->row, x->col);
+  if (m == NULL) return NULL;
+
+  int r,c;
+  for (r=0;r<m->row;r++) {
+    for (c=0;c<m->col;c++){
+        m->a[r][c]=x->a[r][c];
+    }
+  }
+  return m;
+}
+  
+matrix * 
+findInverse(matrix * x ){
+  int r, c, r1, c1;
+
+  if (x == NULL) return NULL;
+  if (x->row != x-> col) return NULL;
+  int s = x->row;
+
+  matrix * m = dupMatrix (x);
+  if (m == NULL) return NULL;
+
+  matrix * z = createIdentity (m->row);
+  if (z == NULL) goto fail2;
+  
+  // force a pivot on each row and column
+  // 
+  for (r=0;r<s;r++) {
+    // calculate division for row
+    long double division;
+    division = 1 / m->a[r][r];
+    printf("%0.4Lf \n", division);
+    if (m->a[r][r] == 0.0)
+      goto fail1;
+    
+    for (c=0;c<s;c++){
+      // apply division across col
+      m->a[r][c] = m->a[r][c] * division;
+      // also apply to identity matrix
+      z->a[r][c] = z->a[r][c] * division;
+
+      for (r1=r+1;r1<s;r1++){
+        // force this pivot down the column to set everything to zero
+        // multandadd
+        long double mult;
+        mult = - m->a[r1][r];
+//        if (mult==0.0) goto fail1;
+        printf("%0.4Lf \n", mult);
+
+        for (c1=r;c1<(s-1);c1++){
+           // mult r by mult and add to r1.  
+           m->a[r1][c1] = mult * m->a[r][c1] + m->a[r1][c1];
+           z->a[r1][c1] = mult * z->a[r][c1] + z->a[r1][c1];
+           printf("%0.4Lf \t", m->a[r1][c1]);
+        }
+  printf("\n");
+      }
+  printf("\n");
+    }
+  printf("\n");
+  }
+
+  printf("*** >>\n");
+  printMatrix(m);
+  // return NULL if  all zero row or column
+
+  free (m);
+  return z;
+ 
+  fail1:
+  DisposeMatrix (z);
+  fail2:
+  DisposeMatrix (m);
+  return NULL;
+}
+
+
+
+void
+main (){
+
+  matrix * m = NewMatrix (5,5);
+  printMatrix(m);
+  SetMatrix(m, 3,3, 5.23);
+  SetMatrix(m, 2,1, .23);
+  SetMatrix(m, 1,2, 7.23);
+  SetMatrix(m, 4,3, 2.23);
+  printf("%0.8Lf\n", GetMatrix(m, 3,3));
+  printf("%0.8Lf\n", GetMatrix(m, 2,1));
+  SetMatrix(m, 1,1, 9999);
+  printf("%0.8Lf\n", GetMatrix(m, 1,1));
+  printMatrix(m);
+
+  long double ab[]= {
+      1.0,   2.0,  3.0,  4.0,  5.0,
+      6.5,   7.2,  8.5,  9.0, 10.0,
+      6.3,   7.4,  8.7,  9.0, 10.0,
+      11.0, 12.0, 13.9, 14.0, 15.0,
+      16.0, 17.0, 18.8, 1.0, 2.0 };
+
+  long double a[]= {
+1.000, 2.000, 3.000, 10.000, 11.000,
+ 4.000,  5.000, 11.000, 12.000, 13.000,
+ 7.000,  8.000,  9.000, 12.000, 34.000,
+ 1.000,  1.000,  1.000,  1.000,  1.000,
+12.593, 37.000,  17.00, 3.333, 15.23 };
+
+  LoadMatrix(m, a);
+  printf("*** *** ***\n%0.8Lf\n\n", GetMatrix(m, 1,1));
+  printMatrix(m);
+  matrix * i = findInverse(m);
+  printMatrix(i);
+}
+
+
+
