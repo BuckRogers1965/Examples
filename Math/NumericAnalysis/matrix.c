@@ -103,7 +103,7 @@ LoadMatrix (matrix * m, long double a[])
 }
 
 void
-printMatrix (matrix * m)
+PrintMatrix (matrix * m)
 {
   int r, c;
   if (m == NULL)
@@ -122,7 +122,7 @@ printMatrix (matrix * m)
 }
 
 matrix *
-createIdentity (int n)
+CreateIdentity (int n)
 {
   matrix *m = NewMatrix (n, n);
   if (m == NULL)
@@ -139,7 +139,7 @@ createIdentity (int n)
 }
 
 matrix *
-dupMatrix (matrix * x)
+DupMatrix (matrix * x)
 {
   if (x == NULL)
     return NULL;
@@ -258,7 +258,7 @@ MultRow(matrix * m, int row, long double x){
 }
 
 matrix *
-findInverse (matrix * x)
+FindInverse (matrix * x)
 {
   int r, c, r1, c1;
   long double mult;
@@ -269,15 +269,15 @@ findInverse (matrix * x)
     return NULL;
   int s = x->row;
 
-  matrix *m = dupMatrix (x);
+  matrix *m = DupMatrix (x);
   if (m == NULL)
     return NULL;
 
-  matrix *z = createIdentity (m->row);
+  matrix *z = CreateIdentity (m->row);
   if (z == NULL)
     goto fail2;
 
-  printf("*****\n");
+  //printf("*****\n");
 
   // force a pivot on each row and column
   for (r=1; r <= s; r++){

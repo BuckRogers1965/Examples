@@ -7,7 +7,7 @@ main ()
 {
 
   matrix *m = NewMatrix (5, 5);
-  printMatrix (m);
+  PrintMatrix (m);
   SetMatrix (m, 3, 3, 5.23);
   SetMatrix (m, 2, 1, .23);
   SetMatrix (m, 1, 2, 7.23);
@@ -16,7 +16,7 @@ main ()
   printf ("%0.8Lf\n", GetMatrix (m, 2, 1));
   SetMatrix (m, 1, 1, 9999);
   printf ("%0.8Lf\n", GetMatrix (m, 1, 1));
-  printMatrix (m);
+  PrintMatrix (m);
 
   long double ab[] = {
     1.0, 2.0, 3.0, 4.0, 5.0,
@@ -35,36 +35,36 @@ main ()
   };
 
   LoadMatrix (m, a);
-  matrix *i = findInverse (m);
+  matrix *i = FindInverse (m);
 
-  printMatrix (m);
-  printMatrix (i);
+  PrintMatrix (m);
+  PrintMatrix (i);
 
   printf ("inverse * m = Identity *** *** ***\n");
   matrix * v = MultMatrix(m,i);
-  printMatrix (i);
-  printMatrix (m);
-  printMatrix (v);
+  PrintMatrix (i);
+  PrintMatrix (m);
+  PrintMatrix (v);
 
   
   printf ("Identity * m = m*** *** ***\n");
-  matrix *z = createIdentity (5);
+  matrix *z = CreateIdentity (5);
   SetMatrix (z, 1, 5, 5);
-  printMatrix (z);
-  printMatrix (m);
+  PrintMatrix (z);
+  PrintMatrix (m);
 
   DisposeMatrix(v);
   v = MultMatrix(z,m);
-  printMatrix (v);
+  PrintMatrix (v);
 
   
   printf ("Add:  A+A = 2A *** *** ***\n");
   matrix *add = AddMatrix (m,m);
-  printMatrix (add);
+  PrintMatrix (add);
 
   
   printf ("scalar mult:  A+A = 2A *** *** ***\n");
   matrix *sca = ScalarMult (m,3);
-  printMatrix (sca);
+  PrintMatrix (sca);
   
 }

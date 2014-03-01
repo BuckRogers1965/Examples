@@ -12,11 +12,11 @@ long double GetMatrix (matrix * m, int row, int col);
 
 void LoadMatrix (matrix * m, long double a[]);
 
-void printMatrix (matrix * m);
+void PrintMatrix (matrix * m);
 
-matrix * createIdentity (int n);
+matrix * CreateIdentity (int n);
 
-matrix * dupMatrix (matrix * x);
+matrix * DupMatrix (matrix * x);
 
 matrix * ScalarMult (matrix * A, long double x);
 
@@ -28,5 +28,5 @@ void MultAddRow(matrix * m, int row, long double x, int row1);
 
 void MultRow(matrix * m, int row, long double x);
 
-matrix * findInverse (matrix * x);
+matrix * FindInverse (matrix * x);
 
