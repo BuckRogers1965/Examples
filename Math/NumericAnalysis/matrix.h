@@ -1,10 +1,10 @@
 #include <stdbool.h>
 
-typedef void * matrix;
+typedef void *matrix;
 
-matrix * NewMatrix (int row, int col);
+matrix *NewMatrix (int row, int col);
 
-matrix * DisposeMatrix (matrix * m);
+matrix *DisposeMatrix (matrix * m);
 
 bool SetMatrix (matrix * m, int row, int col, long double val);
 
@@ -14,19 +14,18 @@ void LoadMatrix (matrix * m, long double a[]);
 
 void PrintMatrix (matrix * m);
 
-matrix * CreateIdentity (int n);
+matrix *CreateIdentity (int n);
 
-matrix * DupMatrix (matrix * x);
+matrix *DupMatrix (matrix * x);
 
-matrix * ScalarMult (matrix * A, long double x);
+matrix *ScalarMult (matrix * A, long double x);
 
-matrix * AddMatrix (matrix * A, matrix * v);
+matrix *AddMatrix (matrix * A, matrix * v);
 
-matrix * MultMatrix (matrix * A, matrix * v);
+matrix *MultMatrix (matrix * A, matrix * v);
 
-void MultAddRow(matrix * m, int row, long double x, int row1);
+void MultAddRow (matrix * m, int row, long double x, int row1);
 
-void MultRow(matrix * m, int row, long double x);
+void MultRow (matrix * m, int row, long double x);
 
-matrix * FindInverse (matrix * x);
-
+matrix *FindInverse (matrix * x);

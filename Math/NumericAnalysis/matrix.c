@@ -162,10 +162,10 @@ DupMatrix (matrix * x)
 matrix *
 ScalarMult (matrix * A, long double x)
 {
-  if (A == NULL )
+  if (A == NULL)
     return NULL;
 
-  matrix * b = NewMatrix (A->row, A->col);
+  matrix *b = NewMatrix (A->row, A->col);
   if (b == NULL)
     return NULL;
 
@@ -184,10 +184,10 @@ AddMatrix (matrix * A, matrix * v)
   if (A == NULL || v == NULL)
     return NULL;
 
-  if ((A->col != v->col)&&(A->row != v->row)) 
+  if ((A->col != v->col) && (A->row != v->row))
     return NULL;
-  
-  matrix * b = NewMatrix (A->row, v->col);
+
+  matrix *b = NewMatrix (A->row, v->col);
   if (b == NULL)
     return NULL;
 
@@ -200,14 +200,16 @@ AddMatrix (matrix * A, matrix * v)
 }
 
 // internal only
-long double RxC(matrix * A, int row, matrix * v, int col){
-  long double results=0.0;
+long double
+RxC (matrix * A, int row, matrix * v, int col)
+{
+  long double results = 0.0;
   int b;
 
   // skip tests, already done.
-  for (b=0; b<A->col; b++)
+  for (b = 0; b < A->col; b++)
     results += A->a[row][b] * v->a[b][col];
-  return results; 
+  return results;
 }
 
 // Av=b
@@ -217,22 +219,23 @@ MultMatrix (matrix * A, matrix * v)
   if (A == NULL || v == NULL)
     return NULL;
 
-  if (A->col != v->row) 
+  if (A->col != v->row)
     return NULL;
-  
-  matrix * b = NewMatrix (A->row, v->col);
+
+  matrix *b = NewMatrix (A->row, v->col);
   if (b == NULL)
     return NULL;
 
   int r, c;
   for (r = 0; r < b->row; r++)
     for (c = 0; c < b->col; c++)
-      b->a[r][c] = RxC(A, r, v, c);
+      b->a[r][c] = RxC (A, r, v, c);
   return b;
 }
 
 void
-MultAddRow(matrix * m, int row, long double x, int row1){
+MultAddRow (matrix * m, int row, long double x, int row1)
+{
   if (m == NULL)
     return;
   if (row > m->row || row < 1)
@@ -241,26 +244,27 @@ MultAddRow(matrix * m, int row, long double x, int row1){
     return;
 
   int c;
-  for (c=0;c<m->col;c++)
-    m->a[row1-1][c] += m->a[row-1][c] * x; 
+  for (c = 0; c < m->col; c++)
+    m->a[row1 - 1][c] += m->a[row - 1][c] * x;
 }
 
-void 
-MultRow(matrix * m, int row, long double x){
+void
+MultRow (matrix * m, int row, long double x)
+{
   if (m == NULL)
     return;
   if (row > m->row || row < 1)
     return;
 
   int c;
-  for (c=0;c<m->col;c++)
-    m->a[row-1][c] *=  x; 
+  for (c = 0; c < m->col; c++)
+    m->a[row - 1][c] *= x;
 }
 
 matrix *
 FindInverse (matrix * x)
 {
-  int r, c, r1, c1;
+  int r, r1;
   long double mult;
 
   if (x == NULL)
@@ -275,41 +279,42 @@ FindInverse (matrix * x)
 
   matrix *z = CreateIdentity (m->row);
   if (z == NULL)
-    goto fail2;
+    goto fail;
 
   //printf("*****\n");
 
   // force a pivot on each row and column
-  for (r=1; r <= s; r++){
-    mult =  1 / GetMatrix(m, r, r);
-    //printf("%0.3Lf  %0.3Lf\n", GetMatrix(m, r, r), mult);
-    MultRow(m, r, mult);
-    MultRow(z, r, mult);
-    for(r1=r+1; r1<=s; r1++){
-        mult = -GetMatrix(m, r1, r);
-        //printf("%0.3Lf\t", mult);
-        MultAddRow(m, r, mult, r1);
-        MultAddRow(z, r, mult, r1);
+  for (r = 1; r <= s; r++)
+    {
+      mult = 1 / GetMatrix (m, r, r);
+      //printf("%0.3Lf  %0.3Lf\n", GetMatrix(m, r, r), mult);
+      MultRow (m, r, mult);
+      MultRow (z, r, mult);
+      for (r1 = r + 1; r1 <= s; r1++)
+	{
+	  mult = -GetMatrix (m, r1, r);
+	  //printf("%0.3Lf\t", mult);
+	  MultAddRow (m, r, mult, r1);
+	  MultAddRow (z, r, mult, r1);
+	}
     }
-  }
 
   // solve from bottom to top
-  for (r=s; r > 0; r--){
-    for(r1=r-1; r1>0; r1--){
-        mult = -GetMatrix(m, r1, r);
-        //printf("* %0.3Lf\t", mult);
-        MultAddRow(m, r, mult, r1);
-        MultAddRow(z, r, mult, r1);
+  for (r = s; r > 0; r--)
+    {
+      for (r1 = r - 1; r1 > 0; r1--)
+	{
+	  mult = -GetMatrix (m, r1, r);
+	  //printf("* %0.3Lf\t", mult);
+	  MultAddRow (m, r, mult, r1);
+	  MultAddRow (z, r, mult, r1);
+	}
     }
-  }
 
   free (m);
   return z;
 
-fail1:
-  DisposeMatrix (z);
-fail2:
+fail:
   DisposeMatrix (m);
   return NULL;
 }
-
