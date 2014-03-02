@@ -261,6 +261,57 @@ Mat_MultRow (matrix * m, int row, long double x)
     m->a[row - 1][c] *= x;
 }
 
+long double 
+Mat_Determinate (matrix * x){
+  if (x == NULL)
+    return 0;
+  if (x->row != x->col)
+    return 0; 
+
+  int size = x->row;
+  int d = 0;
+
+  // a b  ad - cb
+  // c d
+  if (size == 2) {
+    //printf("%0.0Lf * %0.0Lf - %0.0Lf * %0.0Lf\n", x->a[0][0], x->a[1][1], x->a[1][0], x->a[0][1]);
+    return x->a[0][0]*x->a[1][1] - x->a[1][0]*x->a[0][1]; 
+  }
+
+  //Mat_Print (x);
+  // brute force recursive 
+  // choose top row
+  int r = 0, c, tc, tr ;
+  long double sign = 1;
+  
+  // create an n-1 by n-1 matrix
+  matrix * t = NewMatrix(size-1, size-1);
+  for (c = 0; c< size; c++) {
+     // Go col by col,
+     int skip=0;
+     for (tc=0;tc<size;tc++) {
+       // populate from cells not in current row or column.
+       if ( tc == c) {
+         //printf("skip at col %d\n", tc); 
+         skip = 1;
+         continue;
+       }
+       // fill in each column
+       for (tr=0; tr< size-1; tr++) {
+         //printf("r %d c %d tc %d tr %d skip %d source %0.0Lf \n", r, c, tc, tr, skip, x->a[tr+1][tc]); 
+         t->a[tr][tc-skip] = x->a[tr+1][tc];    
+       }
+     }
+     skip = 0;
+     //printf("%0.0Lf * %0.0Lf * \n", sign, x->a[r][c]);
+     //Mat_Print (t);
+     d += sign * x->a[r][c] * Mat_Determinate(t);
+     sign *= -1;
+  }
+  Mat_Dispose(t);
+  return d;
+}
+
 matrix *
 Mat_FindInverse (matrix * x)
 {
@@ -269,7 +320,10 @@ Mat_FindInverse (matrix * x)
 
   if (x == NULL)
     return NULL;
-  if (x->row != x->col)
+//  if (x->row != x->col)
+//    return NULL;
+  // no det = no inverse
+  if (Mat_Determinate(x) == 0)
     return NULL;
   int s = x->row;
 

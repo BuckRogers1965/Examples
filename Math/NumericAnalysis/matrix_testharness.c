@@ -66,5 +66,49 @@ main ()
   printf ("scalar mult:  A+A+A = 3A *** *** ***\n");
   matrix *sca = Mat_ScalarMult (m,3);
   Mat_Print (sca);
+
+  matrix * two = NewMatrix(2,2);
+  Mat_SetCell (two, 1, 1, 1);
+  Mat_SetCell (two, 1, 2, 2);
+  Mat_SetCell (two, 2, 1, 3);
+  Mat_SetCell (two, 2, 2, 4);
+  Mat_Print (two);
+  printf ("Determinate is: %0.6Lf\n", Mat_Determinate(two));
+
+  matrix * three = NewMatrix(3,3);
+  Mat_SetCell (three, 1, 1, 1);
+  Mat_SetCell (three, 1, 2, 5);
+  Mat_SetCell (three, 1, 3, 0);
+  Mat_SetCell (three, 2, 1, 2);
+  Mat_SetCell (three, 2, 2, 4);
+  Mat_SetCell (three, 2, 3, -1);
+  Mat_SetCell (three, 3, 1, 0);
+  Mat_SetCell (three, 3, 2, -2);
+  Mat_SetCell (three, 3, 3, 0);
+  Mat_Print (three);
+  printf ("Determinate is: %0.6Lf\n", Mat_Determinate(three));
   
+  Mat_SetCell (three, 1, 1, 1);
+  Mat_SetCell (three, 1, 2, 2);
+  Mat_SetCell (three, 1, 3, 3);
+  Mat_SetCell (three, 2, 1, 1);
+  Mat_SetCell (three, 2, 2, 2);
+  Mat_SetCell (three, 2, 3, 3);
+  Mat_SetCell (three, 3, 1, 11);
+  Mat_SetCell (three, 3, 2, 21);
+  Mat_SetCell (three, 3, 3, 31);
+  Mat_Print (three);
+  printf ("Determinate  with repeating rows is: %0.6Lf\n", Mat_Determinate(three));
+  
+  Mat_SetCell (three, 1, 1, 1);
+  Mat_SetCell (three, 1, 2, 2);
+  Mat_SetCell (three, 1, 3, 11);
+  Mat_SetCell (three, 2, 1, 2);
+  Mat_SetCell (three, 2, 2, 4);
+  Mat_SetCell (three, 2, 3, 21);
+  Mat_SetCell (three, 3, 1, 3);
+  Mat_SetCell (three, 3, 2, 6);
+  Mat_SetCell (three, 3, 3, 31);
+  Mat_Print (three);
+  printf ("Determinate  with repeating cols is: %0.6Lf\n", Mat_Determinate(three));
 }

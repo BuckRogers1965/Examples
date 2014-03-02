@@ -28,4 +28,6 @@ void Mat_MultAddRow (matrix * m, int row, long double x, int row1);
 
 void Mat_MultRow (matrix * m, int row, long double x);
 
+long double Mat_Determinate (matrix * x);
+
 matrix *Mat_FindInverse (matrix * x);
