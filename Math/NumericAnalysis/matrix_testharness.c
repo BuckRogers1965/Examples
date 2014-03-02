@@ -111,4 +111,71 @@ main ()
   Mat_SetCell (three, 3, 3, 31);
   Mat_Print (three);
   printf ("Determinate  with repeating cols is: %0.6Lf\n", Mat_Determinate(three));
+
+  matrix * five = NewMatrix(5,5);
+  Mat_SetCell (five, 1, 1, 1);
+  Mat_SetCell (five, 1, 2, 2);
+  Mat_SetCell (five, 1, 3, 5);
+  Mat_SetCell (five, 1, 4, 0);
+  Mat_SetCell (five, 1, 5, 1);
+
+  Mat_SetCell (five, 2, 1, 2);
+  Mat_SetCell (five, 2, 2, 3);
+  Mat_SetCell (five, 2, 3, 7);
+  Mat_SetCell (five, 2, 4, 1);
+  Mat_SetCell (five, 2, 5, 9);
+
+  Mat_SetCell (five, 3, 1, 1);
+  Mat_SetCell (five, 3, 2, 2);
+  Mat_SetCell (five, 3, 3, 3);
+  Mat_SetCell (five, 3, 4, 0);
+  Mat_SetCell (five, 3, 5, 3);
+
+  Mat_SetCell (five, 4, 1, 0);
+  Mat_SetCell (five, 4, 2, 0);
+  Mat_SetCell (five, 4, 3, 1);
+  Mat_SetCell (five, 4, 4, 0);
+  Mat_SetCell (five, 4, 5, 0);
+
+  Mat_SetCell (five, 5, 1, 3);
+  Mat_SetCell (five, 5, 2, 2);
+  Mat_SetCell (five, 5, 3, -4);
+  Mat_SetCell (five, 5, 4, 0);
+  Mat_SetCell (five, 5, 5, 1);
+  Mat_Print (five);
+  printf ("Determinate  with repeating cols is: %0.6Lf\n", Mat_Determinate(five));
+
+
+  Mat_SetCell (five, 1, 1, 7);
+  Mat_SetCell (five, 1, 2, 2);
+  Mat_SetCell (five, 1, 3, -8);
+  Mat_SetCell (five, 1, 4, 4);
+  Mat_SetCell (five, 1, 5, 6);
+
+  Mat_SetCell (five, 2, 1, -3);
+  Mat_SetCell (five, 2, 2, -1);
+  Mat_SetCell (five, 2, 3,  4);
+  Mat_SetCell (five, 2, 4, -2);
+  Mat_SetCell (five, 2, 5, -3);
+
+  Mat_SetCell (five, 3, 1, 6);
+  Mat_SetCell (five, 3, 2, 2);
+  Mat_SetCell (five, 3, 3, 2);
+  Mat_SetCell (five, 3, 4, 4);
+  Mat_SetCell (five, 3, 5, 7);
+
+  Mat_SetCell (five, 4, 1, 1);
+  Mat_SetCell (five, 4, 2, 3);
+  Mat_SetCell (five, 4, 3, 7);
+  Mat_SetCell (five, 4, 4, 5);
+  Mat_SetCell (five, 4, 5, 1);
+
+  Mat_SetCell (five, 5, 1, -2);
+  Mat_SetCell (five, 5, 2, 2);
+  Mat_SetCell (five, 5, 3, 3);
+  Mat_SetCell (five, 5, 4, 4);
+  Mat_SetCell (five, 5, 5, 7);
+  Mat_Print (five);
+  printf ("Determinate  with repeating cols is: %0.6Lf\n", Mat_Determinate(five));
+
 }
