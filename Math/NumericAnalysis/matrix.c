@@ -261,55 +261,71 @@ Mat_MultRow (matrix * m, int row, long double x)
     m->a[row - 1][c] *= x;
 }
 
+
+//internal
+long double
+FUD(matrix * x){
+  int size = x->row-1;
+  int offset=0;
+  int r=size, c, os;
+  long double d1=1;
+  long double d=0;
+  //printf("\nFUD\n");
+  for (os=0; os<=size; os++ ){
+      for (c=os; c <= (size+os); c++, r--){
+          d1 *= x->a[r][c>size?c-(size+1):c];
+          //printf("r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
+            //r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
+      }
+    d += d1;
+    d1=1;
+    r=size;
+  }
+  //printf("***r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
+            //r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
+    
+  return d;
+}
+
+//internal
+long double
+FDD(matrix * x){
+  int size = x->row-1;
+  int offset=0;
+  int r=0, c, os;
+  long double d1=1;
+  long double d=0;
+  //printf("\nFDD\n");
+  for (os=0; os<=size; os++){
+      for (c=os; c<=(size+os); c++, r++){
+          d1 *= x->a[r][c>size?c-(size+1):c];
+          //printf("r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
+            //r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
+      }
+    d += d1;
+    d1=1;
+    r=0;
+  }
+    
+//  printf("***r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
+//            r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
+  return d;
+}
+
 long double 
 Mat_Determinate (matrix * x){
   if (x == NULL)
     return 0;
   if (x->row != x->col)
     return 0; 
-
-  int size = x->row;
-  int d = 0;
-
   // a b  ad - cb
   // c d
-  if (size == 2) {
+  if (x->row == 2) {
     //printf("%0.0Lf * %0.0Lf - %0.0Lf * %0.0Lf\n", x->a[0][0], x->a[1][1], x->a[1][0], x->a[0][1]);
     return x->a[0][0]*x->a[1][1] - x->a[1][0]*x->a[0][1]; 
   }
-
-  //Mat_Print (x);
-  // brute force recursive 
-  // choose top row
-  int r = 0, c, tc, tr ;
-  long double sign = 1;
-  
-  // create an n-1 by n-1 matrix
-  matrix * t = NewMatrix(size-1, size-1);
-  for (c = 0; c< size; c++) {
-     // Go col by col,
-     int skip=0;
-     for (tc=0;tc<size;tc++) {
-       // populate from cells not in current row or column.
-       if ( tc == c) {
-         //printf("skip at col %d\n", tc); 
-         skip = 1;
-         continue;
-       }
-       // fill in each column
-       for (tr=0; tr< size-1; tr++) {
-         //printf("r %d c %d tc %d tr %d skip %d source %0.0Lf \n", r, c, tc, tr, skip, x->a[tr+1][tc]); 
-         t->a[tr][tc-skip] = x->a[tr+1][tc];    
-       }
-     }
-     skip = 0;
-     //printf("%0.0Lf * %0.0Lf * \n", sign, x->a[r][c]);
-     //Mat_Print (t);
-     d += sign * x->a[r][c] * Mat_Determinate(t);
-     sign *= -1;
-  }
-  Mat_Dispose(t);
-  return d;
+  int size = x->row - 1;
+  return FDD(x) - FUD(x);
 }
 
 matrix *
@@ -320,8 +336,6 @@ Mat_FindInverse (matrix * x)
 
   if (x == NULL)
     return NULL;
-//  if (x->row != x->col)
-//    return NULL;
   // no det = no inverse
   if (Mat_Determinate(x) == 0)
     return NULL;
