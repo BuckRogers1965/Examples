@@ -48,7 +48,7 @@ fail2:
 }
 
 matrix *
-DisposeMatrix (matrix * m)
+Mat_Dispose (matrix * m)
 {
   int i = 0;
   if (m == NULL)
@@ -63,7 +63,7 @@ DisposeMatrix (matrix * m)
 }
 
 bool
-SetMatrix (matrix * m, int row, int col, long double val)
+Mat_SetCell (matrix * m, int row, int col, long double val)
 {
   if (m == NULL)
     return false;
@@ -76,7 +76,7 @@ SetMatrix (matrix * m, int row, int col, long double val)
 }
 
 long double
-GetMatrix (matrix * m, int row, int col)
+Mat_GetCell (matrix * m, int row, int col)
 {
   if (m == NULL)
     return NAN;
@@ -88,7 +88,7 @@ GetMatrix (matrix * m, int row, int col)
 }
 
 void
-LoadMatrix (matrix * m, long double a[])
+Mat_Load (matrix * m, long double a[])
 {
   int r, c;
   for (r = 0; r < m->row; r++)
@@ -103,7 +103,7 @@ LoadMatrix (matrix * m, long double a[])
 }
 
 void
-PrintMatrix (matrix * m)
+Mat_Print (matrix * m)
 {
   int r, c;
   if (m == NULL)
@@ -122,7 +122,7 @@ PrintMatrix (matrix * m)
 }
 
 matrix *
-CreateIdentity (int n)
+Mat_CreateIdentity (int n)
 {
   matrix *m = NewMatrix (n, n);
   if (m == NULL)
@@ -131,7 +131,7 @@ CreateIdentity (int n)
 
   while (r <= n)
     {
-      SetMatrix (m, r, c, 1);
+      Mat_SetCell (m, r, c, 1);
       r++;
       c++;
     }
@@ -139,7 +139,7 @@ CreateIdentity (int n)
 }
 
 matrix *
-DupMatrix (matrix * x)
+Mat_Dup (matrix * x)
 {
   if (x == NULL)
     return NULL;
@@ -160,7 +160,7 @@ DupMatrix (matrix * x)
 
 // x * A = b
 matrix *
-ScalarMult (matrix * A, long double x)
+Mat_ScalarMult (matrix * A, long double x)
 {
   if (A == NULL)
     return NULL;
@@ -179,7 +179,7 @@ ScalarMult (matrix * A, long double x)
 
 // Av=b
 matrix *
-AddMatrix (matrix * A, matrix * v)
+Mat_Add (matrix * A, matrix * v)
 {
   if (A == NULL || v == NULL)
     return NULL;
@@ -214,7 +214,7 @@ RxC (matrix * A, int row, matrix * v, int col)
 
 // Av=b
 matrix *
-MultMatrix (matrix * A, matrix * v)
+Mat_Mult (matrix * A, matrix * v)
 {
   if (A == NULL || v == NULL)
     return NULL;
@@ -234,7 +234,7 @@ MultMatrix (matrix * A, matrix * v)
 }
 
 void
-MultAddRow (matrix * m, int row, long double x, int row1)
+Mat_MultAddRow (matrix * m, int row, long double x, int row1)
 {
   if (m == NULL)
     return;
@@ -249,7 +249,7 @@ MultAddRow (matrix * m, int row, long double x, int row1)
 }
 
 void
-MultRow (matrix * m, int row, long double x)
+Mat_MultRow (matrix * m, int row, long double x)
 {
   if (m == NULL)
     return;
@@ -262,7 +262,7 @@ MultRow (matrix * m, int row, long double x)
 }
 
 matrix *
-FindInverse (matrix * x)
+Mat_FindInverse (matrix * x)
 {
   int r, r1;
   long double mult;
@@ -273,11 +273,11 @@ FindInverse (matrix * x)
     return NULL;
   int s = x->row;
 
-  matrix *m = DupMatrix (x);
+  matrix *m = Mat_Dup (x);
   if (m == NULL)
     return NULL;
 
-  matrix *z = CreateIdentity (m->row);
+  matrix *z = Mat_CreateIdentity (m->row);
   if (z == NULL)
     goto fail;
 
@@ -286,16 +286,16 @@ FindInverse (matrix * x)
   // force a pivot on each row and column
   for (r = 1; r <= s; r++)
     {
-      mult = 1 / GetMatrix (m, r, r);
+      mult = 1 / Mat_GetCell (m, r, r);
       //printf("%0.3Lf  %0.3Lf\n", GetMatrix(m, r, r), mult);
-      MultRow (m, r, mult);
-      MultRow (z, r, mult);
+      Mat_MultRow (m, r, mult);
+      Mat_MultRow (z, r, mult);
       for (r1 = r + 1; r1 <= s; r1++)
 	{
-	  mult = -GetMatrix (m, r1, r);
+	  mult = -Mat_GetCell (m, r1, r);
 	  //printf("%0.3Lf\t", mult);
-	  MultAddRow (m, r, mult, r1);
-	  MultAddRow (z, r, mult, r1);
+	  Mat_MultAddRow (m, r, mult, r1);
+	  Mat_MultAddRow (z, r, mult, r1);
 	}
     }
 
@@ -304,17 +304,17 @@ FindInverse (matrix * x)
     {
       for (r1 = r - 1; r1 > 0; r1--)
 	{
-	  mult = -GetMatrix (m, r1, r);
+	  mult = -Mat_GetCell (m, r1, r);
 	  //printf("* %0.3Lf\t", mult);
-	  MultAddRow (m, r, mult, r1);
-	  MultAddRow (z, r, mult, r1);
+	  Mat_MultAddRow (m, r, mult, r1);
+	  Mat_MultAddRow (z, r, mult, r1);
 	}
     }
 
-  free (m);
+  Mat_Dispose (m);
   return z;
 
 fail:
-  DisposeMatrix (m);
+  Mat_Dispose (m);
   return NULL;
 }

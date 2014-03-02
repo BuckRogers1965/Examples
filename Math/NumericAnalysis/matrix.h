@@ -4,28 +4,28 @@ typedef void *matrix;
 
 matrix *NewMatrix (int row, int col);
 
-matrix *DisposeMatrix (matrix * m);
+matrix *Mat_Dispose (matrix * m);
 
-bool SetMatrix (matrix * m, int row, int col, long double val);
+bool Mat_SetCell (matrix * m, int row, int col, long double val);
 
-long double GetMatrix (matrix * m, int row, int col);
+long double Mat_GetCell (matrix * m, int row, int col);
 
-void LoadMatrix (matrix * m, long double a[]);
+void Mat_Load (matrix * m, long double a[]);
 
-void PrintMatrix (matrix * m);
+void Mat_Print (matrix * m);
 
-matrix *CreateIdentity (int n);
+matrix *Mat_CreateIdentity (int n);
 
-matrix *DupMatrix (matrix * x);
+matrix *Mat_Dup (matrix * x);
 
-matrix *ScalarMult (matrix * A, long double x);
+matrix *Mat_ScalarMult (matrix * A, long double x);
 
-matrix *AddMatrix (matrix * A, matrix * v);
+matrix *Mat_Add (matrix * A, matrix * v);
 
-matrix *MultMatrix (matrix * A, matrix * v);
+matrix *Mat_Mult (matrix * A, matrix * v);
 
-void MultAddRow (matrix * m, int row, long double x, int row1);
+void Mat_MultAddRow (matrix * m, int row, long double x, int row1);
 
-void MultRow (matrix * m, int row, long double x);
+void Mat_MultRow (matrix * m, int row, long double x);
 
-matrix *FindInverse (matrix * x);
+matrix *Mat_FindInverse (matrix * x);

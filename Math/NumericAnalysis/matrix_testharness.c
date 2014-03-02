@@ -7,16 +7,16 @@ main ()
 {
 
   matrix *m = NewMatrix (5, 5);
-  PrintMatrix (m);
-  SetMatrix (m, 3, 3, 5.23);
-  SetMatrix (m, 2, 1, .23);
-  SetMatrix (m, 1, 2, 7.23);
-  SetMatrix (m, 4, 3, 2.23);
-  printf ("%0.8Lf\n", GetMatrix (m, 3, 3));
-  printf ("%0.8Lf\n", GetMatrix (m, 2, 1));
-  SetMatrix (m, 1, 1, 9999);
-  printf ("%0.8Lf\n", GetMatrix (m, 1, 1));
-  PrintMatrix (m);
+  Mat_Print (m);
+  Mat_SetCell (m, 3, 3, 5.23);
+  Mat_SetCell (m, 2, 1, .23);
+  Mat_SetCell (m, 1, 2, 7.23);
+  Mat_SetCell (m, 4, 3, 2.23);
+  printf ("%0.8Lf\n", Mat_GetCell (m, 3, 3));
+  printf ("%0.8Lf\n", Mat_GetCell (m, 2, 1));
+  Mat_SetCell (m, 1, 1, 9999);
+  printf ("%0.8Lf\n", Mat_GetCell (m, 1, 1));
+  Mat_Print (m);
 
   long double ab[] = {
     1.0, 2.0, 3.0, 4.0, 5.0,
@@ -34,37 +34,37 @@ main ()
     12.593, 37.000, 17.00, 3.333, 15.23
   };
 
-  LoadMatrix (m, a);
-  matrix *i = FindInverse (m);
+  Mat_Load (m, a);
+  matrix *i = Mat_FindInverse (m);
 
-  PrintMatrix (m);
-  PrintMatrix (i);
+  Mat_Print (m);
+  Mat_Print (i);
 
   printf ("inverse * m = Identity *** *** ***\n");
-  matrix * v = MultMatrix(m,i);
-  PrintMatrix (i);
-  PrintMatrix (m);
-  PrintMatrix (v);
+  matrix * v = Mat_Mult(m,i);
+  Mat_Print (i);
+  Mat_Print (m);
+  Mat_Print (v);
 
   
   printf ("Identity * m = m*** *** ***\n");
-  matrix *z = CreateIdentity (5);
-  SetMatrix (z, 1, 5, 5);
-  PrintMatrix (z);
-  PrintMatrix (m);
+  matrix *z = Mat_CreateIdentity (5);
+  Mat_SetCell (z, 1, 5, 5);
+  Mat_Print (z);
+  Mat_Print (m);
 
-  DisposeMatrix(v);
-  v = MultMatrix(z,m);
-  PrintMatrix (v);
+  Mat_Dispose(v);
+  v = Mat_Mult(z,m);
+  Mat_Print (v);
 
   
   printf ("Add:  A+A = 2A *** *** ***\n");
-  matrix *add = AddMatrix (m,m);
-  PrintMatrix (add);
+  matrix *add = Mat_Add (m,m);
+  Mat_Print (add);
 
   
-  printf ("scalar mult:  A+A = 2A *** *** ***\n");
-  matrix *sca = ScalarMult (m,3);
-  PrintMatrix (sca);
+  printf ("scalar mult:  A+A+A = 3A *** *** ***\n");
+  matrix *sca = Mat_ScalarMult (m,3);
+  Mat_Print (sca);
   
 }

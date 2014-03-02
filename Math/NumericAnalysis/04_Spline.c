@@ -64,7 +64,8 @@ SolveSplineDerive (int n, Point P[], long double x)
   //printf("Found interval %d\n", i);
   i--;
 
-  return P[i].b + 2 * P[i].c * F (x, P[i].x, 1) + 3 * P[i].d * F (x, P[i].x, 2);
+  return P[i].b + 2 * P[i].c * F (x, P[i].x, 1)
+                + 3 * P[i].d * F (x, P[i].x, 2);
 }
 
 long double
@@ -81,7 +82,8 @@ SolveSpline (int n, Point P[], long double x)
   i--;
 
   return P[i].a + P[i].b * F (x, P[i].x, 1)
-    + P[i].c * F (x, P[i].x, 2) + P[i].d * F (x, P[i].x, 3);
+                + P[i].c * F (x, P[i].x, 2)
+                + P[i].d * F (x, P[i].x, 3);
 }
 
 bool
@@ -107,17 +109,17 @@ FindSpline (int n, Point P[])
   if (A == NULL)
     return false;
 
-  SetMatrix (A, 1, 1, 1);
-  SetMatrix (A, n, n, 1);
+  Mat_SetCell (A, 1, 1, 1);
+  Mat_SetCell (A, n, n, 1);
   for (i = 2; i < n; i++)
     {
-      SetMatrix (A, i, i - 1, P[i - 2].h);
-      SetMatrix (A, i, i, 2 * (P[i - 2].h + P[i - 1].h));
-      SetMatrix (A, i, i + 1, P[i - 1].h);
+      Mat_SetCell (A, i, i - 1, P[i - 2].h);
+      Mat_SetCell (A, i, i, 2 * (P[i - 2].h + P[i - 1].h));
+      Mat_SetCell (A, i, i + 1, P[i - 1].h);
     }
 
   printf ("A = ");
-  PrintMatrix (A);
+  Mat_Print (A);
 
   matrix *b = NewMatrix (n, 1);
   if (b == NULL)
@@ -125,37 +127,37 @@ FindSpline (int n, Point P[])
 
   for (i = 2; i < n; i++)
     {
-      SetMatrix (b, i, 1,
+      Mat_SetCell (b, i, 1,
 		 (3 / P[i - 1].h) * (P[i].a - P[i - 1].a) -
 		 (3 / P[i - 2].h) * (P[i - 1].a - P[i - 2].a));
     }
 
   printf ("b_vector = ");
-  PrintMatrix (b);
+  Mat_Print (b);
 
-  matrix *Ai = FindInverse (A);
+  matrix *Ai = Mat_FindInverse (A);
   if (Ai == NULL)
     goto fail2;
 
   printf ("A^-1 = ");
-  PrintMatrix (Ai);
+  Mat_Print (Ai);
 
-  matrix *c = MultMatrix (Ai, b);
+  matrix *c = Mat_Mult (Ai, b);
   if (c == NULL)
     goto fail3;
 
   printf ("A^-1 * b_vector = c = ");
-  PrintMatrix (c);
+  Mat_Print (c);
   // copy to the Points collection
   for (i = 0; i < n - 1; i++)
     {
-      P[i].c = GetMatrix (c, i + 1, 1);
+      P[i].c = Mat_GetCell (c, i + 1, 1);
     }
 
-  DisposeMatrix (c);
-  DisposeMatrix (Ai);
-  DisposeMatrix (b);
-  DisposeMatrix (A);
+  Mat_Dispose (c);
+  Mat_Dispose (Ai);
+  Mat_Dispose (b);
+  Mat_Dispose (A);
 
   printf ("b = ");
   for (j = 0; j < n - 1; j++)
@@ -178,11 +180,11 @@ FindSpline (int n, Point P[])
   return true;
 
 fail3:
-  DisposeMatrix (Ai);
+  Mat_Dispose (Ai);
 fail2:
-  DisposeMatrix (b);
+  Mat_Dispose (b);
 fail1:
-  DisposeMatrix (A);
+  Mat_Dispose (A);
   return false;
 }
 
@@ -220,5 +222,14 @@ main ()
 	      SolveSpline (n, P, x));
       printf ("First derivative at x: %Lf \n\n", SolveSplineDerive (n, P, x));
     }
+
+/*
+  printf ("\n\nGraph\n\n");
+  for (x = 1; x <= 10.1; x +=.1)
+    {
+      printf ("%Lf %Lf\n", x, SolveSpline (n, P, x));
+    }
+*/
+
   return 0;
 }
