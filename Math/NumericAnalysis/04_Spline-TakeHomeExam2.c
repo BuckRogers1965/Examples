@@ -256,11 +256,13 @@ main ()
       printf ("First derivative at x: %Lf \n\n", SolveSplineDerive (n, P, x));
     }
 
+/*
   printf ("\n\nGraph\n\n");
   for (x = .5; x <= 14.1; x +=.1)
     {
       printf ("%Lf %Lf %Lf\n", x, SolveSpline (n, P, x), SolveSplineDerive (n, P, x));
     }
+*/
 
   return 0;
 }

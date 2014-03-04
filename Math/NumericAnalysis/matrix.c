@@ -94,6 +94,10 @@ void
 Mat_Load (matrix * m, long double a[])
 {
   int r, c;
+  if (m == NULL)
+    return;
+
+  m->det = NAN;
   for (r = 0; r < m->row; r++)
     {
       for (c = 0; c < m->col; c++)
@@ -149,6 +153,7 @@ Mat_Dup (matrix * x)
   matrix *m = NewMatrix (x->row, x->col);
   if (m == NULL)
     return NULL;
+  m->det = x->det;
 
   int r, c;
   for (r = 0; r < m->row; r++)
