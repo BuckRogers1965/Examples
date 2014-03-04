@@ -8,6 +8,7 @@ struct matrix
 {
   int row;
   int col;
+  long double det;
   long double **a;
 
 } myMatrix;
@@ -38,6 +39,7 @@ NewMatrix (int row, int col)
     }
   m->row = row;
   m->col = col;
+  m->det = NAN;
   return m;
 
 fail1:
@@ -72,6 +74,7 @@ Mat_SetCell (matrix * m, int row, int col, long double val)
   if (col > m->col || col < 1)
     return false;
   m->a[row - 1][col - 1] = val;
+  m->det=NAN;
   return true;
 }
 
@@ -168,6 +171,8 @@ Mat_ScalarMult (matrix * A, long double x)
   matrix *b = NewMatrix (A->row, A->col);
   if (b == NULL)
     return NULL;
+  
+  if (!isnan(A->det)) A->det *= powl(x,A->row);
 
   int r, c;
   for (r = 0; r < b->row; r++)
@@ -255,130 +260,71 @@ Mat_MultRow (matrix * m, int row, long double x)
     return;
   if (row > m->row || row < 1)
     return;
+  m->det = NAN;
 
   int c;
   for (c = 0; c < m->col; c++)
     m->a[row - 1][c] *= x;
 }
 
-
-//internal
-long double
-FUD(matrix * x){
-  int size = x->row-1;
-  int offset=0;
-  int r=size, c, os;
-  long double d1=1;
-  long double d=0;
-  printf("\nFUD\n");
-  for (os=0; os<=size; os++ ){
-      for (c=os; c <= (size+os); c++, r--){
-          d1 *= x->a[r][c>size?c-(size+1):c];
-          printf("r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
-            r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
-      }
-    printf("\n");
-    d += d1;
-    d1=1;
-    r=size;
-  }
-  printf("***r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
-            r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
-    
-  return d;
-}
-
-//internal
-long double
-FDD(matrix * x){
-  int size = x->row-1;
-  int offset=0;
-  int r=0, c, os;
-  long double d1=1;
-  long double d=0;
-  printf("\nFDD\n");
-  for (os=0; os<=size; os++){
-      for (c=os; c<=(size+os); c++, r++){
-          d1 *= x->a[r][c>size?c-(size+1):c];
-          printf("r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
-            r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
-      }
-    printf("\n");
-    d += d1;
-    d1=1;
-    r=0;
-  }
-    
-  printf("***r %d c %d x %0.0Lf\td %0.0Lf\td1 %0.0Lf \n",
-            r, c>size?c-(size+1):c, x->a[r][c>size?c-(size+1):c], d, d1);
-  return d;
-}
-
-long double 
-Mat_DeterminateNeedsWork (matrix * x){
-  if (x == NULL)
-    return 0;
-  if (x->row != x->col)
-    return 0; 
-  // a b  ad - cb
-  // c d
-  if (x->row == 2) {
-    //printf("%0.0Lf * %0.0Lf - %0.0Lf * %0.0Lf\n", x->a[0][0], x->a[1][1], x->a[1][0], x->a[0][1]);
-    return x->a[0][0]*x->a[1][1] - x->a[1][0]*x->a[0][1]; 
-  }
-  int size = x->row - 1;
-  return FDD(x) - FUD(x);
-}
-
 long double
 Mat_Determinate (matrix * x){
-  if (x == NULL)
-    return 0;
-  if (x->row != x->col)
-    return 0;
 
-  int size = x->row;
-  int d = 0;
+  int r, r1;
+  long double mult;
+  long double det = 1;
+
+  if (x == NULL)
+    return NAN;
+  if (x->row != x->col)
+    return NAN;
+  int s = x->row;
+
+  if (!isnan(x->det))
+    return x->det;
 
   // a b  ad - cb
   // c d
-  if (size == 2) {
+  if (s == 2) {
     //printf("%0.0Lf * %0.0Lf - %0.0Lf * %0.0Lf\n", x->a[0][0], x->a[1][1], x->a[1][0], x->a[0][1]);
-    return x->a[0][0]*x->a[1][1] - x->a[1][0]*x->a[0][1];
+    det = x->a[0][0]*x->a[1][1] - x->a[1][0]*x->a[0][1];
+    goto good1;
   }
 
-  //Mat_Print (x);
-  // brute force recursive
-  // choose top row
-  int r = 0, c, tc, tr ;
-  long double sign = 1;
- 
-  // create an n-1 by n-1 matrix
-  matrix * t = NewMatrix(size-1, size-1);
-  for (c = 0; c< size; c++) {
-     // Go col by col,
-     int skip=0;
-     for (tc=0;tc<size;tc++) {
-       // populate from cells not in current row or column.
-       if ( tc == c) {
-         //printf("skip at col %d\n", tc);
-         skip = 1;
-         continue;
-       }
-       // fill in each column
-       for (tr=0; tr< size-1; tr++) {
-         //printf("r %d c %d tc %d tr %d skip %d source %0.0Lf \n", r, c, tc, tr, skip, x->a[tr+1][tc]);
-         t->a[tr][tc-skip] = x->a[tr+1][tc];   
-       }
-     }
-     skip = 0;
-     //printf("%0.0Lf * %0.0Lf * \n", sign, x->a[r][c]);
-     //Mat_Print (t);
-     d += sign * x->a[r][c] * Mat_Determinate(t);
-     sign *= -1;
-  }
-  Mat_Dispose(t);
-  return d;
+  matrix *m = Mat_Dup (x);
+  if (m == NULL)
+    return NAN;
+
+  // force a pivot on each row and column
+  for (r = 1; r <= s; r++)
+    {
+      mult = 1 / Mat_GetCell (m, r, r);
+      if (isnan(mult)) goto fail2;
+      
+      det *= Mat_GetCell (m, r, r);
+      //printf("%0.3Lf  %0.3Lf\n", GetMatrix(m, r, r), mult);
+      Mat_MultRow (m, r, mult);
+      for (r1 = r + 1; r1 <= s; r1++)
+	{
+	  mult = -Mat_GetCell (m, r1, r);
+          if (mult == 0.0) continue;
+	  //printf("%0.3Lf\t", mult);
+	  Mat_MultAddRow (m, r, mult, r1);
+	}
+    }
+
+good2:
+  Mat_Dispose(m);
+
+good1:
+  x->det = det;
+  return x->det;
+
+fail2:
+  Mat_Dispose(m);
+
+fail1:
+  return 0;
 }
 
 matrix *
@@ -389,9 +335,9 @@ Mat_FindInverse (matrix * x)
 
   if (x == NULL)
     return NULL;
-  // no det = no inverse
-  if (Mat_Determinate(x) == 0)
-    return NULL;
+  if (x->row != x->col)
+    return 0;
+  long double det = 1;
   int s = x->row;
 
   matrix *m = Mat_Dup (x);
@@ -402,11 +348,12 @@ Mat_FindInverse (matrix * x)
   if (z == NULL)
     goto fail;
 
-
   // force a pivot on each row and column
   for (r = 1; r <= s; r++)
     {
       mult = 1 / Mat_GetCell (m, r, r);
+      
+      det *= Mat_GetCell (m, r, r);
       //printf("%0.3Lf  %0.3Lf\n", GetMatrix(m, r, r), mult);
       Mat_MultRow (m, r, mult);
       Mat_MultRow (z, r, mult);
@@ -419,7 +366,14 @@ Mat_FindInverse (matrix * x)
 	  Mat_MultAddRow (z, r, mult, r1);
 	}
     }
+  //printf("determinant %0.6Lf\n", det);
+  // no det = no inverse
+  if (det == 0) {
+    x->det == NAN;
+    goto fail2;
+  }
 
+  x->det = det;
   // solve from bottom to top
   for (r = s; r > 0; r--)
     {
@@ -435,6 +389,8 @@ Mat_FindInverse (matrix * x)
   Mat_Dispose (m);
   return z;
 
+fail2:  
+  Mat_Dispose (z);
 fail:
   Mat_Dispose (m);
   return NULL;
