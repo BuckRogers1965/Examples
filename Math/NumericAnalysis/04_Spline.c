@@ -6,6 +6,8 @@
 
 /* James M. Rogers
    01 March 2014
+
+   Superceeded by SplineInterpolaton.c and .h
 */
 
 typedef struct Point Point;

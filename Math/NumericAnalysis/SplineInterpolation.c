@@ -60,7 +60,7 @@ long double
 SolveSplineDerive (int n, Point P[], long double x)
 {
   // find the interval x is in
-  if (!(P[n - 1].x > x && P[0].x < x))
+  if (!(P[n - 1].x >= x && P[0].x <= x))
     return NAN;
   int i = 0;
   for (i = 1; i < n; i++)
@@ -77,7 +77,7 @@ long double
 SolveSpline (int n, Point P[], long double x)
 {
   // find the interval x is in
-  if (!(P[n - 1].x > x && P[0].x < x))
+  if (!(P[n - 1].x >= x && P[0].x <= x))
     return NAN;
   int i = 0;
   for (i = 1; i < n; i++)
