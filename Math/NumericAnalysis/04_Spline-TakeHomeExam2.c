@@ -154,7 +154,8 @@ FindSpline (int n, Point P[])
       P[i].c = Mat_GetCell (c, i + 1, 1);
     }
 
-  printf ("Determinate of A is : %Lf \n\n", Mat_Determinate(A));
+  printf ("Determinate of A    is : %Lf \n\n", Mat_Determinate(A));
+  printf ("Determinate of A^-1 is : %0.30Lf \n\n", Mat_Determinate(Ai));
 
   Mat_Dispose (c);
   Mat_Dispose (Ai);

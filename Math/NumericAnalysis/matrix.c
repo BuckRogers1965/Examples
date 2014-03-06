@@ -379,6 +379,7 @@ Mat_FindInverse (matrix * x)
   }
 
   x->det = det;
+  z->det = 1/det;
   // solve from bottom to top
   for (r = s; r > 0; r--)
     {

@@ -178,4 +178,37 @@ main ()
   Mat_Print (five);
   printf ("Determinate  with repeating cols is: %0.6Lf\n", Mat_Determinate(five));
 
+  matrix * hw2 = NewMatrix(3, 3);
+
+  Mat_SetCell (hw2, 1, 1, 2);
+  Mat_SetCell (hw2, 1, 2, -6);
+  Mat_SetCell (hw2, 1, 3, 4);
+
+  Mat_SetCell (hw2, 2, 1, -4);
+  Mat_SetCell (hw2, 2, 2, 8);
+  Mat_SetCell (hw2, 2, 3, 0);
+
+  Mat_SetCell (hw2, 3, 1, 0);
+  Mat_SetCell (hw2, 3, 2, -4);
+  Mat_SetCell (hw2, 3, 3, 6);
+
+  printf ("A=\n");
+  Mat_Print (hw2);
+
+  matrix * hw2b = NewMatrix (3, 1);
+  Mat_SetCell (hw2b, 1, 1, 2);
+  Mat_SetCell (hw2b, 2, 1, -4);
+  Mat_SetCell (hw2b, 3, 1, 6);
+
+  printf ("b=\n");
+  Mat_Print (hw2b);
+
+  matrix * hw2Ainv = Mat_FindInverse (hw2);
+  printf ("Ainv = \n");
+  Mat_Print (hw2Ainv);
+
+  matrix * hw2sol = Mat_Mult(hw2Ainv, hw2b);
+  printf ("Ainv * b = \n");
+  Mat_Print (hw2sol);
+  
 }
