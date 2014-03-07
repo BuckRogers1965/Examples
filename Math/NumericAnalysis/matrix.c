@@ -318,7 +318,6 @@ Mat_Determinate (matrix * x){
 	}
     }
 
-good2:
   Mat_Dispose(m);
 
 good1:
@@ -327,8 +326,6 @@ good1:
 
 fail2:
   Mat_Dispose(m);
-
-fail1:
   return 0;
 }
 
@@ -374,7 +371,7 @@ Mat_FindInverse (matrix * x)
   //printf("determinant %0.6Lf\n", det);
   // no det = no inverse
   if (det == 0) {
-    x->det == NAN;
+    x->det = NAN;
     goto fail2;
   }
 

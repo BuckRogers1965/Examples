@@ -3,8 +3,10 @@
 
 /* James M. Rogers
    06 March 2014
-*/
 
+  compile with
+    gcc matrix.c SplineInterpolation.c 04_Spline-TakeHomeExam2.c -lm
+*/
 
 int
 main ()
@@ -34,7 +36,6 @@ main ()
   Spline_AddPoint(s, 13.0, 0.4 );
   Spline_AddPoint(s, 13.3, 0.25);
 
-  // now that the solution values are stored in P you can call SolveSpline()
   printf ("\n\nSolution test\n\n");
   for (x = 0.5; x < 14; x++)
     {
@@ -43,13 +44,11 @@ main ()
       printf ("First derivative at x: %Lf \n\n", Spline_Derive (s, x));
     }
 
-/*
   printf ("\n\nGraph\n\n");
   for (x = .5; x <= 14.1; x +=.1)
     {
       printf ("%Lf %Lf %Lf\n", x, Spline_Solve (s, x), Spline_Derive (s, x));
     }
-*/
 
   return 0;
 }
