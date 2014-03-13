@@ -19,7 +19,7 @@ series(long double n, long double b) {
 //
 // return value is 0 if there was no exact match
 // or the nth index integer number otherwise
-long long
+inline long long
 isinseries(long double y, long double b){
   long double n = (sqrtl(b*b+8*b*y-4*b+4)+b-2)/(2*b);
   //printf("%Lf %Lf %Lf \n", y, b, n);

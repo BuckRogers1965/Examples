@@ -15,12 +15,14 @@ int matchhere(char * srch, char * msg){
 
 int grep(char * srch, char * msg) {
 
+ // printf("%s\n%s\n", srch, msg);
+  int n = 1;
   if (srch[0] == '^')
      return matchhere(srch+1, msg);
 
-  for (; msg[0] != 0; *msg++) 
+  for (; msg[0] != 0; *msg++, n++) 
     if (matchhere (srch, msg))
-      return 1;
+      return n;
 
   return 0;
 }
