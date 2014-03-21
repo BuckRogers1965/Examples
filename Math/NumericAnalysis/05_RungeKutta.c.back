@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef long double (*rkf)(long double, long double);
+
+typedef struct RungeKutta RungeKutta;
+struct RungeKutta
+{
+	long double alpha;
+	long double omega;
+	long double range;
+        long double step;
+        long double max;
+	long double t;
+	long double h;
+	rkf f;
+	long double  *w;
+
+} myRungeKutta;
+
+RungeKutta *
+RungeKutta_New(long double alpha, long double omega, long double step, long double t, rkf f) {
+  RungeKutta * r = calloc (sizeof(myRungeKutta), 1);
+  if (r == NULL)
+    return NULL;
+  r->alpha = alpha;
+  r->omega = omega;
+  r->range = fabsl(omega - alpha);
+  r->step = step;
+  r->max = r->range*step;
+  r->h = r->range/r->max;
+  r->t = r->h;
+  r->f = f;
+  r->w = calloc (sizeof(long double), r->max + 1);
+  return r;
+}
+
+long double
+f1 (long double t, long double y)
+{
+  return y - t * t + 1;
+}
+
+int
+rk (long double alpha, long double h, int max, long double t, long double  (*f)(long double, long double))
+{
+
+  long long i = 0.0;
+  long double k1, k2, k3, k4, w[max+ 1];
+
+  w[0] = alpha;
+
+  for (i = 0; i < max; i++)
+    {
+      k1 = h*f (t * i, w[i]);
+      k2 = h*f (t * i + h / 2, w[i] + 1.0 / 2.0 * k1);
+      k3 = h*f (t * i + h / 2, w[i] + 1.0 / 2.0 * k2);
+      k4 = h*f (t * (i+1), w[i] + k3);
+      //printf ("k1 %Lf\t k2 %Lf\t k3 %Lf\t k4 %Lf\n ", k1, k2, k3, k4);
+
+      w[i + 1] = w[i] + 1.0 / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+      printf ("%Lf\t %Lf\n", t * i, w[i]);
+    }
+      printf ("%Lf\t %Lf\n", t * i, w[i]);
+
+}
+
+int main (){
+
+    rk(0.5, 0.2, 10, 0.2, &f1);
+
+}
