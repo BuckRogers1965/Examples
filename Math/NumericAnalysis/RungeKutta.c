@@ -12,7 +12,6 @@ struct rk
   long double range;
   long double step;
   long double max;
-  long double t;
   long double h;
   rkf f;
   long double *w;
@@ -30,10 +29,11 @@ irk (rk * r)
   r->w[0] = r->alpha;
   for (i = 0; i < r->max; i++)
     {
-      k1 = r->h * r->f (t + r->h * i, r->w[i]);
-      k2 = r->h * r->f (t + r->h * i + r->h / 2, r->w[i] + 1.0 / 2.0 * k1);
-      k3 = r->h * r->f (t + r->h * i + r->h / 2, r->w[i] + 1.0 / 2.0 * k2);
-      k4 = r->h * r->f (t + r->h * (i + 1), r->w[i] + k3);
+      k1 = r->h * r->f (t, r->w[i]);
+      k2 = r->h * r->f (t + r->h / 2.0, r->w[i] + 1.0 / 2.0 * k1);
+      k3 = r->h * r->f (t + r->h / 2.0, r->w[i] + 1.0 / 2.0 * k2);
+      t += r->h;
+      k4 = r->h * r->f (t , r->w[i] + k3);
       r->w[i + 1] = r->w[i] + 1.0 / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
     }
 }
@@ -52,7 +52,6 @@ rk_New (long double alpha, long double start, long double end,
   r->step = step;
   r->max = r->range * step;
   r->h = r->range / r->max;
-  r->t = r->h;
   r->f = f;
   r->w = calloc (sizeof (long double), r->max + 1);
   if (r->w == NULL)
@@ -125,12 +124,14 @@ long double rk_GetMax (rk * r)
   return r->max;
 }
 
-long double rk_GetT (rk * r)
+long double rk_GetT (rk * r, int i)
 {
   if (r == NULL)
     return NAN;
+  if (i < 0 || i > r->max)
+    return NAN;
 
-  return r->t;
+  return r->start + i*r->h;
 }
 
 long double rk_GetH (rk * r)

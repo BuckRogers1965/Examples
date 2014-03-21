@@ -10,7 +10,7 @@ long double rk_GetEnd (rk * r);
 long double rk_GetRange (rk * r);
 long double rk_GetStep (rk * r);
 long double rk_GetMax (rk * r);
-long double rk_GetT (rk * r);
+long double rk_GetT (rk * r, int i);
 long double rk_GetH (rk * r);
 long double rk_GetW (rk * r, int i);
 void rk_Print (rk * r);
