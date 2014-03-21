@@ -24,14 +24,16 @@ void
 irk (rk * r)
 {
   long long i = 0;
-  long double k1, k2, k3, k4;
+  long double k1, k2, k3, k4,
+      t = r->start;
+
   r->w[0] = r->alpha;
   for (i = 0; i < r->max; i++)
     {
-      k1 = r->h * r->f (r->t * i, r->w[i]);
-      k2 = r->h * r->f (r->t * i + r->h / 2, r->w[i] + 1.0 / 2.0 * k1);
-      k3 = r->h * r->f (r->t * i + r->h / 2, r->w[i] + 1.0 / 2.0 * k2);
-      k4 = r->h * r->f (r->t * (i + 1), r->w[i] + k3);
+      k1 = r->h * r->f (t + r->h * i, r->w[i]);
+      k2 = r->h * r->f (t + r->h * i + r->h / 2, r->w[i] + 1.0 / 2.0 * k1);
+      k3 = r->h * r->f (t + r->h * i + r->h / 2, r->w[i] + 1.0 / 2.0 * k2);
+      k4 = r->h * r->f (t + r->h * (i + 1), r->w[i] + k3);
       r->w[i + 1] = r->w[i] + 1.0 / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
     }
 }
@@ -155,5 +157,5 @@ void rk_Print (rk * r) {
     return;
 
   for (i = 0; i <= r->max; i++)
-    printf ("%Lf\t %Lf\n", r->t * i, r->w[i]);
+    printf ("%Lf\t %Lf\n", r->start + r->h * i, r->w[i]);
 }

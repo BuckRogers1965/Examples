@@ -17,6 +17,10 @@ main ()
       rk *r = rk_New (0.5, 0, 2, 5, &f1);
       rk_Print (r);
       rk_Dispose (r);
+      printf("\n");
+      r = rk_New (2.640823, 1, 3, 5, &f1);
+      rk_Print (r);
+      rk_Dispose (r);
     }
 }
 
