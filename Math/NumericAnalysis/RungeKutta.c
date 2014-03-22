@@ -158,5 +158,5 @@ void rk_Print (rk * r) {
     return;
 
   for (i = 0; i <= r->max; i++)
-    printf ("%Lf\t %Lf\n", r->start + r->h * i, r->w[i]);
+    printf ("%0.4Lf\t %0.10Lf\n", r->start + r->h * i, r->w[i]);
 }
