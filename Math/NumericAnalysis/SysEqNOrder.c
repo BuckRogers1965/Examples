@@ -106,7 +106,7 @@ freemem(syseq * s)
     return;
 
   int i;
-  for (i=1; i<s->max; i++)
+  for (i=1; i<s->max + 2; i++)
     free (s->w[i]);
   free (s->w);
   s->w = NULL;
