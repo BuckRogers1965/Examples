@@ -1,26 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "SysEq.h"
+#include "SysEqNOrder.h"
 
 #define E 2.71828182845904523536
 
 long double
-f1ex (long double t, long double u1, long double u2)
+f1ex (long double t, long double *u)
 {
-  return u2;
+  return u[1];
 }
 
 long double
-f2ex (long double t, long double u1, long double u2)
+f2ex (long double t, long double *u)
 {
-  return powl (E, 2*t) * sinl (t) - 2 * (u1) + 2 * u2;
+  return powl (E, 2*t) * sinl (t) - 2 * (u[0]) + 2 * u[1];
 }
 
 long double
-f2pr2a (long double t, long double u1, long double u2)
+f2pr2a (long double t, long double *u)
 {
-  return t * powl(E, t) - t -  (u1) + 2* u2;
+  return t * powl(E, t) - t -  (u[0]) + 2* u[1];
 }
 
 long double
@@ -29,16 +29,33 @@ f2pr2a_actual (long double t )
   return 1.0/6.0 * powl(t, 3) * powl(E, t) - t * powl(E, t) + 2 * powl(E, t) - t - 2;
 }
 
+long double
+f1 (long double t, long double *u)
+{
+  return u[0] - t * t + 1;
+}
+
+
 int 
 main () {
 
-   syseq * s = syseq_New(-0.4, -0.6, 0.0, 1.0, 10, f1ex, f2ex,
-		"Example program from handout");
+   syseq * s = syseq_New(0.0, 2.0, 5, "Runge Kutta example");
+   syseq_AddOrder(s, 0.5, f1);
+   syseq_Calculate(s);
    syseq_Print(s);
    syseq_Dispose(s);
 
-   s = syseq_New(0, 0, 0.0, 1.0, 10, f1ex, f2pr2a,
-		"Problem 2a from handout");
+   s = syseq_New(0.0, 1.0, 10, "Example program from handout");
+   syseq_AddOrder(s, -0.4, f1ex);
+   syseq_AddOrder(s, -0.6, f2ex);
+   syseq_Calculate(s);
+   syseq_Print(s);
+   syseq_Dispose(s);
+
+   s = syseq_New(0.0, 1.0, 10, "Problem 2a from handout");
+   syseq_AddOrder(s, 0, f1ex);
+   syseq_AddOrder(s, 0, f2pr2a);
+   syseq_Calculate(s);
    syseq_Print(s);
    syseq_Dispose(s);
 

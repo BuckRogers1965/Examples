@@ -2,101 +2,133 @@
 #include <stdlib.h>
 #include <math.h>
 
-typedef long double (*syseqf) (long double, long double, long double);
+#define MAXORDER 100
+
+typedef long double (*syseqf) (long double, long double *);
 typedef struct syseq syseq;
 struct syseq
 {
-  long double u1;
-  long double u2;
   long double start;
   long double end;
   long double range;
   long double step;
   long double max;
   long double h;
-  syseqf f1;
-  syseqf f2;
-  long double **w;
   char * title;
+
+  
+  int dirty;
+  int ordercount;
+  long double u[MAXORDER];
+  syseqf f[MAXORDER];
+  long double **w;
+  
 } mysyseq;
 
 // internal function
-void
+int
 isyseq (syseq * s)
 {
-  long double k1_1, k1_2, k2_1, k2_2, k3_1, k3_2, k4_1, k4_2;
+  int i, j, m;
   long double t = s->start;
-  // y (0) = u1(0) =
-  s->w[1][0] = s->u1;
-  // y'(0) = u2(0) =
-  s->w[2][0] = s->u2;
+  long double u[s->ordercount+1];
 
-  int i;
+  long double k[4][s->ordercount+1];
+
+  for (j=0; j<s->ordercount; j++)
+    s->w[j][0] = s->u[j];
+
   for (i = 0; i <= s->max; i++)
     {
-      k1_1 = s->h * s->f1 (t, s->w[1][i], s->w[2][i]);
-      k1_2 = s->h * s->f2 (t, s->w[1][i], s->w[2][i]);
+      for (j=0; j<s->ordercount; j++) {
+        for (m=0; m<s->ordercount; m++) {
+            u[m] = s->w[m][i];
+          }
+        k[0][j] = s->h * s->f[j] (t, u);
+      }
 
-      k2_1 = s->h * s->f1 (t + s->h / 2.0, s->w[1][i] + 0.5 * k1_1, s->w[2][i] + 0.5 * k1_2);
-      k2_2 = s->h * s->f2 (t + s->h / 2.0, s->w[1][i] + 0.5 * k1_1, s->w[2][i] + 0.5 * k1_2);
+      for (j=0; j<s->ordercount; j++) {
+        for (m=0; m<s->ordercount; m++) {
+            u[m] = s->w[m][i] + 0.5 * k[0][m];
+          }
+        k[1][j] = s->h * s->f[j] (t + s->h / 2.0, u);
+      }
 
-      k3_1 = s->h * s->f1 (t + s->h / 2.0, s->w[1][i] + 0.5 * k2_1, s->w[2][i] + 0.5 * k2_2);
-      k3_2 = s->h * s->f2 (t + s->h / 2.0, s->w[1][i] + 0.5 * k2_1, s->w[2][i] + 0.5 * k2_2);
+      for (j=0; j<s->ordercount; j++) {
+        for (m=0; m<s->ordercount; m++) {
+            u[m] = s->w[m][i] + 0.5 * k[1][m];
+          }
+        k[2][j] = s->h * s->f[j] (t + s->h / 2.0, u);
+      }
 
       t += s->h;
-      k4_1 = s->h * s->f1 (t, s->w[1][i] + k3_1, s->w[2][i] + k3_2);
-      k4_2 = s->h * s->f2 (t, s->w[1][i] + k3_1, s->w[2][i] + k3_2);
+      for (j=0; j<s->ordercount; j++) {
+        for (m=0; m<s->ordercount; m++) {
+            u[m] = s->w[m][i] + k[2][m];
+          }
+        k[3][j] = s->h * s->f[j] (t, u);
+      }
 
-      s->w[1][i + 1] = s->w[1][i] + 1.0 / 6.0 * (k1_1 + 2 * k2_1 + 2 * k3_1 + k4_1);
-      s->w[2][i + 1] = s->w[2][i] + 1.0 / 6.0 * (k1_2 + 2 * k2_2 + 2 * k3_2 + k4_2);
+      for (j=0; j<s->ordercount; j++)
+        s->w[j][i + 1] = s->w[j][i] + 1.0 / 6.0 * (k[0][j] + 2 * k[1][j] + 2 * k[2][j] + k[3][j]);
     }
+
+  return 1;
 }
 
 syseq *
-syseq_New (long double u1, long double u2, long double start, long double end,
-		long double step, syseqf f1, syseqf f2, char * title)
+syseq_New (long double start, long double end,
+		long double step, char * title)
 {
   syseq *s = calloc (sizeof (mysyseq), 1);
   if (s == NULL)
     return NULL;
-  s->u1    = u1;
-  s->u2    = u2;
   s->start = start;
   s->end   = end;
   s->range = fabsl (end - start);
   s->step  = step;
   s->max   = s->range * step;
   s->h     = s->range / s->max;
-  s->f1    = f1;
-  s->f2    = f2;  
   s->title = title;
-  s->w     = calloc (sizeof (long double), 3);
-  if (s->w == NULL)
-    goto fail1;
-  
-  int i;
-  for (i = 1; i < 3; i++)
-    {
-      s->w[i] = calloc (sizeof (long double), s->max+2);
-      if (s->w[i] == NULL)
-	{
-	  for (i--; i > 0; i--)
-	    {
-	      free (s->w[i]);
-	    }
-	  goto fail2;
-	}
-    }
-
-  isyseq (s);
+  s->dirty = 1;
+  s->ordercount = 0;
+  s->w = NULL;
   return s;
+}
 
-fail2:
-  free(s->w);
+void
+freemem(syseq * s)
+{
+  if (s == NULL)
+    return ;
 
-fail1:
-  free(s);
-  return NULL;
+  if (s->w == NULL)
+    return;
+
+  int i;
+  for (i=1; i<s->max; i++)
+    free (s->w[i]);
+  free (s->w);
+  s->w = NULL;
+}
+
+int 
+syseq_AddOrder (syseq * s, long double u, syseqf f)
+{
+  if (s == NULL)
+    return 0;
+
+  if (!s->dirty) 
+	freemem(s);
+
+  if (s->ordercount > MAXORDER)
+	return 0;
+
+  s->dirty = 1;
+  s->u[s->ordercount] = u;
+  s->f[s->ordercount] = f;
+  s->ordercount++;
+  return 1;
 }
 
 syseq *
@@ -104,29 +136,60 @@ syseq_Dispose (syseq * s)
 {
   if (s == NULL)
     return;
-  int i;
-  for (i=1; i<3; i++)
-    free (s->w[i]);
-  free (s->w);
+  freemem(s);
   free (s);
   s = NULL;
   return NULL;
 }
 
-long double syseq_GetU1 (syseq * s)
+int
+syseq_Calculate(syseq * s)
 {
   if (s == NULL)
-    return NAN;
+    return;
+  // need at least one order to perform calculations
+  if (s->ordercount < 1)
+    return 0;
+  // if we have already calculated the results return good
+  if (!s->dirty)
+    return 1;
 
-  return s->u1;
+  //allocate memory
+  int i;
+  s->w = calloc (sizeof (long double), s->ordercount + 4);
+  if (s->w == NULL)
+    return 0;
+
+  for (i=0; i<s->ordercount + 1; i++)
+    s->w[i] = calloc (sizeof (long double), s->max +2);
+
+  // perform calculation
+  if (isyseq (s)) {
+    s->dirty = 0;
+    return 1;
+  }
+  
+  freemem(s);
+  return 0;
 }
 
-long double syseq_GetU2 (syseq * s)
+long double syseq_GetOrderCount (syseq * s)
 {
   if (s == NULL)
     return NAN;
 
-  return s->u2;
+  return s->ordercount;
+}
+
+long double syseq_GetU (syseq * s, int ordercount)
+{
+  if (s == NULL)
+    return NAN;
+
+  if (ordercount < 0 || ordercount > s->ordercount)
+    return NAN;
+
+  return s->u[ordercount];
 }
 
 long double syseq_GetStart (syseq * s)
@@ -191,6 +254,9 @@ long double syseq_GetW (syseq * s, int j, int i)
 {
   if (s == NULL)
     return NAN;
+  if (s->dirty)
+	return NAN;
+
   if (i < 0 || i > s->max)
     return NAN;
   if (j < 1 || i > 2)
@@ -200,13 +266,19 @@ long double syseq_GetW (syseq * s, int j, int i)
 }
 
 void syseq_Print (syseq * s) {
-  int i;
+  int i,j;
   if (s == NULL)
     return;
+  if (s->dirty)
+	return;
 
   printf("%s\n\n", s->title);
-  for (i = 0; i <= s->max; i++)
-    printf ("%0.4Lf  %0.10Lf  %0.10Lf\n", s->start + s->h * i, s->w[1][i], s->w[2][i]);
+  for (i = 0; i <= s->max; i++) {
+    printf ("%0.4Lf  ", s->start + s->h * i);
+    for (j = 0; j < s->ordercount; j++)
+      printf ("%0.10Lf  ", s->w[j][i]);
+    printf("\n");
+  }
   printf("\n");
 }
 
