@@ -66,8 +66,15 @@ fail1:
 SystemNL *
 System_Dispose (SystemNL * s, long double x)
 {
+  int i;
   if (s == NULL)
     return NULL;
+  for (i = s->OrderSize - 1; i > 0; i--)
+    {
+      free (s->J[i]);
+    }
+  free (s->J);
+  free (s);
   return NULL;
 }
 
