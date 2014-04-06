@@ -127,30 +127,28 @@ sqrf(SystemNL * s, matrix * z, long double a[], int j){
   return x;
 }
 
+#define QUADPT 3
 void
-findAlpha(SystemNL * s, matrix * z, long double a[], long double g[]){
+findAlpha(SystemNL * s, matrix * z, long double a[], long double ga[]){
 
   int i;
 
-  for (i=0; i<s->OrderSize; i++)
+  for (i=0; i<QUADPT; i++)
 	a[i] = i;
 
   do {
 
-    for (i=1; i<s->OrderSize; i++)
-      a[i] /= (s->OrderSize-1.0);
+    for (i=1; i<QUADPT; i++)
+      a[i] /= 2.0;
 
-    for (i=0; i<s->OrderSize; i++) {
-      g[i] = sqrf(s, z, a, i);
-      //printf("%Lf %Lf  ", a[i],  g[i]);
-    }
-   // printf("\n");
+    for (i=0; i<QUADPT; i++) 
+      ga[i] = sqrf(s, z, a, i);
 
-  } while ( g[0] <= g[s->OrderSize-1]);
+  } while ( ga[0] <= ga[QUADPT-1]);
 }
 
 void
-SteepestDescent (SystemNL * s)
+SteepestDescent (SystemNL * s, matrix * m, matrix * F)
 {
   if (s == NULL)
     return;
@@ -158,12 +156,10 @@ SteepestDescent (SystemNL * s)
   // find beginning points using method of steepist descent
 
   int i, j;
-  matrix *F = NewMatrix (s->OrderSize, 1);
   for (i=0; i<s->OrderSize; i++)
 	Mat_SetCell(F, i+1,1, s->f[i](s->initial) );
   //Mat_Print(F);
     
-  matrix *m = NewMatrix (s->OrderSize, s->OrderSize);
   for (i=0; i<s->OrderSize; i++)
     for (j=0; j<s->OrderSize; j++)
       Mat_SetCell(m, i+1, j+1, s->J[i][j](s->initial));
@@ -181,14 +177,12 @@ SteepestDescent (SystemNL * s)
   matrix * z = Mat_2Norm(g2);
   //Mat_Print(z);
 
-  Mat_Dispose (m);
-  Mat_Dispose (F);
   Mat_Dispose (n);
   Mat_Dispose (g);
   Mat_Dispose (g2);
 
-  long double  a[s->OrderSize];
-  long double ga[s->OrderSize];
+  long double  a[QUADPT];
+  long double ga[QUADPT];
 
   findAlpha(s, z, a, ga);
 
@@ -205,6 +199,7 @@ SteepestDescent (SystemNL * s)
   //   printf("h%d  %Lf  ", i+1, h[i]);
  // printf("\n");
 
+  //long double P = -(-h[2]*0.5 + h[0] )/ (2.0*h[2]);
   long double P = -(-h[2]*a[1] + h[0] )/ (2.0*h[2]);
 
 //  printf("P is %Lf \\ %Lf  = %Lf\n", (-h[2]*a[1] + h[0] ), 2.0*h[2], P);
@@ -221,18 +216,16 @@ SteepestDescent (SystemNL * s)
 }
 
 void
-NewtonsMethod (SystemNL * s)
+NewtonsMethod (SystemNL * s, matrix * m, matrix * F)
 {
   if (s == NULL)
     return;
 
   int i, j;
-  matrix *F = NewMatrix (s->OrderSize, 1);
   for (i=0; i<s->OrderSize; i++)
 	Mat_SetCell(F, i+1,1, s->f[i](s->initial) );
 //  Mat_Print(F);
 
-  matrix *m = NewMatrix (s->OrderSize, s->OrderSize);
   for (i=0; i<s->OrderSize; i++)
     for (j=0; j<s->OrderSize; j++)
       Mat_SetCell(m, i+1, j+1, s->J[i][j](s->initial));
@@ -253,6 +246,10 @@ NewtonsMethod (SystemNL * s)
   }
   printf("\n");
 
+  Mat_Dispose (ny);
+  Mat_Dispose (y);
+  Mat_Dispose (ji);
+
   return;
 }
 
@@ -262,22 +259,29 @@ System_Solve (SystemNL * s)
   if (s == NULL)
     return;
 
+  int i, x=7;
   // double check to see if we are lacking any Jacobain entries
 
-  int i;
-  for (i=0; i<2; i++)  {
+  matrix *m = NewMatrix (s->OrderSize, s->OrderSize);
+  matrix *F = NewMatrix (s->OrderSize, 1);
+
+  printf("\nSteepest Descent:  \n0  ");
+  for (i=0; i<s->OrderSize; i++) 
+    printf("%14.10Lf  ", s->initial[i] );
+  printf("\n");
+
+  for (i=1; i<x; i++)  {
     printf("%d  ", i);
-    SteepestDescent(s);
+    SteepestDescent(s, m, F);
   }
 
-  //s->initial[0] = .1;
-  //s->initial[1] = .1;
-  //s->initial[2] = -.1;
-
-  for (i=0; i<7; i++)  {
+  printf("\nNewton's Method:  \n");
+  for (; i<x+10; i++)  {
     printf("%d  ", i);
-    NewtonsMethod(s);
+    NewtonsMethod(s, m, F);
   }
 
+  Mat_Dispose (m);
+  Mat_Dispose (F);
   return;
 }

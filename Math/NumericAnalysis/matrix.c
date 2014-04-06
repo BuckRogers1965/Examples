@@ -166,6 +166,56 @@ Mat_Dup (matrix * x)
   return m;
 }
 
+
+matrix *
+Mat_Transpose (matrix * x)
+{
+  if (x == NULL)
+    return NULL;
+  matrix *m = NewMatrix (x->col, x->row);
+  if (m == NULL)
+    return NULL;
+  m->det = x->det;
+
+  int r, c;
+  for (r = 0; r < m->row; r++)
+    {
+      for (c = 0; c < m->col; c++)
+	{
+	  m->a[c][r] = x->a[r][c];
+	}
+    }
+  return m;
+}
+
+// x * A = b
+matrix *
+Mat_2Norm (matrix * A)
+{
+  if (A == NULL)
+    return NULL;
+
+  matrix *b = NewMatrix (A->row, A->col);
+  if (b == NULL)
+    return NULL;
+  
+  int r, c;
+  long double x=0;
+  for (r = 0; r < b->row; r++)
+    for (c = 0; c < b->col; c++)
+      x += A->a[r][c] * A->a[r][c];
+
+  x = sqrtl(x);
+
+  for (r = 0; r < b->row; r++)
+    for (c = 0; c < b->col; c++)
+      b->a[r][c] = A->a[r][c] / x;
+  
+  return b;
+}
+
+// Av=b
+
 // x * A = b
 matrix *
 Mat_ScalarMult (matrix * A, long double x)

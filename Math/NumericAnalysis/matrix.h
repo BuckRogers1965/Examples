@@ -18,6 +18,10 @@ matrix *Mat_CreateIdentity (int n);
 
 matrix *Mat_Dup (matrix * x);
 
+matrix *Mat_Transpose (matrix * x);
+
+matrix *Mat_2Norm (matrix * A);
+
 matrix *Mat_ScalarMult (matrix * A, long double x);
 
 matrix *Mat_Add (matrix * A, matrix * v);
