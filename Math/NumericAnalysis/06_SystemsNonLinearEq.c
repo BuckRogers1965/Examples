@@ -24,10 +24,13 @@ struct SystemNL
   syseqf **J;
   syseqf f[MAXORDER];
   long double initial[MAXORDER];
+  char * title;
+  int SD;
+  int NI;
 } mySystem;
 
 SystemNL *
-System_New (int OrderSize)
+System_New (int OrderSize, char * title)
 {
   if (OrderSize > MAXORDER || OrderSize < 1)
     return NULL;
@@ -38,6 +41,10 @@ System_New (int OrderSize)
   s->J = calloc (sizeof (syseqf), s->OrderSize);
   if (s->J == NULL)
     goto fail1;
+
+  s->title = title;
+  s->SD = 10;
+  s->NI = 10;
 
   int i=0;
   for (; i < OrderSize; i++)
@@ -76,6 +83,22 @@ System_Dispose (SystemNL * s, long double x)
   free (s->J);
   free (s);
   return NULL;
+}
+
+void
+System_SetNI (SystemNL * s, int NI)
+{
+  if (s == NULL)
+    return;
+  s->NI = NI;
+}
+
+void
+System_SetSD (SystemNL * s, int SD)
+{
+  if (s == NULL)
+    return;
+  s->SD = SD;
 }
 
 bool
@@ -259,29 +282,45 @@ System_Solve (SystemNL * s)
   if (s == NULL)
     return;
 
-  int i, x=7;
+  int i, x=s->SD;
   // double check to see if we are lacking any Jacobain entries
+
+  printf ("Solving for: %s", s->title);
 
   matrix *m = NewMatrix (s->OrderSize, s->OrderSize);
   matrix *F = NewMatrix (s->OrderSize, 1);
 
-  printf("\nSteepest Descent:  \n0  ");
+  printf("\nInitial Values:  \n0  ");
   for (i=0; i<s->OrderSize; i++) 
     printf("%14.10Lf  ", s->initial[i] );
-  printf("\n");
+  printf("\n x is %d\n", x);
 
+  printf("\nSteepest Descent:  \n  ");
   for (i=1; i<x; i++)  {
     printf("%d  ", i);
     SteepestDescent(s, m, F);
   }
+  if (i==1)
+	printf("Skipping.\n");
 
   printf("\nNewton's Method:  \n");
-  for (; i<x+10; i++)  {
+  for (; i<x+s->NI; i++)  {
     printf("%d  ", i);
     NewtonsMethod(s, m, F);
   }
 
   Mat_Dispose (m);
   Mat_Dispose (F);
+
+  printf ("\nUltimate solution is:\n");
+  for (i=0; i<s->OrderSize; i++) 
+    printf ("x(%d) = %24.20Lf\n", i+1, s->initial[i]);
+  printf("\n");
+
+  printf ("Testing solution, should be all zeros:\n");
+  for (i=0; i<s->OrderSize; i++) 
+    printf ("F%d = %24.20Lf\n", i+1, s->f[i](s->initial));
+  printf("\n");
+
   return;
 }
