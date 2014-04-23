@@ -406,7 +406,7 @@ Mat_FindInverse (matrix * x)
       mult = 1 / Mat_GetCell (m, r, r);
       
       det *= Mat_GetCell (m, r, r);
-      //printf("%0.3Lf  %0.3Lf\n", GetMatrix(m, r, r), mult);
+      //printf("%0.3Lf  %0.3Lf\n", Mat_GetCell(m, r, r), mult);
       Mat_MultRow (m, r, mult);
       Mat_MultRow (z, r, mult);
       for (r1 = r + 1; r1 <= s; r1++)
@@ -417,6 +417,7 @@ Mat_FindInverse (matrix * x)
 	  Mat_MultAddRow (m, r, mult, r1);
 	  Mat_MultAddRow (z, r, mult, r1);
 	}
+  //Mat_Print(m);
     }
   //printf("determinant %0.6Lf\n", det);
   // no det = no inverse
@@ -425,6 +426,7 @@ Mat_FindInverse (matrix * x)
     goto fail2;
   }
 
+  //Mat_Print(z);
   x->det = det;
   z->det = 1/det;
   // solve from bottom to top
@@ -433,7 +435,7 @@ Mat_FindInverse (matrix * x)
       for (r1 = r - 1; r1 > 0; r1--)
 	{
 	  mult = -Mat_GetCell (m, r1, r);
-	  //printf("* %0.3Lf\t", mult);
+	  //printf("* %0.3Lf\n", mult);
 	  Mat_MultAddRow (m, r, mult, r1);
 	  Mat_MultAddRow (z, r, mult, r1);
 	}
