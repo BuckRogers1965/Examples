@@ -167,7 +167,7 @@ findAlpha(SystemNL * s, matrix * z, long double a[], long double ga[]){
     for (i=0; i<QUADPT; i++) 
       ga[i] = sqrf(s, z, a, i);
 
-  } while ( ga[0] <= ga[QUADPT-1]);
+  } while ( ga[0] < ga[QUADPT-1]);
 }
 
 void

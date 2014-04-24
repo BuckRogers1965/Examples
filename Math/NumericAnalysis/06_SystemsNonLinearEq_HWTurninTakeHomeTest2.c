@@ -3,70 +3,72 @@
 #include "06_SystemsNonLinearEq.h"
 
 /* James M. Rogers
-   03 April 2014
+   09 April 2014
 
   compile with
-    gcc matrix.c 06_SystemsNonLinearEq.c 06_SystemsNonLinearEq_HW.c -lm
+    gcc matrix.c 06_SystemsNonLinearEq.c \
+       06_SystemsNonLinearEq_HWTurninTakehomeTest2.c -lm
 */
 
-#define E 2.71828182845904523536
-
 long double F1 (long double x[]) {
-  return 3*x[0]-cosl(x[1]*x[2])-0.5;
+  return x[0] + cosl(x[0]*x[1]*x[2]) - 1.0;
 }
 
 long double F2 (long double x[]) {
-  return x[0]*x[0]-81.0*(x[1]+0.1)*(x[1] +0.1)+sinl(x[2])+1.06;
+  return powl(1-x[0],1.0/4.0)+x[1]+0.05*x[2]*x[2]-0.15*x[2]-1.0;
 }
 
 long double F3 (long double x[]) {
-  return powl(E, -x[0]*x[1]) + 20.0*x[2] + (10*M_PI-3.0)/3.0;
+  return -x[0]*x[0] -0.1*x[1]*x[1] + 0.01*x[1] + x[2] - 1.0;
 }
 
 long double F1X1 (long double x[]) {
-  return 3.0;
+  return 1 - x[1] * x[2] * sinl(x[0]*x[1]*x[2]) ;
 }
 
 long double F1X2 (long double x[]) {
-  return x[2]*sinl(x[1]*x[2]);
+  return - x[0] * x[2] * sinl(x[0]*x[1]*x[2]) ;
 }
 
 long double F1X3 (long double x[]) {
-  return x[1]*sinl(x[1]*x[2]);
+  return - x[0] * x[1] * sinl(x[0]*x[1]*x[2]) ;
 }
 
 long double F2X1 (long double x[]) {
-  return 2*x[0];
+  return  - (1.0/ 4.0 *(powl (1-x[0], 3.0/4.0)));
 }
 
 long double F2X2 (long double x[]) {
-  return -162.0*(x[1]+0.1);
+  return 1.0;
 }
 
 long double F2X3 (long double x[]) {
-  return cosl(x[2]);
+  return .01 * x[2] -0.15;
 }
 
 long double F3X1 (long double x[]) {
-  return -x[1] * powl(E, -x[0]*x[1]) ;
+  return  -2.0 * x[0];
 }
 
 long double F3X2 (long double x[]) {
-  return -x[0] * powl(E, -x[0]*x[1]) ;
+  return  0.01 - 0.2 * x[1];
 }
 
 long double F3X3 (long double x[]) {
-  return 20.0;
+  return  1.0;
 }
 
 int
 main ()
 {
-  SystemNL s = System_New(3, "Example from handout.");
+  SystemNL s = System_New(3, "TakeHomeTest");
 
   System_AddFunc(s, 1, 0, F1);
   System_AddFunc(s, 2, 0, F2);
   System_AddFunc(s, 3, 0, F3);
+
+  System_SetSD(s, 5);
+  System_SetNI(s, 10);
 
   System_AddJacobian(s, 1, 1, F1X1);
   System_AddJacobian(s, 1, 2, F1X2);
