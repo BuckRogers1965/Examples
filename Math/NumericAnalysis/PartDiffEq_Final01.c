@@ -3,9 +3,8 @@
 #include <math.h>
 
 // u(x, max-y)
-long double
-FN (long double x, long double y)
-{ return (logl (x * x + 1.0)); }
+long double FN (long double x, long double y)
+	{ return (logl (x * x + 1.0)); }
 
 // u(x, min-y)
 long double FS (long double x, long double y)
@@ -22,9 +21,8 @@ long double FW (long double x, long double y)
 long double exact (long double x, long double y)
 	{ return (logl (x * x + y * y)); }
 
-int
-main ()
-{
+int main () {
+
   long double h = 1.0 / 3.0;
   long double k = h;
 
