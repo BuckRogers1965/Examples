@@ -4,6 +4,20 @@ on the command line to do amazing, helpful things.
 
 ------
 
+VMWare
+------
+
+ovftool -ds=DataStore-02 vi://root@192.168.0.95/os2 vi://root@192.168.0.149b
+
+Copies the virtual machine named os2 from the first server to the second server and places it in DataStore-02.
+This is really the only way to copy vms from one esxi server to another. You cannot connect a usb drive and copy them. and you cannot scp them in and have them recognized.
+
+scp -rv systemrescuecd-x86-2.3.1.iso trinity-rescue-kit.3.4-build-367.iso   root@192.168.0.149:/vmfs/volumes/DataStore-01/ISO-Files/Other/
+
+copies iso images over to a datastore where you can install them into virtual machines.
+
+------
+
 To use perl to help format text.
 
 Find book with extra garbage in it:
