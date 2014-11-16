@@ -291,6 +291,8 @@ monitor (int fd)
 	printframe (&buf);
 	last = now;
       }
+    } else {
+      printframe (&buf);
     }
   }
 }
