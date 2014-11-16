@@ -286,7 +286,7 @@ monitor (int fd)
       now = time (NULL);
       if ((now - last) >= interval) {
         lt = *localtime(&now);
-        printf("%d-%d-%d %d:%d:%d ", lt.tm_year + 1900, lt.tm_mon + 1,
+        printf("%d-%02d-%02d %02d:%02d:%02d\t", lt.tm_year + 1900, lt.tm_mon + 1,
            lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec);
 	printframe (&buf);
 	last = now;
