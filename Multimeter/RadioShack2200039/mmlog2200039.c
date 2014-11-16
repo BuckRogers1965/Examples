@@ -2,7 +2,23 @@
 static char *Sccsid __attribute__ ((unused)) = "%Z%%M% %I% %G% John Rehwinkel KG4L";
 #endif
 
-/* log data from Radio Shack 2200039 Digital Multimeter w/ USB */
+/* log data from Radio Shack 2200039 Digital Multimeter w/ USB 
+
+  James M. Rogers
+  15 Nov 2014
+  Refreshing some older code for a newer
+  radio shack usb 46 range digital multimeter.
+
+
+  I got the code from this link:
+    http://www.vitriol.com/ftp/mmlog.c
+
+  and merged the code with this even older code: 
+    http://www.mungewell.org/ut61b/ut60e_simple.c
+
+  So that the tty code would restart after I stopped the code.
+*/
+
 
 #include <stdio.h>
 #include <string.h>
