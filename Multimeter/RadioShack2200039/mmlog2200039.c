@@ -268,6 +268,7 @@ monitor (int fd)
   time_t last;			/* last print time */
   time_t start;			/* start time */
   frame_t buf;			/* incoming frame */
+  struct tm lt;
 
   last = 0;
   start = time (NULL);
@@ -281,18 +282,15 @@ monitor (int fd)
       myread (fd, (char *) &buf + sizeof (buf) - 1, 1);
     }
 
-    if (interval != 0) {
+    if(interval >0) {
       now = time (NULL);
-
       if ((now - last) >= interval) {
-	fprintf (ofp, "%d\t", (int) (now - start));
-
+        lt = *localtime(&now);
+        printf("%d-%d-%d %d:%d:%d ", lt.tm_year + 1900, lt.tm_mon + 1,
+           lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec);
 	printframe (&buf);
 	last = now;
       }
-    }
-    else {
-      printframe (&buf);
     }
   }
 }
@@ -430,6 +428,7 @@ printframe (frame_t * fp)
     fprintf (ofp, " HOLD");
   }
 
+/*
   if (fp->flags & 0x02) {
     fprintf (ofp, " RS-232");
   }
@@ -437,6 +436,7 @@ printframe (frame_t * fp)
   if (fp->flags & 0x01) {
     fprintf (ofp, " AUTO");
   }
+*/
 
 finish:
   if (fp->flags & 0x20) {
