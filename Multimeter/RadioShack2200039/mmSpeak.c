@@ -427,7 +427,6 @@ monitor (int fd)
       while (!checksum (&buf))
 	{
 	  bcopy ((char *) &buf + 1, (char *) &buf, sizeof (buf) - 1);
-
 	  myread (fd, (char *) &buf + sizeof (buf) - 1, 1);
 	}
 	
@@ -448,9 +447,28 @@ monitor (int fd)
 static void
 SpeakReadings (frame_t * fp)
 {
-
   float value = calcvalue (fp);
   char  strnum[10];
+
+  //    ohms                   F
+  if ( (fp->units1 & 0x40) && (fp->digit3 == 47) )
+    {
+      speak ("Open");
+      return;
+    }
+
+  //    continuity   
+  printf("%d\n", fp->digit1);         
+  if (fp->flags & 0x80)
+    if (fp->digit1 == 215)
+      {
+        speak ("Open");
+        return;
+      }  else {
+        speak ("Short");
+        return;
+      }
+  
 
   sprintf(strnum, "%.4g", value);
   printf("%.4g\n", value);
