@@ -420,15 +420,18 @@ monitor (int fd)
 
   for (;;)
     {
+    
+    for (i=0; i<20; i++) {
       myread (fd, &buf, sizeof (buf));
 
-      for (i; i<50; i++)
       while (!checksum (&buf))
 	{
 	  bcopy ((char *) &buf + 1, (char *) &buf, sizeof (buf) - 1);
 
 	  myread (fd, (char *) &buf + sizeof (buf) - 1, 1);
 	}
+	
+    }
       
       if(interval >0) {
         now = time (NULL);
