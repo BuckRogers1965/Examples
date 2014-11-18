@@ -1,5 +1,6 @@
 #ifndef	lint
-static char *Sccsid __attribute__ ((unused)) = "%Z%%M% %I% %G% John Rehwinkel KG4L";
+static char *Sccsid __attribute__ ((unused)) =
+  "%Z%%M% %I% %G% John Rehwinkel KG4L";
 #endif
 
 /* log data from Radio Shack 2200039 Digital Multimeter w/ USB 
@@ -68,23 +69,23 @@ static char *Sccsid __attribute__ ((unused)) = "%Z%%M% %I% %G% John Rehwinkel KG
 
 struct frame
 {
-  unsigned char mode;	 /* multimeter mode */
-  unsigned char units1;	 /* units and other flags */
-  unsigned char units2;	 /* more units and stuff */
-  unsigned char digit4;	 /* digit 4 */
-  unsigned char digit3;	 /* digit 3 */
-  unsigned char digit2;	 /* digit 2 */
-  unsigned char digit1;	 /* digit 1 */
-  unsigned char flags;	 /* flags */
-  unsigned char cksum;	 /* checksum */
+  unsigned char mode;		/* multimeter mode */
+  unsigned char units1;		/* units and other flags */
+  unsigned char units2;		/* more units and stuff */
+  unsigned char digit4;		/* digit 4 */
+  unsigned char digit3;		/* digit 3 */
+  unsigned char digit2;		/* digit 2 */
+  unsigned char digit1;		/* digit 1 */
+  unsigned char flags;		/* flags */
+  unsigned char cksum;		/* checksum */
 };
 
 typedef struct frame frame_t;
 
 struct digit
 {
-  unsigned segments;	 /* segment bits */
-  int digit;		 /* resulting digit */
+  unsigned segments;		/* segment bits */
+  int digit;			/* resulting digit */
 };
 
 typedef struct digit digit_t;
@@ -93,8 +94,10 @@ static int openport (char *path);
 static int checksum (frame_t * fp);
 static void init (void);
 static void monitor (int);
-static void printframe (frame_t * fp);
+//static void printframe (frame_t * fp);
 static void printvalue (frame_t * fp);
+static void SpeakSettings (frame_t * fp);
+static void SpeakReadings (frame_t * fp);
 static void myread (int fd, void *bp, size_t len);
 static void setprog (char *name);
 static void dprint (char *fmt, ...);
@@ -164,110 +167,118 @@ static FILE *ofp;		/* input file pointer */
 char voicename[40];
 int samplerate;
 int quiet = 0;
-static char genders[4] = {' ','M','F',' '};
+static char genders[4] = { ' ', 'M', 'F', ' ' };
 
-const char *data_path = NULL;   // use default path for espeak-data
+const char *data_path = NULL;	// use default path for espeak-data
 
-int strrcmp(const char *s, const char *sub)
+int
+strrcmp (const char *s, const char *sub)
 {
-int slen = strlen(s);
-int sublen = strlen(sub);
-return memcmp(s + slen - sublen, sub, sublen);
+  int slen = strlen (s);
+  int sublen = strlen (sub);
+  return memcmp (s + slen - sublen, sub, sublen);
 }
 
 
-char * strrcpy(char *dest, const char *source)
+char *
+strrcpy (char *dest, const char *source)
 {
 // Pre assertions
-assert(dest != NULL);
-assert(source != NULL);
-assert(dest != source);
+  assert (dest != NULL);
+  assert (source != NULL);
+  assert (dest != source);
 
 // tk: parentheses
-while((*dest++ = *source++))
+  while ((*dest++ = *source++))
     ;
-return(--dest);
+  return (--dest);
 }
 
-const char* GetLanguageVoiceName(const char* pszShortSign)
+const char *
+GetLanguageVoiceName (const char *pszShortSign)
 {
+
+  int ix, i;
 #define LANGUAGE_LENGTH 30
-static char szReturnValue[LANGUAGE_LENGTH] ;
-memset(szReturnValue, 0, LANGUAGE_LENGTH);
+  static char szReturnValue[LANGUAGE_LENGTH];
+  memset (szReturnValue, 0, LANGUAGE_LENGTH);
 
-for (int i = 0; pszShortSign[i] != '\0'; ++i)
-    szReturnValue[i] = (char) tolower(pszShortSign[i]);
+  for (i = 0; pszShortSign[i] != '\0'; ++i)
+    szReturnValue[i] = (char) tolower (pszShortSign[i]);
 
-const espeak_VOICE **voices;
-espeak_VOICE voice_select;
-voices = espeak_ListVoices(NULL);
+  const espeak_VOICE **voices;
+  espeak_VOICE voice_select;
+  voices = espeak_ListVoices (NULL);
 
-const espeak_VOICE *v;
-for(int ix=0; (v = voices[ix]) != NULL; ix++)
-{
-    if( !strrcmp( v->languages, szReturnValue) )
+  const espeak_VOICE *v;
+  for (ix = 0; (v = voices[ix]) != NULL; ix++)
     {
-        strcpy(szReturnValue, v->name);
-        return szReturnValue;
+      if (!strrcmp (v->languages, szReturnValue))
+	{
+	  strcpy (szReturnValue, v->name);
+	  return szReturnValue;
+	}
+    }				// End for
+
+  strcpy (szReturnValue, "default");
+  return szReturnValue;
+}				// End function getvoicename
+
+
+void
+ListVoices ()
+{
+  const espeak_VOICE **voices;
+  espeak_VOICE voice_select;
+  int ix;
+  voices = espeak_ListVoices (NULL);
+
+  const espeak_VOICE *v;
+  for (ix = 0; (v = voices[ix]) != NULL; ix++)
+    {
+      printf ("Shortsign: %s\n", v->languages);
+      printf ("age: %d\n", v->age);
+      printf ("gender: %c\n", genders[v->gender]);
+      printf ("name: %s\n", v->name);
+      printf ("\n\n");
+    }				// End for
+}				// End function getvoicename
+
+
+void
+speak (char *words)
+{
+  const char *szVersionInfo = espeak_Info (NULL);
+
+  samplerate = espeak_Initialize (AUDIO_OUTPUT_PLAYBACK, 0, data_path, 0);
+  strcpy (voicename, GetLanguageVoiceName ("EN"));
+
+  if (espeak_SetVoiceByName (voicename) != EE_OK)
+    {
+      printf ("Espeak setvoice error...\n");
     }
-} // End for
 
-strcpy(szReturnValue, "default");
-return szReturnValue;
-} // End function getvoicename
-
-
-void ListVoices()
-{
-const espeak_VOICE **voices;
-espeak_VOICE voice_select;
-voices = espeak_ListVoices(NULL);
-
-const espeak_VOICE *v;
-for(int ix=0; (v = voices[ix]) != NULL; ix++)
-{
-    printf("Shortsign: %s\n", v->languages);
-    printf("age: %d\n", v->age);
-    printf("gender: %c\n", genders[v->gender]);
-    printf("name: %s\n", v->name);
-    printf("\n\n");
-} // End for
-} // End function getvoicename
-
-
-void  speak( char * words)
-{
-const char* szVersionInfo = espeak_Info(NULL);
-
-//printf("Espeak version: %s\n", szVersionInfo);
-samplerate = espeak_Initialize(AUDIO_OUTPUT_PLAYBACK,0,data_path,0);
-strcpy(voicename, GetLanguageVoiceName("EN"));
-
-if(espeak_SetVoiceByName(voicename) != EE_OK)
-{
-    printf("Espeak setvoice error...\n");
-}
-
-int speed = 120;
-int volume = 50; // volume in range 0-100    0=silence
-int pitch = 50; //  base pitch, range 0-100.  50=normal
+  int speed = 120;
+  int volume = 50;		// volume in range 0-100    0=silence
+  int pitch = 50;		//  base pitch, range 0-100.  50=normal
 
 // espeak.cpp 625
-espeak_SetParameter(espeakRATE, speed, 0);
-espeak_SetParameter(espeakVOLUME,volume,0);
-espeak_SetParameter(espeakPITCH,pitch,0);
+  espeak_SetParameter (espeakRATE, speed, 0);
+  espeak_SetParameter (espeakVOLUME, volume, 0);
+  espeak_SetParameter (espeakPITCH, pitch, 0);
 // espeakRANGE:   pitch range, range 0-100. 0-monotone, 50=normal
 // espeakPUNCTUATION:  which punctuation characters to announce:
-    // value in espeak_PUNCT_TYPE (none, all, some), 
-espeak_VOICE *voice_spec = espeak_GetCurrentVoice();
-voice_spec->gender=2; // 0=none 1=male, 2=female,
+  // value in espeak_PUNCT_TYPE (none, all, some), 
+  espeak_VOICE *voice_spec = espeak_GetCurrentVoice ();
+  voice_spec->gender = 2;	// 0=none 1=male, 2=female,
 //voice_spec->age = age;
 
-espeak_SetVoiceByProperties(voice_spec);
-espeak_Synth( (char*) words, strlen(words)+1, 0, POS_CHARACTER, 0, espeakCHARS_AUTO, NULL, NULL);
-espeak_Synchronize();
+  espeak_SetVoiceByProperties (voice_spec);
+  espeak_Synth ((char *) words, strlen (words) + 1, 0, POS_CHARACTER, 0,
+		espeakCHARS_AUTO, NULL, NULL);
+  espeak_Synchronize ();
 
-espeak_Terminate();
+  espeak_Terminate ();
 }
 
 
@@ -293,68 +304,80 @@ main (int argc,			/* argument count */
   showmode = FALSE;
   valueonly = FALSE;
 
-  while (--argc) {
-    if (**++argv == ARGCHAR) {
-      while (*++*argv) {
-	switch (**argv) {
-	case 'd':		/* device */
-	case 'o':		/* output file */
-	case 't':		/* time interval */
-	  if (nvp == evp) {
-	    error (Usage, prog);
-	  }
-	  *nvp++ = **argv;
-	  break;
+  while (--argc)
+    {
+      if (**++argv == ARGCHAR)
+	{
+	  while (*++*argv)
+	    {
+	      switch (**argv)
+		{
+		case 'd':	/* device */
+		case 'o':	/* output file */
+		case 't':	/* time interval */
+		  if (nvp == evp)
+		    {
+		      error (Usage, prog);
+		    }
+		  *nvp++ = **argv;
+		  break;
 
-	case 'm':		/* show mode */
-	  showmode = TRUE;
-	  break;
-	  
-	case 'v':		/* value only */
-	  valueonly = TRUE;
-	  break;
+		case 'm':	/* show mode */
+		  showmode = TRUE;
+		  break;
 
-	case 'D':		/* debug */
-	  debugflag = TRUE;
-	  break;
+		case 'v':	/* value only */
+		  valueonly = TRUE;
+		  break;
 
-	default:
-	  error (Usage, prog);
+		case 'D':	/* debug */
+		  debugflag = TRUE;
+		  break;
+
+		default:
+		  error (Usage, prog);
+		}
+	    }
 	}
-      }
-    }
-    else {
-      if (nvp > cvp) {
-	switch (*cvp++) {
-	case 'd':		/* device */
-	  Dev = *argv;
-	  break;
+      else
+	{
+	  if (nvp > cvp)
+	    {
+	      switch (*cvp++)
+		{
+		case 'd':	/* device */
+		  Dev = *argv;
+		  break;
 
-	case 'o':		/* output file */
-	  ofp = fopen (*argv, Write);
+		case 'o':	/* output file */
+		  ofp = fopen (*argv, Write);
 
-	  if (ofp == NULL) {
-	    whyerror (*argv);
-	  }
-	  break;
+		  if (ofp == NULL)
+		    {
+		      whyerror (*argv);
+		    }
+		  break;
 
-	case 't':		/* time interval */
-	  if (!GETINT (*argv, &interval)) {
-	    error (Usage, prog);
-	  }
+		case 't':	/* time interval */
+		  if (!GETINT (*argv, &interval))
+		    {
+		      error (Usage, prog);
+		    }
 
-	  break;
+		  break;
+		}
+	    }
+	  else
+	    {
+	      error (Usage, prog);
+	    }
 	}
-      }
-      else {
-	error (Usage, prog);
-      }
     }
-  }
 
-  if (nvp > cvp) {
-    error (Usage, prog);
-  }
+  if (nvp > cvp)
+    {
+      error (Usage, prog);
+    }
 
   free (va);
 
@@ -377,13 +400,15 @@ init (void)
   ddecode = (unsigned char *) mkbuf (NBYTES);
   de = ddecode + NBYTES;
 
-  for (dp = ddecode; dp < de; dp++) {
-    *dp = '?';
-  }
+  for (dp = ddecode; dp < de; dp++)
+    {
+      *dp = '?';
+    }
 
-  for (dep = digits; dep->digit != NODIGIT; dep++) {
-    ddecode[dep->segments] = dep->digit;
-  }
+  for (dep = digits; dep->digit != NODIGIT; dep++)
+    {
+      ddecode[dep->segments] = dep->digit;
+    }
 }
 
 /* monitor RS-232 traffic */
@@ -391,189 +416,204 @@ init (void)
 static void
 monitor (int fd)
 {
-  time_t now;			/* current time */
-  time_t last;			/* last print time */
-  time_t start;			/* start time */
   frame_t buf;			/* incoming frame */
   struct tm lt;
 
-  last = 0;
-  start = time (NULL);
+  for (;;)
+    {
+      myread (fd, &buf, sizeof (buf));
 
-  for (;;) {
-    myread (fd, &buf, sizeof (buf));
+      while (!checksum (&buf))
+	{
+	  bcopy ((char *) &buf + 1, (char *) &buf, sizeof (buf) - 1);
 
-    while (!checksum (&buf)) {
-      bcopy ((char *) &buf + 1, (char *) &buf, sizeof (buf) - 1);
-
-      myread (fd, (char *) &buf + sizeof (buf) - 1, 1);
+	  myread (fd, (char *) &buf + sizeof (buf) - 1, 1);
+	}
+	
+      sleep(1);
+      
+      SpeakReadings(&buf);
+      SpeakSettings(&buf);
     }
-
-    if(interval >0) {
-      now = time (NULL);
-      if ((now - last) >= interval) {
-        lt = *localtime(&now);
-        printf("%d-%02d-%02d %02d:%02d:%02d\t", lt.tm_year + 1900, lt.tm_mon + 1,
-           lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec);
-	printframe (&buf);
-	last = now;
-      }
-    } else {
-      printframe (&buf);
-    }
-  }
 }
 
-/* print data frame */
+/*Speak digit*/
 
 static void
-printframe (frame_t * fp)
-{				/* frame pointer */
-  if (valueonly) {
-    printvalue (fp);
+SpeakDigit(unsigned char digit) {
+
+  char  strdigit[2];
+
+  if (digit & DPBIT) {
+    speak ("Dot");
+    putc('.', ofp);
+    //return;
+  }
+  
+  if ( (digit == 0x27)  || (digit == 0x87) )
     return;
-  }
+    
+  sprintf(strdigit, "%c", ddecode[digit & SEGBITS]);
+  putc(ddecode[digit & SEGBITS], ofp);
+  speak (strdigit);
+}
 
-  if (showmode && (fp->mode < NMODES)) {
-    fprintf (ofp, "%s: ", modes[fp->mode]);
-  }
+/* Speak Readings */
+static void
+SpeakReadings (frame_t * fp)
+{
+  if (fp->flags & 0x08)
+      speak ("Negative");
 
-  if (fp->flags & 0x04) {
-    fprintf (ofp, "~ ");
-  }
+  SpeakDigit(fp->digit1);
+  SpeakDigit(fp->digit2);   
+  SpeakDigit(fp->digit3);
+  SpeakDigit(fp->digit4);
+  
+  putc('\n', ofp);
+  fflush(ofp);
+}
 
-  if (fp->flags & 0x08) {
-    fprintf (ofp, "-");
-  }
+/* Speak Settings */
+static void
+SpeakSettings (frame_t * fp)  /* frame pointer */
+{				
 
-  putc (ddecode[fp->digit1 & SEGBITS], ofp);
+  // only do this if there is a diff in settings.
 
-  if (fp->digit2 & DPBIT) {
-    putc ('.', ofp);
-  }
+  if (showmode && (fp->mode < NMODES))
+    {
+      fprintf (ofp, "%s: ", modes[fp->mode]);
+    }
 
-  putc (ddecode[fp->digit2 & SEGBITS], ofp);
+  if (fp->flags & 0x04)
+    {
+      speak ("A. C. ");
+    }
 
-  if (fp->digit3 & DPBIT) {
-    putc ('.', ofp);
-  }
+  if (fp->digit4 == 0x27)
+    {
+      speak ("Fahrenheit");
+      goto finish;
+    }
 
-  putc (ddecode[fp->digit3 & SEGBITS], ofp);
+  if (fp->digit4 == 0x87)
+    {
+      speak ("Celcius");
+      goto finish;
 
-  if (fp->digit4 & DPBIT) {
-    putc ('.', ofp);
-  }
+    }
 
-  if (fp->digit4 == 0x27) {
-    fprintf (ofp, "F");
-    goto finish;
-  }
+  if (fp->units1 & 0x20)
+    {
+      speak ("Kilo");
+    }
 
-  if (fp->digit4 == 0x87) {
-    fprintf (ofp, "C");
-    goto finish;
+  if (fp->units1 & 0x10)
+    {
+      speak ("Mega");
+    }
 
-  }
+  if (fp->units1 & 0x01)
+    {
+      speak ("Milli");
+    }
 
-  putc (ddecode[fp->digit4 & SEGBITS], ofp);
+  if (fp->units2 & 0x80)
+    {
+      speak ("Micro");
+    }
 
-  if (fp->units1 & 0x20) {
-    fprintf (ofp, " K");
-  }
+  if (fp->units2 & 0x40)
+    {
+      speak ("Nano");
+    }
 
-  if (fp->units1 & 0x10) {
-    fprintf (ofp, " M");
-  }
+  if (fp->units1 & 0x80)
+    {
+      speak ("Hertz");
+    }
 
-  if (fp->units1 & 0x01) {
-    fprintf (ofp, " m");
-  }
+  if (fp->units1 & 0x40)
+    {
+      speak ("Ohm");
+    }
 
-  if (fp->units2 & 0x80) {
-    fprintf (ofp, " u");
-  }
+  if (fp->units1 & 0x08)
+    {
+      speak ("Farrad");
+    }
 
-  if (fp->units2 & 0x40) {
-    fprintf (ofp, " n");
-  }
+  if (fp->units1 & 0x04)
+    {
+      speak ("Amps");
+    }
 
-  if (fp->units1 & 0x80) {
-    fprintf (ofp, "Hz");
-  }
+  if (fp->units1 & 0x02)
+    {
+      speak ("Volts");
+    }
 
-  if (fp->units1 & 0x40) {
-    fprintf (ofp, "Ohm");
-  }
+  if (fp->units2 & 0x20)
+    {
+      speak ("dBm");
+    }
 
-  if (fp->units1 & 0x08) {
-    fprintf (ofp, "F");
-  }
+  if (fp->units2 & 0x10)
+    {
+      speak ("S");
+    }
 
-  if (fp->units1 & 0x04) {
-    fprintf (ofp, "A");
-  }
+  if (fp->units2 & 0x08)
+    {
+      speak ("%%");
+    }
 
-  if (fp->units1 & 0x02) {
-    fprintf (ofp, "V");
-  }
+  if (fp->units2 & 0x04)
+    {
+      speak ("h.F.E.");
+    }
 
-  if (fp->units2 & 0x20) {
-    fprintf (ofp, "dBm");
-  }
+  if (fp->units2 & 0x02)
+    {
+      speak ("Relative");
+    }
 
-  if (fp->units2 & 0x10) {
-    fprintf (ofp, "S");
-  }
+  if (fp->units2 & 0x01)
+    {
+      speak ("Minimum");
+    }
 
-  if (fp->units2 & 0x08) {
-    fprintf (ofp, "%%");
-  }
+  if (fp->digit1 & 0x08)
+    {
+      speak ("Maximum");
+    }
 
-  if (fp->units2 & 0x04) {
-    fprintf (ofp, " hFE");
-  }
+  if (fp->flags & 0x80)
+    {
+      speak ("Continuity");
+    }
 
-  if (fp->units2 & 0x02) {
-    fprintf (ofp, " REL");
-  }
+  if (fp->flags & 0x40)
+    {
+      speak ("Diode");
+    }
 
-  if (fp->units2 & 0x01) {
-    fprintf (ofp, " MIN");
-  }
-
-  if (fp->digit1 & 0x08) {
-    fprintf (ofp, " MAX");
-  }
-
-  if (fp->flags & 0x80) {
-    fprintf (ofp, " BEEP");
-  }
-
-  if (fp->flags & 0x40) {
-    fprintf (ofp, " DIODE");
-  }
-
-  if (fp->flags & 0x10) {
-    fprintf (ofp, " HOLD");
-  }
-
-/*
-  if (fp->flags & 0x02) {
-    fprintf (ofp, " RS-232");
-  }
+  if (fp->flags & 0x10)
+    {
+      speak ("Hold");
+    }
 
   if (fp->flags & 0x01) {
-    fprintf (ofp, " AUTO");
+    speak ("Auto");
   }
-*/
 
 finish:
-  if (fp->flags & 0x20) {
-    fprintf (ofp, " BAT");
-  }
+  if (fp->flags & 0x20)
+    {
+      speak ("Battery");
+    }
 
-
-  fprintf (ofp, "\n");
 }
 
 /* print value */
@@ -588,56 +628,68 @@ printvalue (frame_t * fp)
   value = 0;
   dp = &fp->digit1;
 
-  for (dp = &fp->digit1; dp >= &fp->digit4; dp--) {
-    value *= 10;
-    digit = ddecode[*dp & SEGBITS];
+  for (dp = &fp->digit1; dp >= &fp->digit4; dp--)
+    {
+      value *= 10;
+      digit = ddecode[*dp & SEGBITS];
 
-    if (digit == '?') {
-      return;
+      if (digit == '?')
+	{
+	  return;
+	}
+
+      if (digit == '-')
+	{
+	  return;
+	}
+
+      value += digit - '0';
     }
 
-    if (digit == '-') {
-      return;
+  if (fp->digit2 & DPBIT)
+    {
+      value /= 1000;
     }
 
-    value += digit - '0';
-  }
+  if (fp->digit3 & DPBIT)
+    {
+      value /= 100;
+    }
 
-  if (fp->digit2 & DPBIT) {
-    value /= 1000;
-  }
+  if (fp->digit4 & DPBIT)
+    {
+      value /= 10;
+    }
 
-  if (fp->digit3 & DPBIT) {
-    value /= 100;
-  }
+  if (fp->flags & 0x08)
+    {
+      value = -value;
+    }
 
-  if (fp->digit4 & DPBIT) {
-    value /= 10;
-  }
+  if (fp->units1 & 0x20)
+    {
+      value *= 1e3;
+    }
 
-  if (fp->flags & 0x08) {
-    value = -value;
-  }
+  if (fp->units1 & 0x10)
+    {
+      value *= 1e6;
+    }
 
-  if (fp->units1 & 0x20) {
-    value *= 1e3;
-  }
+  if (fp->units1 & 0x01)
+    {
+      value /= 1e3;
+    }
 
-  if (fp->units1 & 0x10) {
-    value *= 1e6;
-  }
+  if (fp->units2 & 0x80)
+    {
+      value /= 1e6;
+    }
 
-  if (fp->units1 & 0x01) {
-    value /= 1e3;
-  }
-
-  if (fp->units2 & 0x80) {
-    value /= 1e6;
-  }
-
-  if (fp->units2 & 0x40) {
-    value /= 1e9;
-  }
+  if (fp->units2 & 0x40)
+    {
+      value /= 1e9;
+    }
 
   fprintf (ofp, "%f\n", value);
 }
@@ -650,9 +702,12 @@ checksum (frame_t * fp)
   unsigned char sum;		/* running sum */
 
   dprint ("%02x %02x %02x %02x %02x %02x %02x %02x [%02x]",
-	  fp->mode, fp->units1, fp->units2, fp->digit1, fp->digit2, fp->digit3, fp->digit4, fp->flags, fp->cksum);
+	  fp->mode, fp->units1, fp->units2, fp->digit1, fp->digit2,
+	  fp->digit3, fp->digit4, fp->flags, fp->cksum);
 
-  sum = (fp->mode + fp->units1 + fp->units2 + fp->digit1 + fp->digit2 + fp->digit3 + fp->digit4 + fp->flags + 0x39) & 0xff;
+  sum =
+    (fp->mode + fp->units1 + fp->units2 + fp->digit1 + fp->digit2 +
+     fp->digit3 + fp->digit4 + fp->flags + 0x39) & 0xff;
 
   dprint ("sum = %#02x, cksum = %#02x", sum, fp->cksum);
 
@@ -668,17 +723,20 @@ myread (int fd,			/* file descriptor to read from */
 {				/* amount to read */
   int nxfer;			/* number of bytes transferred */
 
-  for (;;) {
-    nxfer = read (fd, bp, len);
+  for (;;)
+    {
+      nxfer = read (fd, bp, len);
 
-    if (nxfer < 0) {
-      whyerror ("read(%d)", len);
-    }
+      if (nxfer < 0)
+	{
+	  whyerror ("read(%d)", len);
+	}
 
-    if (nxfer == len) {
-      return;
+      if (nxfer == len)
+	{
+	  return;
+	}
     }
-  }
 }
 
 /* open and configure a serial port */
@@ -693,9 +751,10 @@ openport (char *path)
 
   fd = open (path, O_RDONLY | O_NOCTTY);
 
-  if (fd < 0) {
-    whyerror (path);
-  }
+  if (fd < 0)
+    {
+      whyerror (path);
+    }
 
   newtio.c_cflag = Baud | CS8 | CLOCAL | CREAD;
   newtio.c_iflag = ICRNL;
@@ -738,12 +797,14 @@ setprog (char *name)
 {				/* program name to use */
   prog = strrchr (name, PATHSEP);
 
-  if (prog) {
-    prog++;
-  }
-  else {
-    prog = name;
-  }
+  if (prog)
+    {
+      prog++;
+    }
+  else
+    {
+      prog = name;
+    }
 }
 
 /* print out debug message (if enabled) */
@@ -754,9 +815,10 @@ dprint (char *fmt,		/* message format */
 {				/* format arguments */
   va_list ap;			/* argument pointer */
 
-  if (debugflag == FALSE) {
-    return;
-  }
+  if (debugflag == FALSE)
+    {
+      return;
+    }
 
   fflush (stdout);
 
@@ -813,19 +875,23 @@ whyerror (char *fmt,		/* message format */
 
   errstr = strerror (errno);
 
-  if (errstr) {
-    fprintf (stderr, ": %s\n", errstr);
-  }
-  else {
-    fprintf (stderr, ": errno=%d\n", errno);
-  }
+  if (errstr)
+    {
+      fprintf (stderr, ": %s\n", errstr);
+    }
+  else
+    {
+      fprintf (stderr, ": errno=%d\n", errno);
+    }
 
-  if (errno) {
-    exit (errno);
-  }
-  else {
-    exit (EINVAL);
-  }
+  if (errno)
+    {
+      exit (errno);
+    }
+  else
+    {
+      exit (EINVAL);
+    }
 }
 
 /* allocate a buffer and punt on failure */
@@ -837,9 +903,10 @@ mkbuf (int size)
 
   ptr = malloc (size);
 
-  if (ptr == NULL) {
-    whyerror ("Malloc(%d)", size);
-  }
+  if (ptr == NULL)
+    {
+      whyerror ("Malloc(%d)", size);
+    }
 
   return ptr;
 }
