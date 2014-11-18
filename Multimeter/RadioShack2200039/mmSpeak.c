@@ -21,15 +21,11 @@ static char *Sccsid __attribute__ ((unused)) =
   
 // JMR got the code from this link:
 // http://stackoverflow.com/questions/2661129/espeak-sapi-dll-usage-on-windows?rq=1
-// Compile like this: gcc espeak_example.c -l espeak
+// Compile like this: gcc mmSpeak.c -lespeak -o mmSpeak
 
 // libespeak-dev: /usr/include/espeak/speak_lib.h
 // apt-get install libespeak-dev
 // apt-get install libportaudio-dev
-
-// g++ -o mine mine.cpp -lespeak
-// g++ -o mine mine.cpp -I/usr/include/espeak/ -lespeak
-// gcc -o mine mine.cpp -I/usr/include/espeak/ -lespeak
   
 */
 
@@ -383,6 +379,8 @@ main (int argc,			/* argument count */
 
   init ();
 
+  speak ("Do not measure voltage above 20volts if you cannot see the location of the probes.");
+
   monitor (openport (Dev));
 
   return 0;
@@ -437,32 +435,6 @@ monitor (int fd)
     }
 }
 
-/*Speak digit*/
-
-int
-SpeakDigit(unsigned char digit, int skip, int skipleading) {
-
-  char  strdigit[2];
-
-  if ((digit & DPBIT) && !skip) {
-    speak ("Dot");
-    putc('.', ofp);
-    //return;
-  }
-  
-  if (skipleading && ddecode[digit & SEGBITS] == '0')
-     return 1;
-  
-  if ( (digit == 0x27)  || (digit == 0x87) )
-    return;
-    
-  sprintf(strdigit, "%c", ddecode[digit & SEGBITS]);
-  putc(ddecode[digit & SEGBITS], ofp);
-  speak (strdigit);
-  
-  return 0;
-}
-
 /* Speak Readings */
 static void
 SpeakReadings (frame_t * fp)
@@ -474,20 +446,6 @@ SpeakReadings (frame_t * fp)
   sprintf(strnum, "%.4g", value);
   printf("%.4g\n", value);
   speak (strnum);
-
-/*
-  int skipleading = 1;
-  
-  if (fp->flags & 0x08)
-      speak ("Negative");
-
-  skipleading = SpeakDigit(fp->digit1, 1, skipleading);
-  skipleading = SpeakDigit(fp->digit2, 0, skipleading);   
-  skipleading = SpeakDigit(fp->digit3, 0, skipleading);
-                SpeakDigit(fp->digit4, 0, 0);
-
-  putc('\n', ofp);
-*/
 
   fflush(ofp);
 }
