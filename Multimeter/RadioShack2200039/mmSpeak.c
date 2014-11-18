@@ -3,10 +3,10 @@ static char *Sccsid __attribute__ ((unused)) =
   "%Z%%M% %I% %G% John Rehwinkel KG4L";
 #endif
 
-/* log data from Radio Shack 2200039 Digital Multimeter w/ USB 
+/* read values aloud from Radio Shack 2200039 Digital Multimeter w/ USB 
 
   James M. Rogers
-  15 Nov 2014
+  18 Nov 2014
   Refreshing some older code for a newer
   radio shack usb 46 range digital multimeter.
 
@@ -17,7 +17,7 @@ static char *Sccsid __attribute__ ((unused)) =
   and merged the code with this even older code: 
     http://www.mungewell.org/ut61b/ut60e_simple.c
 
-  So that the tty code would restart after I stopped the code.
+  So that the tty code would restart after I stopped the program and restarted it.
   
 // JMR got the code from this link:
 // http://stackoverflow.com/questions/2661129/espeak-sapi-dll-usage-on-windows?rq=1
@@ -295,7 +295,7 @@ main (int argc,			/* argument count */
   cvp = va;
   evp = va + argc;
   ofp = stdout;
-  interval = 0;
+  interval = 5;
   debugflag = FALSE;
   showmode = FALSE;
   valueonly = FALSE;
@@ -416,22 +416,28 @@ monitor (int fd)
 {
   frame_t buf;			/* incoming frame */
   struct tm lt;
+  int now=0, last=0, i;
 
   for (;;)
     {
       myread (fd, &buf, sizeof (buf));
 
+      for (i; i<50; i++)
       while (!checksum (&buf))
 	{
 	  bcopy ((char *) &buf + 1, (char *) &buf, sizeof (buf) - 1);
 
 	  myread (fd, (char *) &buf + sizeof (buf) - 1, 1);
 	}
-	
-      sleep(1);
       
-      SpeakReadings(&buf);
-      SpeakSettings(&buf);
+      if(interval >0) {
+        now = time (NULL);
+        if ((now - last) >= interval) {
+          SpeakReadings(&buf);
+          SpeakSettings(&buf);
+          last = now;
+        }
+      }
     }
 }
 
