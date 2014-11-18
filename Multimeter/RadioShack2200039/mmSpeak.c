@@ -95,7 +95,7 @@ static int checksum (frame_t * fp);
 static void init (void);
 static void monitor (int);
 //static void printframe (frame_t * fp);
-static void printvalue (frame_t * fp);
+double      calcvalue (frame_t * fp);
 static void SpeakSettings (frame_t * fp);
 static void SpeakReadings (frame_t * fp);
 static void myread (int fd, void *bp, size_t len);
@@ -439,16 +439,19 @@ monitor (int fd)
 
 /*Speak digit*/
 
-static void
-SpeakDigit(unsigned char digit) {
+int
+SpeakDigit(unsigned char digit, int skip, int skipleading) {
 
   char  strdigit[2];
 
-  if (digit & DPBIT) {
+  if ((digit & DPBIT) && !skip) {
     speak ("Dot");
     putc('.', ofp);
     //return;
   }
+  
+  if (skipleading && ddecode[digit & SEGBITS] == '0')
+     return 1;
   
   if ( (digit == 0x27)  || (digit == 0x87) )
     return;
@@ -456,21 +459,36 @@ SpeakDigit(unsigned char digit) {
   sprintf(strdigit, "%c", ddecode[digit & SEGBITS]);
   putc(ddecode[digit & SEGBITS], ofp);
   speak (strdigit);
+  
+  return 0;
 }
 
 /* Speak Readings */
 static void
 SpeakReadings (frame_t * fp)
 {
+
+  float value = calcvalue (fp);
+  char  strnum[10];
+
+  sprintf(strnum, "%.4g", value);
+  printf("%.4g\n", value);
+  speak (strnum);
+
+/*
+  int skipleading = 1;
+  
   if (fp->flags & 0x08)
       speak ("Negative");
 
-  SpeakDigit(fp->digit1);
-  SpeakDigit(fp->digit2);   
-  SpeakDigit(fp->digit3);
-  SpeakDigit(fp->digit4);
-  
+  skipleading = SpeakDigit(fp->digit1, 1, skipleading);
+  skipleading = SpeakDigit(fp->digit2, 0, skipleading);   
+  skipleading = SpeakDigit(fp->digit3, 0, skipleading);
+                SpeakDigit(fp->digit4, 0, 0);
+
   putc('\n', ofp);
+*/
+
   fflush(ofp);
 }
 
@@ -616,10 +634,10 @@ finish:
 
 }
 
-/* print value */
+/* Calculate Value */
 
-static void
-printvalue (frame_t * fp)
+double
+calcvalue (frame_t * fp)
 {				/* frame pointer */
   int digit;			/* digit */
   unsigned char *dp;		/* digit pointer */
@@ -635,12 +653,12 @@ printvalue (frame_t * fp)
 
       if (digit == '?')
 	{
-	  return;
+	  continue;
 	}
 
       if (digit == '-')
 	{
-	  return;
+	  continue;
 	}
 
       value += digit - '0';
@@ -666,32 +684,7 @@ printvalue (frame_t * fp)
       value = -value;
     }
 
-  if (fp->units1 & 0x20)
-    {
-      value *= 1e3;
-    }
-
-  if (fp->units1 & 0x10)
-    {
-      value *= 1e6;
-    }
-
-  if (fp->units1 & 0x01)
-    {
-      value /= 1e3;
-    }
-
-  if (fp->units2 & 0x80)
-    {
-      value /= 1e6;
-    }
-
-  if (fp->units2 & 0x40)
-    {
-      value /= 1e9;
-    }
-
-  fprintf (ofp, "%f\n", value);
+  return value;
 }
 
 /* verify frame checksum */
