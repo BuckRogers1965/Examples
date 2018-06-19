@@ -8,25 +8,28 @@
 int main () {
 
 
-  long j, n, x;
+  long n;
 
-  long double i, r, t, z;
+  long double i, j, r, t, x, z;
 
-	z=10; t=0;
+	z=25; t=0;
 
-	t=3.5;
 
+
+  for (j=2; j<101; j+=2) {
+
+	t=x=j/2+.5;
   for (i=1; i < z; i++) {
-	r = 2.5/powl(6, i);
+	r = (x-1)/powl(j, i);
 	t += r;
 
-	printf("Res %Lg	Total  %Lg \n", r, t);
+	//printf("die %Lg	Res %Lg	Total  %Lg \n", x, r, t);
+  }
 
+ 	printf("Res %Lg	Average %Lg \n", r, t);
 
 
   }
-
- 	printf("Total  %Lf \n", t);
  
 }
 
