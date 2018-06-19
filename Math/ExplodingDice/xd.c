@@ -46,15 +46,17 @@ int main () {
 
   double t, z;
 
-	z=10000000; t=0;
+	z=100000000; t=0;
 
     srand(time(NULL));
 
+  for (j=2; j<101; j+=2) {
+
   for (i=0; i < z; i++) {
-	r = xplod(6, 0, 0);
+	r = xplod(j, 0, 0);
 	t += r;
-	if (r>10)
-  		printf("%ld\n", r);
+	//if (r>8)
+  	//	printf("%ld\n", r);
 	//else 
   	//printf("\n");
 
@@ -63,5 +65,6 @@ int main () {
   }
 
  	printf("Total  %f	Average %f\n", t, t/z);
- 
+        t=0;
+   }
 }
